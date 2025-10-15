@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
 import { SelectTrigger, Separator } from "@radix-ui/react-select"
-import { User, UserCheck, EyeOff, Eye, Lock } from "lucide-react"
+import { User, UserCheck, EyeOff, Eye, Lock, Mail } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "@/Registro/hook/useForm"
 import { useNavigate } from "react-router"
@@ -22,11 +22,11 @@ export const RegisterPage = () => {
   const [IsLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false)
-  const {nombre, apellido, contraseña, onInputChange}= useForm(formData)
+  const {nombre, apellido, contraseña, email, onInputChange}= useForm(formData)
 
   const onSumbit = (e:any) =>{
     e.preventDefault();
-    console.log({nombre, apellido, contraseña, role})
+    console.log({nombre, apellido, contraseña, role, email})
     setIsLoading(true)
     setTimeout(()=>{
       setIsLoading(false)
@@ -83,6 +83,22 @@ export const RegisterPage = () => {
                       required
                     />
                   </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Correo electrónico</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="tu@empresa.com"
+                    name="email"
+                    value={email}
+                    onChange={onInputChange}
+                    className="pl-10 h-11"
+                    required
+                  />
                 </div>
               </div>
 

@@ -2,9 +2,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { PropsRegitros } from "@/Registro/types/typeRegistro"
-import { StarIcon, CalendarIcon, TruckIcon, UserIcon, EyeIcon } from "lucide-react"
+import { StarIcon, CalendarIcon, TruckIcon, UserIcon, EyeIcon, TrashIcon } from "lucide-react"
 import { Link } from "react-router"
-
 
 
 
@@ -73,16 +72,27 @@ export const RemisionCard = ({registro}: props) => {
                     <UserIcon className="h-4 w-4 text-amber-600" />
                     <span className="text-sm font-medium text-amber-900">{registro.user}</span>
                 </div>
-                <Button
+
+                <div className="flex items-center gap-2">
+                  <Button
                     size="sm"
                     variant="outline"
                     className="border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
                   >
                     <EyeIcon className="h-4 w-4 mr-1" />
-                    <Link to={`/registro/${registro.id}`}>
-                      Ver Detalles
-                    </Link>
-                </Button>
+                    <Link to={`/registro/${registro.id}`}>Ver Detalles</Link>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-amber-200 text-amber-700 hover:bg-red-50 bg-transparent"
+                    // onClick={() => handleDelete(registro.id)} // función que tú definas
+                  >
+                    <TrashIcon className="h-4 w-4 mr-1" />
+                    Eliminar
+                  </Button>
+                </div>    
             </div>
         </CardContent>
     </Card>
