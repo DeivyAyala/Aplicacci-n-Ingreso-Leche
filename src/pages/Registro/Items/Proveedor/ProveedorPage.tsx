@@ -1,20 +1,19 @@
 import { useState } from "react"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BanIcon, EditIcon, MoreVerticalIcon, PlusIcon, SearchIcon, TrashIcon, EyeIcon } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import {  EyeIcon, SearchIcon } from "lucide-react"
 
-interface Provider {
-  id: string
-  name: string
-  nit: string
-  email: string
-  phone: string
-  inCharge: string
-  active: boolean
-  imageUrl: string
-}
+import { SearchHeader } from "../../Components/SearchHeader"
+import { AvatarWithName } from "../../Components/AvatarWithName"
+import { StatusBadge } from "../../Components/StatusBadge"
+import { ActionMenu } from "../../Components/ActionMenu"
+import { CustomTable } from "../../Components/CustomTable"
+import { Button } from "@/components/ui/button"
+import { CreateProveedor } from "./components/CreateProveedor"
+import { ViewProveedor } from "./components/ViewProveedor "
+import type { Provider } from "./types/Provider"
+
+
 
 // Datos de ejemplo
 const initialProviders: Provider[] = [
@@ -27,6 +26,8 @@ const initialProviders: Provider[] = [
     inCharge: "Carlos Gómez",
     active: true,
     imageUrl: "https://randomuser.me/api/portraits/women/65.jpg",
+    createdAt: "2025-10-10",
+    updatedAt: "2025-10-15",
   },
   {
     id: "2",
@@ -37,17 +38,72 @@ const initialProviders: Provider[] = [
     inCharge: "María Pérez",
     active: false,
     imageUrl: "https://randomuser.me/api/portraits/men/32.jpg",
+    createdAt: "2025-10-11",
+    updatedAt: "2025-10-13",
   },
 ]
+
 
 export const ProveedorPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [providers, setProviders] = useState<Provider[]>(initialProviders)
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+
+  // Estado del modal
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newProvider, setNewProvider] = useState({
+    name: "",
+    nit: "",
+    email: "",
+    phone: "",
+    inCharge: ""
+  })
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+  //Ver 
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+
+ 
+
+  const handleView = (id: string) => {
+    const provider = providers.find((p) => p.id === id)
+    if (provider) {
+      setSelectedProvider(provider)
+      setIsViewModalOpen(true)
+    }
+  }
+
 
   const filteredProviders = providers.filter((prov) =>
     prov.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Manejo de imagen seleccionada
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string)
+        setNewProvider((prev) => ({ ...prev, imageUrl: reader.result as string }))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleCreate = () => {
+    if (!newProvider.name) return
+    const newItem = {
+      ...newProvider,
+      id: Date.now().toString(),
+      imageUrl: "https://randomuser.me/api/portraits/lego/1.jpg",
+      active: true,
+    }
+    setProviders([...providers, newItem])
+    setNewProvider({ name: "", nit: "", email: "", phone: "", inCharge: "",  })
+    setPreviewImage(null)
+    setIsModalOpen(false)
+  }
 
   const handleDelete = (id: string) => {
     setProviders(providers.filter((p) => p.id !== id))
@@ -61,9 +117,39 @@ export const ProveedorPage = () => {
     )
   }
 
-  const toggleMenu = (id: string) => {
-    setOpenMenuId(openMenuId === id ? null : id)
-  }
+
+  const columns = [
+    { key: "name", label: "Nombre", render: (u: any) => <AvatarWithName name={u.name} imageUrl={u.imageUrl} /> },
+    { key: "email", label: "Email" },
+    { key: "estado", label: "Estado", render: (u: any) => <StatusBadge active={u.active} /> },
+    {
+      key: "acciones",
+      label: "Acciones",
+      render: (u: any) => (
+        <ActionMenu
+          isActive={u.active}
+          onEdit={() => alert(`Editar proveedor: ${u.name}`)}
+          onToggleActive={() => handleToggleActive(u.id)}
+          onDelete={() => handleDelete(u.id)}
+        />
+      ),
+    },
+    {
+    key: "ver",
+    label: "Ver",
+    render: (u: any) => (
+      <Button
+        onClick={() => handleView(u.id)}
+        variant="outline"
+        size="icon"
+        className="border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg"
+      >
+        <EyeIcon className="h-4 w-4" />
+      </Button>
+    ),
+  },
+  ]
+
 
   return (
     <div className="min-h-screen bg-amber-50/30">
@@ -83,137 +169,41 @@ export const ProveedorPage = () => {
           </CardHeader>
 
           <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 w-full sm:w-1/2">
-              <Input
-                type="text"
-                placeholder="Buscar proveedor por nombre..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border-amber-200 focus:ring-amber-400"
-              />
-              <SearchIcon className="text-amber-600" />
-            </div>
-
-            <Button
-              className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-2"
-              onClick={() => alert("Abrir modal para agregar proveedor")}
-            >
-              <PlusIcon className="h-4 w-4" />
-              Nuevo Proveedor
-            </Button>
+            <SearchHeader 
+              title="Proveedor"  
+              searchTerm={searchTerm} 
+              onSearchChange={setSearchTerm} 
+              onCreateClick={()=> setIsModalOpen(true)} 
+            />
           </CardContent>
         </Card>
 
         {/* Tabla de proveedores */}
-        <Card className="border-amber-200">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              {/* Encabezado */}
-              <div className="min-w-[800px] grid grid-cols-[2fr_1fr_1.5fr_1fr_1fr_0.5fr] gap-2 border-b border-amber-200 bg-amber-100/60 text-amber-800 font-semibold text-sm px-4 py-2">
-                <div>Nombre</div>
-                <div>NIT</div>
-                <div className="hidden sm:block">Email</div>
-                <div>Estado</div>
-                <div className="text-center">Acciones</div>
-                <div className="text-center">Ver</div>
-              </div>
-
-              {/* Filas */}
-              {filteredProviders.map((prov) => (
-                <div
-                  key={prov.id}
-                  className="min-w-[800px] grid grid-cols-[2fr_1fr_1.5fr_1fr_1fr_0.5fr] gap-2 items-center px-4 py-3 border-b border-amber-100 hover:bg-amber-50 text-sm relative"
-                >
-                  {/* Imagen + nombre */}
-                  <div className="flex items-center gap-3 text-amber-900 font-medium">
-                    <img
-                      src={prov.imageUrl}
-                      alt={prov.name}
-                      className="w-9 h-9 rounded-full object-cover border border-amber-200"
-                    />
-                    {prov.name}
-                  </div>
-
-                  <div className="text-amber-700">{prov.nit}</div>
-                  <div className="hidden sm:block text-amber-700">{prov.email}</div>
-
-                  {/* Estado */}
-                  <div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        prov.active
-                          ? "bg-green-100 text-green-700 border border-green-200"
-                          : "bg-red-100 text-red-700 border border-red-200"
-                      }`}
-                    >
-                      {prov.active ? "Activo" : "Inactivo"}
-                    </span>
-                  </div>
-
-                  {/* Botón menú */}
-                  <div className="flex justify-center relative">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
-                      onClick={() => toggleMenu(prov.id)}
-                    >
-                      Elegir Acción <MoreVerticalIcon className="h-4 w-4" />
-                    </Button>
-
-                    {/* Menú desplegable */}
-                    {openMenuId === prov.id && (
-                      <div className="absolute right-0 top-10 bg-white border border-amber-200 rounded-md shadow-md z-50 w-40">
-                        <div className="px-3 py-2 border-b text-sm font-semibold text-amber-800">
-                          Acciones
-                        </div>
-                        <button
-                          onClick={() => alert(`Editar proveedor ${prov.name}`)}
-                          className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
-                        >
-                          <EditIcon className="h-4 w-4" /> Editar datos
-                        </button>
-                        <button
-                          onClick={() => handleToggleActive(prov.id)}
-                          className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
-                        >
-                          <BanIcon className="h-4 w-4" />{" "}
-                          {prov.active ? "Desactivar" : "Activar"}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(prov.id)}
-                          className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"
-                        >
-                          <TrashIcon className="h-4 w-4" /> Eliminar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Botón Ver */}
-                  <div className="flex justify-center">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-amber-300 text-amber-700 hover:bg-amber-50 flex items-center gap-2"
-                      onClick={() => alert(`Ver detalles de ${prov.name}`)}
-                    >
-                      <EyeIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-
-              {/* Si no hay resultados */}
-              {filteredProviders.length === 0 && (
-                <div className="text-center text-amber-700 py-10 min-w-[800px]">
-                  No se encontraron proveedores
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <CustomTable 
+          data={filteredProviders} 
+          columns={columns} 
+          emptyMessage="No se encontraron usuarios" 
+        />
       </main>
+
+      {/* Modal para agregar proveedor */}
+      <CreateProveedor 
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        previewImage={previewImage}
+        handleImageChange={handleImageChange}
+        newProvider={newProvider}
+        setNewProvider={setNewProvider}
+        handleCreate={handleCreate}
+      />
+
+      <ViewProveedor 
+        isOpen = {isViewModalOpen}
+        onClose = {() => setIsViewModalOpen(false)}  
+        provider = {selectedProvider}
+      />
     </div>
   )
 }
+
+

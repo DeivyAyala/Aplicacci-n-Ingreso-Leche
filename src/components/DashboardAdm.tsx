@@ -39,10 +39,10 @@ export const DashboardAdm = ({
     { name: "Inicio", path: "/adm/inicio", icon: HomeIcon },
     { name: "Ingresos de Leche", path: "/adm/ingreso", icon: ClipboardListIcon },
     { name: "Historial", path: "/adm/historial", icon: HistoryIcon },
+    { name: "Proveedores", path: "/adm/proveedor", icon: FactoryIcon },
     { name: "Reportes", path: "/adm/reportes", icon: BarChart3Icon },
     { name: "Configuración", path: "/adm/configuracion", icon: SettingsIcon },
-    { name: "Proveedores", path: "/adm/proveedor", icon: FactoryIcon },
-
+    
   ]
 
   return (
