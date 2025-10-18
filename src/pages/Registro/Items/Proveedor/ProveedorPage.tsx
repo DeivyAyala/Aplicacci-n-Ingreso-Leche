@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { CreateProveedor } from "./components/CreateProveedor"
 import { ViewProveedor } from "./components/ViewProveedor "
 import type { Provider } from "./types/Provider"
+import { EditProveedor } from "./components/EditProveedor"
 
 
 
@@ -45,6 +46,7 @@ const initialProviders: Provider[] = [
 
 
 export const ProveedorPage = () => {
+
   const [searchTerm, setSearchTerm] = useState("")
   const [providers, setProviders] = useState<Provider[]>(initialProviders)
 
@@ -58,13 +60,12 @@ export const ProveedorPage = () => {
     inCharge: ""
   })
   const [previewImage, setPreviewImage] = useState<string | null>(null)
-
-  //Ver 
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  const [selectedEditProvider, setSelectedEditProvider] = useState<Provider | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
- 
-
+  //Ver 
   const handleView = (id: string) => {
     const provider = providers.find((p) => p.id === id)
     if (provider) {
@@ -73,12 +74,28 @@ export const ProveedorPage = () => {
     }
   }
 
+  //Editar
+  const handleEdit = (id: string) => {
+  const provider = providers.find((p) => p.id === id)
+  if (provider) {
+    setSelectedEditProvider(provider)
+    setIsEditModalOpen(true)
+  }
+}
+
+
+ const handleSaveEdit = (updatedProvider: Provider) => {
+  setProviders((prev) =>
+    prev.map((p) => (p.id === updatedProvider.id ? updatedProvider : p))
+  )
+}
+
 
   const filteredProviders = providers.filter((prov) =>
     prov.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  // Manejo de imagen seleccionada
+ 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -128,7 +145,7 @@ export const ProveedorPage = () => {
       render: (u: any) => (
         <ActionMenu
           isActive={u.active}
-          onEdit={() => alert(`Editar proveedor: ${u.name}`)}
+          onEdit={() => handleEdit(u.id)}
           onToggleActive={() => handleToggleActive(u.id)}
           onDelete={() => handleDelete(u.id)}
         />
@@ -186,7 +203,7 @@ export const ProveedorPage = () => {
         />
       </main>
 
-      {/* Modal para agregar proveedor */}
+      {/* Modales */}
       <CreateProveedor 
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -202,7 +219,18 @@ export const ProveedorPage = () => {
         onClose = {() => setIsViewModalOpen(false)}  
         provider = {selectedProvider}
       />
+
+      <EditProveedor 
+        open = {isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        provider={selectedEditProvider}
+        onSave={handleSaveEdit}
+      />
+
+
+    
     </div>
+
   )
 }
 
