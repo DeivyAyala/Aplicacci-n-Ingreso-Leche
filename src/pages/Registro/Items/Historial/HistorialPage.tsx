@@ -24,7 +24,7 @@ export const HistorialPage =() => {
     dateFrom: "",
     dateTo: "",
     provider: "",
-    quality: "",
+    tank: "",
     user: "",
     volumeRange: "",
   })
@@ -41,10 +41,10 @@ export const HistorialPage =() => {
     const matchesDateTo = !filters.dateTo || registro.date <= filters.dateTo;
     const matchesProvider =
       !filters.provider || registro.provider.toLowerCase().includes(filters.provider.toLowerCase());
-    const matchesQuality = !filters.quality || registro.quality === filters.quality;
+    const matchesTank = !filters.tank || registro.tank === filters.tank;
     const matchesUser = !filters.user || registro.user.toLowerCase().includes(filters.user.toLowerCase());
 
-    return matchesSearch && matchesDateFrom && matchesDateTo && matchesProvider && matchesQuality && matchesUser
+    return matchesSearch && matchesDateFrom && matchesDateTo && matchesProvider && matchesTank && matchesUser
   })
 
 
@@ -106,8 +106,8 @@ export const HistorialPage =() => {
 
        {/* Lista de Remisiones */}
         <div className="grid gap-6 grid-cols-2 [@media(max-width:460px)]:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filtroRegistros.map((registro) => (
-            <RemisionCard key={registro.id} registro={registro}/>
+          {filtroRegistros.map((registro, index) => (
+            <RemisionCard key={registro.id} registro={registro} index={index + 1}/>
           ))}
         </div>
 

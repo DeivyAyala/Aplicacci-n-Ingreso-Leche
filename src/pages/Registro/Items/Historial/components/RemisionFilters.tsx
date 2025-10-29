@@ -5,7 +5,7 @@ type Filters = {
   dateFrom: string;
   dateTo: string;
   provider: string;
-  quality: string;
+  tank: string;
   user: string;
   volumeRange: string;
 };
@@ -16,7 +16,7 @@ interface props {
     
 }
 
-const Qualitis = ["Exelente", "Buena", "Regular","Deficiente" ];
+const tanks = ["Tanque 1", "Tanque 2", "Tanque 3","Tanque 4" ];
 const VolumenRango = [
   {value : "0-100" , title : "0-100L"},
   {value : "101-200" , title : "101-200L"},
@@ -52,14 +52,14 @@ export const RemisionFilters = ({filters, setFilters}:props) => {
                 className="border-amber-200 focus:border-amber-400"
             />
         </FilterBox>
-        <FilterBox title="Calidad">
+        <FilterBox title="Tanque">
           <select
-            value={filters.quality}
-            onChange={(e) => setFilters({ ...filters, quality: e.target.value })}
+            value={filters.tank}
+            onChange={(e) => setFilters({ ...filters, tank: e.target.value })}
             className="w-full px-3 py-2 border border-amber-200 rounded-md focus:border-amber-400 focus:ring-amber-400"
           >
-              <option value="">Todas</option>
-              {Qualitis.map((q)=>(
+              <option value="">Todos</option>
+              {tanks.map((q)=>(
                 <option key={q} value={q}>{q}</option>
                 ))}
           </select>

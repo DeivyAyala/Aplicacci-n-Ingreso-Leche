@@ -33,12 +33,14 @@ export const ActionMenu = ({ onEdit, onToggleActive, onDelete, isActive }: Actio
           >
             <EditIcon className="h-4 w-4" /> Editar
           </button>
-          <button
-            onClick={onToggleActive}
-            className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
-          >
-            <BanIcon className="h-4 w-4" /> {isActive ? "Desactivar" : "Activar"}
-          </button>
+          {isActive !== undefined && (
+            <button
+              onClick={onToggleActive}
+              className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
+            >
+              <BanIcon className="h-4 w-4" /> {isActive ? "Desactivar" : "Activar"}
+            </button>
+          )}
           <button
             onClick={onDelete}
             className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"

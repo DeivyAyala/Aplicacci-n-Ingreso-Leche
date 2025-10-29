@@ -6,6 +6,7 @@ import { ReportesPage } from "../Registro/Items/Reportes/ReportesPage"
 import { ConfiguracionPage } from "../Registro/Items/Configuración/ConfiguracionPage"
 import { RegistroPage } from "../Registro/Items/RemisionDetalles/RegistroPage"
 import { ProveedorPage } from "../Registro/Items/Proveedor/ProveedorPage"
+import { UsuarioPage } from "../Registro/Items/Usuarios/UsuarioPage"
 
 export const AdmPanelRoutes = () => {
   return (
@@ -14,10 +15,12 @@ export const AdmPanelRoutes = () => {
       {/* <Route index element={<InicioPage />} /> */}
       <Route path="adm/ingreso" element={<IngresoPage />} />
       <Route path="adm/historial" element={<HistorialPage />} />
+      <Route path="adm/proveedor" element={ <ProveedorPage/> }/>
+      <Route path="adm/usuario" element={ <UsuarioPage/> }/>
       <Route path="adm/reportes" element={<ReportesPage />} />
       <Route path="adm/configuracion" element={<ConfiguracionPage />} />
       <Route path="adm/registro/:id" element={<RegistroPage />} />
-      <Route path="adm/proveedor" element={ <ProveedorPage/> }/>
+      
     </Routes>
   )
 }

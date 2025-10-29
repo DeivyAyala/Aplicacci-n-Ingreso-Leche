@@ -30,7 +30,7 @@ export const InfGeneralFrom = ({formState, onInputChange, onCustomChange}: props
             <div className="grid grid-cols-2 gap-4">
                 <InputCard 
                   name="date" 
-                  title="Fecha" 
+                  title="Fecha Llegada del Proveedor" 
                   type="date" 
                   value={formState.date} 
                   className="text-amber-800 font-medium" 
@@ -38,7 +38,7 @@ export const InfGeneralFrom = ({formState, onInputChange, onCustomChange}: props
                 />
                 <InputCard 
                   name="time" 
-                  title="Hora" 
+                  title="Hora Llegada del Proveedor" 
                   type="time" 
                   value={formState.time} 
                   className="text-amber-800 font-medium" 
@@ -63,14 +63,6 @@ export const InfGeneralFrom = ({formState, onInputChange, onCustomChange}: props
                       </SelectContent>
                     </Select>
                 </div>
-                <InputCard
-                    name="remission" 
-                    title="Nro de Remision" 
-                    type="number" 
-                    value={formState.remission} 
-                    className="text-amber-800 font-medium" 
-                    onInputChange={onInputChange} 
-                />
             </div>
         </CardContent>
     </Card>

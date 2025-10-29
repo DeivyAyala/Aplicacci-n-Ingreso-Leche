@@ -1,16 +1,12 @@
 
 import React from "react"
-import { Card, CardContent} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 import {
-  FlaskConicalIcon,
   SaveIcon,
   ArrowLeftIcon,
 } from "lucide-react"
 
-import { CardTitulo } from "./components/CardTitulo"
-import { InputCard } from "./components/InputCard"
 import { InfGeneralFrom } from "./components/InfGeneralFrom"
 import { VolumenForm } from "./components/VolumenForm"
 import { FirmaFrom } from "./components/FirmaFrom"
@@ -22,30 +18,19 @@ import { ingresoSchema, type PropsRegitros } from "../../types/ingresoShema"
 // import { Header } from "../../Components/Header"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { useForm } from "@/pages/hook/useForm"
-
-
-
-
-
+import { ResponsablesForm } from "./components/ResponsablesForm"
 
 const emptyIngresoForm: PropsRegitros ={
-  id: "",
   date: "",
   time: "",
   provider: "",
-  remission: "",
-  volume: "" as unknown as number,  // 👈 inicia vacío
+  volume: "" as unknown as number, 
   realVolume: "" as unknown as number,
-  fat: "" as unknown as number,
-  protein: "" as unknown as number,
-  temperature: "" as unknown as number,
-  pH: "" as unknown as number,
-  density: "" as unknown as number,
-  price: "" as unknown as number,
-  quality: "Buena",
   user: "",
-  firma: "",
-  notes:[]
+  supervisor: "",
+  analyst: "",
+  notes:[],
+  tank: ""
 
 }
 
@@ -70,21 +55,6 @@ export const IngresoPage = () => {
     console.log("Datos Validados:", formState)
     onResetForm()
   }
-
-  const parametrosCalidad: {
-  name: keyof PropsRegitros //Identifica el name como una key de PropsRegistrp
-  title: string
-  type: string
-  step?: string
-  placeholder?: string
-  fullWidth?: boolean
-}[] = [
-    { name: "fat", title: "Grasa (%)", type: "number", step: "0.1", placeholder: "0.0" },
-    { name: "protein", title: "Proteína (%)", type: "number", step: "0.1", placeholder: "0.0" },
-    { name: "temperature", title: "Temperatura (°C)", type: "number", step: "0.1", placeholder: "0.0" },
-    { name: "pH", title: "pH", type: "number", step: "0.1", placeholder: "0.0" },
-    { name: "density", title: "Densidad (g/ml)", type: "number", step: "0.001", placeholder: "0.000" , fullWidth: true }
-  ]
 
   return (
 
@@ -130,35 +100,10 @@ export const IngresoPage = () => {
               onCustomChange={onCustomChange}
             />
 
-            {/* Parámetros de Calidad */}
-            <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
-              
-              <CardTitulo 
-                icono={<FlaskConicalIcon className="h-5 w-5" />} 
-                title="Parámetros de Calidad" 
-              />
-
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {
-                    parametrosCalidad.map(({name, title, type, step, placeholder, fullWidth}) =>(
-                      <div key={name} className={fullWidth ? "col-span-2" : ""} > 
-                        <InputCard 
-                          name={name}
-                          title={title}
-                          type={type}
-                          step={step}
-                          placeholder={placeholder}
-                          value={formState[name] as string | number }
-                          onInputChange={onInputChange}
-                          className="text-amber-800 font-medium"
-                        />
-                      </div>
-                    ))
-                  }
-                </div>          
-              </CardContent>
-            </Card>
+            <ResponsablesForm
+              formState={formState} 
+              onCustomChange={onCustomChange}     
+            />
 
             {/* Evaluación y Firma */}
             <FirmaFrom

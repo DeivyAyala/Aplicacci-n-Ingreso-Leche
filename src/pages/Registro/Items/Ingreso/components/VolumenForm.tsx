@@ -1,10 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { CardTitulo } from "./CardTitulo"
 import { InputCard } from "./InputCard"
-import { DollarSignIcon, DropletIcon } from "lucide-react"
+import { Beaker, DropletIcon } from "lucide-react"
 import { Label } from "@radix-ui/react-label"
-import { Input } from "@/components/ui/input"
 import type { PropsRegitros } from "@/pages/Registro/types/ingresoShema"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 interface propsVolumen {
@@ -48,18 +48,20 @@ export const VolumenForm = ({formState,  onCustomChange}: propsVolumen) => {
                 
             <div className="space-y-2">
                 <Label htmlFor="price" className="text-amber-800 font-medium flex items-center gap-2">
-                  <DollarSignIcon className="h-4 w-4" />
-                  Precio por Litro
+                  <Beaker className="h-4 w-4" />
+                  Tanque de Descarga
                 </Label>
-                <Input
-                  name="price"
-                  type="number"
-                  placeholder="0.00"
-                  value={formState.price}
-                  onChange={(e) => onCustomChange("price", Number(e.target.value))}
-                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
-                  required
-                />
+                <Select value={formState.provider} onValueChange={(value) => onCustomChange("provider", value)}>
+                      <SelectTrigger className="border-amber-200 focus:border-amber-400 focus:ring-amber-400">
+                        <SelectValue placeholder="Seleccionar Tanque" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="tanque1">Tanque 1</SelectItem>
+                        <SelectItem value="tanque2">Tanque 2</SelectItem>
+                        <SelectItem value="tanque3">Tanque 3</SelectItem>
+                        <SelectItem value="tanque4">Tanque 4</SelectItem>
+                      </SelectContent>
+                    </Select>
             </div>
         </CardContent>
     </Card>

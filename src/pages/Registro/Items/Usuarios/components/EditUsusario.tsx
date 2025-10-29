@@ -2,27 +2,25 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Registro/Components/CustomModal"
 import { ImageIcon, TrashIcon } from "lucide-react"
-import type { Provider } from "../types/Provider"
+import type { User, UserRole } from "../types/User"
 
-
-interface PropsEditProveedor {
+interface PropsEditUsuario {
   open: boolean
   onClose: () => void
-  provider: Provider | null
-  onSave: (updated: Provider) => void
+  user: User | null
+  onSave: (updated: User) => void
 }
 
-export const EditProveedor = ({ open, onClose, provider, onSave }: PropsEditProveedor) => {
-
-  const [form, setForm] = useState<Partial<Provider>>({})
+export const EditUsuario = ({ open, onClose, user, onSave }: PropsEditUsuario) => {
+  const [form, setForm] = useState<Partial<User>>({})
   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
-    useEffect(() => {
-    if (provider) {
-      setForm(provider)
-      setPreviewImage(provider.imageUrl || null)
+  useEffect(() => {
+    if (user) {
+      setForm(user)
+      setPreviewImage(user.imageUrl || null)
     }
-  }, [provider])
+  }, [user])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -41,18 +39,17 @@ export const EditProveedor = ({ open, onClose, provider, onSave }: PropsEditProv
   }
 
   const handleSave = () => {
-    if (!provider) return
+    if (!user) return
     onSave({
-      ...provider,
+      ...user,
       ...form,
       imageUrl: previewImage ?? null,
-      updatedAt: new Date().toISOString().split("T")[0],
-    })
+    } as User)
     onClose()
   }
 
   return (
-    <CustomModal open={open} title="Editar proveedor" onClose={onClose} size="md">
+    <CustomModal open={open} title="Editar usuario" onClose={onClose} size="md">
       <div className="space-y-4">
         {/* Imagen */}
         <div className="flex flex-col items-center">
@@ -84,34 +81,38 @@ export const EditProveedor = ({ open, onClose, provider, onSave }: PropsEditProv
         {/* Campos editables */}
         <input
           className="w-full border rounded-lg px-3 py-2"
-          placeholder="Nombre del proveedor"
-          value={form.name}
+          placeholder="Nombre"
+          value={form.name || ""}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
         <input
           className="w-full border rounded-lg px-3 py-2"
-          placeholder="NIT"
-          value={form.nit}
-          onChange={(e) => setForm({ ...form, nit: e.target.value })}
+          placeholder="Apellidos"
+          value={form.lastName || ""}
+          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
         />
         <input
           className="w-full border rounded-lg px-3 py-2"
           placeholder="Correo electrónico"
-          value={form.email}
+          value={form.email || ""}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
         <input
           className="w-full border rounded-lg px-3 py-2"
           placeholder="Teléfono"
-          value={form.phone}
+          value={form.phone || ""}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Encargado"
-          value={form.inCharge}
-          onChange={(e) => setForm({ ...form, inCharge: e.target.value })}
-        />
+
+        {/* Rol */}
+        <select
+          className="w-full border rounded-lg px-3 py-2 bg-white"
+          value={form.rol || "Operador"}
+          onChange={(e) => setForm({ ...form, rol: e.target.value as UserRole })}
+        >
+          <option value="Administrador">Administrador</option>
+          <option value="Operador">Operador</option>
+        </select>
 
         <div className="flex justify-end pt-3">
           <Button onClick={handleSave} className="bg-amber-600 hover:bg-amber-700 text-white">

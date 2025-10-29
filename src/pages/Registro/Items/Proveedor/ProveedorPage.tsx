@@ -65,6 +65,13 @@ export const ProveedorPage = () => {
   const [selectedEditProvider, setSelectedEditProvider] = useState<Provider | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
+
+  
+  const filteredProviders = providers.filter((prov) =>
+    prov.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+
   //Ver 
   const handleView = (id: string) => {
     const provider = providers.find((p) => p.id === id)
@@ -76,36 +83,17 @@ export const ProveedorPage = () => {
 
   //Editar
   const handleEdit = (id: string) => {
-  const provider = providers.find((p) => p.id === id)
-  if (provider) {
-    setSelectedEditProvider(provider)
-    setIsEditModalOpen(true)
+    const provider = providers.find((p) => p.id === id)
+    if (provider) {
+      setSelectedEditProvider(provider)
+      setIsEditModalOpen(true)
+    }
   }
-}
-
 
  const handleSaveEdit = (updatedProvider: Provider) => {
-  setProviders((prev) =>
-    prev.map((p) => (p.id === updatedProvider.id ? updatedProvider : p))
-  )
-}
-
-
-  const filteredProviders = providers.filter((prov) =>
-    prov.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
- 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string)
-        setNewProvider((prev) => ({ ...prev, imageUrl: reader.result as string }))
-      }
-      reader.readAsDataURL(file)
-    }
+    setProviders((prev) =>
+      prev.map((p) => (p.id === updatedProvider.id ? updatedProvider : p))
+    )
   }
 
   const handleCreate = () => {
@@ -124,6 +112,19 @@ export const ProveedorPage = () => {
 
   const handleDelete = (id: string) => {
     setProviders(providers.filter((p) => p.id !== id))
+  }
+
+  
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string)
+        setNewProvider((prev) => ({ ...prev, imageUrl: reader.result as string }))
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   const handleToggleActive = (id: string) => {
@@ -152,19 +153,19 @@ export const ProveedorPage = () => {
       ),
     },
     {
-    key: "ver",
-    label: "Ver",
-    render: (u: any) => (
-      <Button
-        onClick={() => handleView(u.id)}
-        variant="outline"
-        size="icon"
-        className="border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg"
-      >
-        <EyeIcon className="h-4 w-4" />
-      </Button>
-    ),
-  },
+      key: "ver",
+      label: "Ver",
+      render: (u: any) => (
+        <Button
+          onClick={() => handleView(u.id)}
+          variant="outline"
+          size="icon"
+          className="border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg"
+        >
+          <EyeIcon className="h-4 w-4" />
+        </Button>
+      ),
+    },
   ]
 
 
@@ -199,7 +200,7 @@ export const ProveedorPage = () => {
         <CustomTable 
           data={filteredProviders} 
           columns={columns} 
-          emptyMessage="No se encontraron usuarios" 
+          emptyMessage="No se encontraron Proveedores" 
         />
       </main>
 
@@ -227,8 +228,6 @@ export const ProveedorPage = () => {
         onSave={handleSaveEdit}
       />
 
-
-    
     </div>
 
   )

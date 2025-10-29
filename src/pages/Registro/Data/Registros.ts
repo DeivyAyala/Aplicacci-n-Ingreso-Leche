@@ -19,6 +19,9 @@ export const Registros: PropsRegitros[] = [
     price: 1200,
     firma: "Juan P",
     notes: ["Leche recibida en excelentes condiciones", "Proveedor cumple con todos los estándares de calidad"],
+    supervisor: "Carlos",
+    analyst: "Marcos",
+    tank: "Tanque 1",
   },
   {
     id: "2",
@@ -38,6 +41,9 @@ export const Registros: PropsRegitros[] = [
     price: 1150,
     firma: "Maria",
     notes: ["Leche recibida en excelentes condiciones", "Proveedor cumple con todos los estándares de calidad"],
+    supervisor: "Mario",
+    analyst: "Marcela",
+    tank: "Tanque 2",
   },
   {
     id: "3",
@@ -57,6 +63,9 @@ export const Registros: PropsRegitros[] = [
     price: 1250,
     firma: "Carlos",
     notes: ["Leche recibida en excelentes condiciones", "Proveedor cumple con todos los estándares de calidad"],
+    supervisor: "Camilo",
+    analyst: "Marcela",
+    tank: "Tanque 3",
   },
   {
     id: "4",
@@ -76,6 +85,9 @@ export const Registros: PropsRegitros[] = [
     price: 1100,
     firma: "Ana",
     notes: ["Leche recibida en excelentes condiciones", "Proveedor cumple con todos los estándares de calidad"],
+    supervisor: "Cesar",
+    analyst: "Yefree",
+    tank: "Tanque 4",
   },
   {
     id: "5",
@@ -97,3 +109,4 @@ export const Registros: PropsRegitros[] = [
     notes: ["Leche recibida en excelentes condiciones", "Proveedor cumple con todos los estándares de calidad"],
   },
 ]
+
