@@ -20,7 +20,8 @@ import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { useForm } from "@/pages/hook/useForm"
 import { ResponsablesForm } from "./components/ResponsablesForm"
 
-const emptyIngresoForm: PropsRegitros ={
+const emptyIngresoForm: PropsRegitros = {
+  id: "",
   date: "",
   time: "",
   provider: "",

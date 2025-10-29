@@ -53,7 +53,7 @@ export const UsuarioPage = () => {
   phone: string
   rol: UserRole
   password: string
-  imageUrl: string
+  imageUrl?: string
 }>({
   name: "",
   lastName: "",
@@ -180,7 +180,7 @@ export const UsuarioPage = () => {
                     title="Usuario"
                     searchTerm ={searchTerm}
                     onSearchChange={setSearchTerm} 
-                    onCreateClick={() => setIsEditModalOpen(true)}
+                    onCreateClick={() => setIsModalOpen(true)}
                 />
             </CardContent>
         </Card>

@@ -3,7 +3,8 @@ import { CardTitulo } from "./CardTitulo"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@radix-ui/react-label"
 import { Textarea } from "@/components/ui/textarea"
-import type { PropsRegitros } from "@/Registro/types/typeRegistro"
+import type { PropsRegitros } from "@/pages/Registro/types/typeRegistro"
+
 
 interface propsFirma {
     formState: PropsRegitros
@@ -27,10 +28,10 @@ export const FirmaFrom = ({formState, onCustomChange}: propsFirma ) => {
                 Notas
               </Label>
               <Textarea
-                id="firma"
+                id="user"
                 placeholder="Obervaciones"
-                value={formState.firma}
-                onChange={(e) => onCustomChange("firma", e.target.value)}
+                value={formState.user}
+                onChange={(e) => onCustomChange("user", e.target.value)}
                 className="border-amber-200 focus:border-amber-400 focus:ring-amber-400 min-h-[100px]"
                 required
               />

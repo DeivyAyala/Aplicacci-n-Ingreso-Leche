@@ -1,44 +1,13 @@
-
-
 export interface PropsRegitros {
   id?: string
-  date?: string
-  time?: string
+  date: string
+  time: string
   provider?: string
-  remission?: string
-  volume?: number
-  realVolume?: number
-  fat?: number
-  protein?: number
-  temperature?: number
-  pH?: number
-  density?: number
-  quality?: string
-  user?: string
-  price: number
-  firma: string
+  volume: number
+  realVolume: number
+  user: string
   notes?: string[]
   supervisor?: string
   analyst?: string
   tank?: string
 }
-
-
-// export interface IngresoForm {
-//   id: string,
-//   date: string
-//   time: string
-//   provider: string
-//   remision: string
-//   volumenRemision: number
-//   volumenRecibido: number
-//   fat: number
-//   protein: number
-//   temperature: number
-//   ph: number
-//   density: number
-//   price: number
-//   quality: string
-//   firma: string
-//   note: string[]
-// }

@@ -7,6 +7,7 @@ import { Label } from "@radix-ui/react-label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { PropsRegitros } from "@/pages/Registro/types/ingresoShema"
 
+
 interface propsInfo {
     formState: PropsRegitros
     onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void

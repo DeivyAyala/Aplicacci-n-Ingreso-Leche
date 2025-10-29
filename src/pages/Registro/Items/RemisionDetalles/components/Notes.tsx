@@ -5,7 +5,7 @@ import { PlusIcon, StickyNoteIcon, TrashIcon } from "lucide-react"
 import { useState } from "react"
 
 interface propsNotes {
-    notes: string[]
+    notes: string[] 
     onAddNote: (note:string) => void
     onRemoveNote : (index:number) => void
 }

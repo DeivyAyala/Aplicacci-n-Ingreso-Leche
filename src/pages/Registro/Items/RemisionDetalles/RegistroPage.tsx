@@ -7,7 +7,6 @@ import { Firma } from "./components/Firma"
 
 import { GeneralInfoCard } from "./components/GeneralInfoCard"
 import { VolumenCard } from "./components/VolumenCard"
-import { QualityCard } from "./components/QualityCard"
 import { useRegistro } from "@/pages/hook/useRegistro"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon } from "lucide-react"
@@ -55,7 +54,7 @@ export const RegistroPage = () => {
 
       {/* Custom Jumbotron */}
       <CustomJumbotron 
-      title={`Detalles de Remisión ${remission.remission}`}
+      title={`Detalles de Remisión`}
       subtitle="Información completa del ingreso de leche"
       />
   
@@ -83,13 +82,6 @@ export const RegistroPage = () => {
               isEditing={isEditing}
               onCustomChange={onCustomChange}
             />
-            {/*  Parámetros de Calidad */}
-            <QualityCard 
-              remission={remission}
-              isEditing={isEditing}
-              onCustomChange={onCustomChange}
-            />
-
           </div>
 
           {/* Columna derecha de acciones rapidas, firma y notas  */}
@@ -111,7 +103,7 @@ export const RegistroPage = () => {
 
             {/* Seccion de Notas */}
             <Notes 
-              notes={remission.notes}
+              notes={remission.notes ?? []}
               onAddNote={addNote}
               onRemoveNote={removeNote}
             />

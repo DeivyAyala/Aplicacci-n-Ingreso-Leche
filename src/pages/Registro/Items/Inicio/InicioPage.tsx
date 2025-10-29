@@ -17,8 +17,7 @@ import {
   BarChart3Icon
 } from "lucide-react"
 
-import { CardInicio } from "./components/CardInicio"
-import { QuilityCard } from "../Historial/components/QuilityCard"
+
 import { Link } from "react-router"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { Registros } from "../../Data/Registros"
@@ -27,11 +26,11 @@ export const InicioPage = () => {
 
   const totaLitros = Registros.reduce((acc, i) => acc + i.realVolume, 0)
   const totalProveedores = new Set(Registros.map(i => i.provider)).size
-  const promedioGrasa = (Registros.reduce((acc, i)=> acc + i.fat, 0)/Registros.length).toFixed(2)
-  const promedioProteina = (Registros.reduce((acc, i)=> acc + i.protein, 0)/Registros.length).toFixed(2)
-  const temperaturaPromedio = (Registros.reduce((acc, i)=> acc + i.temperature, 0)/Registros.length).toFixed(2)
-  const pHPromedio = (Registros.reduce((acc, i)=> acc + i.pH, 0)/Registros.length).toFixed(2)
-  const densidadPromedio = (Registros.reduce((acc, i)=> acc + i.density, 0)/Registros.length).toFixed(4)
+  // const promedioGrasa = (Registros.reduce((acc, i)=> acc + i.fat, 0)/Registros.length).toFixed(2)
+  // const promedioProteina = (Registros.reduce((acc, i)=> acc + i.protein, 0)/Registros.length).toFixed(2)
+  // const temperaturaPromedio = (Registros.reduce((acc, i)=> acc + i.temperature, 0)/Registros.length).toFixed(2)
+  // const pHPromedio = (Registros.reduce((acc, i)=> acc + i.pH, 0)/Registros.length).toFixed(2)
+  // const densidadPromedio = (Registros.reduce((acc, i)=> acc + i.density, 0)/Registros.length).toFixed(4)
 
   return (
     <>
@@ -98,7 +97,7 @@ export const InicioPage = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Grasa (%)</span>
-                  <span className="text-sm text-muted-foreground">{promedioGrasa}%</span>
+                  {/* <span className="text-sm text-muted-foreground">{promedioGrasa}%</span> */}
                 </div>
                 <Progress value={70} className="h-2" />
                 <p className="text-xs text-muted-foreground">Meta: 3.6 - 4.2%</p>
@@ -107,7 +106,7 @@ export const InicioPage = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Proteína (%)</span>
-                  <span className="text-sm text-muted-foreground">{promedioProteina}%</span>
+                  {/* <span className="text-sm text-muted-foreground">{promedioProteina}%</span> */}
                 </div>
                 <Progress value={64} className="h-2" />
                 <p className="text-xs text-muted-foreground">Meta: 3.1 - 3.4%</p>
@@ -146,12 +145,11 @@ export const InicioPage = () => {
         </div>
 
         {/* Datos Adicionales */}
-        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <CardInicio title="Temperatura Promedio" dato={`${temperaturaPromedio}°C`} escala="°C" className="text-blue-600"/>
           <CardInicio title="pH Promedio" dato={pHPromedio} escala="pH" className="text-red-600"/>
           <CardInicio title="Densidad" dato={`${densidadPromedio}°g/ml`} escala="g/ml" className="text-purple-600"/>
-          <QuilityCard/>
-        </div>
+        </div> */}
       </main>
     </>
   )

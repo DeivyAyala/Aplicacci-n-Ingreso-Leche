@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { PropsRegitros } from "@/Registro/types/typeRegistro"
-import { StarIcon, CalendarIcon, TruckIcon, UserIcon, EyeIcon, TrashIcon, BarrelIcon } from "lucide-react"
+import { CalendarIcon, TruckIcon, UserIcon, EyeIcon, TrashIcon, BarrelIcon } from "lucide-react"
 import { Link } from "react-router"
 
 

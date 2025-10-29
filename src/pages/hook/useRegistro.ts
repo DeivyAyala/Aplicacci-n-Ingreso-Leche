@@ -25,7 +25,11 @@ export const useRegistro = ( id: string) => {
         user: "",
         price: 0,
         firma: "",
-        notes: []
+        notes: [],
+        supervisor: "",
+        analyst: "",
+        tank: "",
+
     } ) 
 
     //Formato de Hora 
