@@ -15,28 +15,28 @@ import { Button } from "@/components/ui/button"
 
 
 const initialUsers: User[] = [
-    {
-        id: "1",
-        name: "yefree",
-        lastName: "Ayala",
-        email: "yefree@gmail.com",
-        password: "123456",
-        phone: "3135567782",
-        rol: "Administrador",
-        imageUrl: "https://randomuser.me/api/portraits/women/6.jpg",
-       
-    },
-     {
-        id: "2",
-        name: "Ferney",
-        lastName: "Ayala",
-        email: "Ferneye@gmail.com",
-        password: "123456",
-        phone: "318490495",
-        rol: "Operador",
-        imageUrl: "https://randomuser.me/api/portraits/men/34.jpg",
+  {
+      id: "1",
+      name: "yefree",
+      lastName: "Ayala",
+      email: "yefree@gmail.com",
+      password: "123456",
+      phone: "3135567782",
+      rol: "Administrador",
+      imageUrl: "https://randomuser.me/api/portraits/women/6.jpg",
      
-    }
+  },
+   {
+      id: "2",
+      name: "Ferney",
+      lastName: "Ayala",
+      email: "Ferneye@gmail.com",
+      password: "123456",
+      phone: "318490495",
+      rol: "Operador",
+      imageUrl: "https://randomuser.me/api/portraits/men/34.jpg",
+   
+  }
 ]
 
 export const UsuarioPage = () => {
@@ -67,7 +67,7 @@ export const UsuarioPage = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
   const filteredUsers = users.filter((user) => 
-  user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   //Crear Ususario
