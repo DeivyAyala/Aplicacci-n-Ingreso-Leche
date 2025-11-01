@@ -90,7 +90,7 @@ export const ProveedorPage = () => {
     }
   }
 
- const handleSaveEdit = (updatedProvider: Provider) => {
+  const handleSaveEdit = (updatedProvider: Provider) => {
     setProviders((prev) =>
       prev.map((p) => (p.id === updatedProvider.id ? updatedProvider : p))
     )

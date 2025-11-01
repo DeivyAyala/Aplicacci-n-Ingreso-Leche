@@ -18,7 +18,7 @@ export function CustomTable<T>({
   emptyMessage = "Sin datos disponibles",
 }: CustomTableProps<T>) {
   return (
-    <div className="w-full overflow-x-auto border border-amber-100 rounded-xl bg-white shadow-sm">
+    <div className="w-full overflow-visible border border-amber-100 rounded-xl bg-white shadow-sm relative z-0">
       <table className="min-w-full text-sm text-left border-collapse">
 
         <thead className="bg-amber-50 text-amber-800 font-semibold">

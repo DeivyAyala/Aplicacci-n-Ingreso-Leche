@@ -10,6 +10,7 @@ import {
   XIcon,
   FactoryIcon,
   UsersIcon,
+  Cylinder,
 } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { useState, useEffect } from "react"
@@ -41,6 +42,7 @@ export const DashboardAdm = ({
     { name: "Ingresos de Leche", path: "/adm/ingreso", icon: ClipboardListIcon },
     { name: "Historial", path: "/adm/historial", icon: HistoryIcon },
     { name: "Proveedores", path: "/adm/proveedor", icon: FactoryIcon },
+    { name: "Tanques", path: "/adm/tanque", icon: Cylinder  },
     { name: "Usuarios", path: "/adm/usuario", icon: UsersIcon  },
     { name: "Reportes", path: "/adm/reportes", icon: BarChart3Icon },
     { name: "Configuración", path: "/adm/configuracion", icon: SettingsIcon },
