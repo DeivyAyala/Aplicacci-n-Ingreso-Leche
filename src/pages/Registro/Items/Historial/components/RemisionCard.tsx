@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { PropsRegitros } from "@/Registro/types/typeRegistro"
+
 import { CalendarIcon, TruckIcon, UserIcon, EyeIcon, TrashIcon, BarrelIcon } from "lucide-react"
 import { Link } from "react-router"
 
@@ -30,7 +30,7 @@ return (
               </CardTitle>
               <Badge className="bg-amber-100 text-amber-700 border border-amber-300">
                   <BarrelIcon className="h-3 w-3 mr-1" />
-                  {registro.tank}
+                  {registro.tank.name}
               </Badge>
           </div>
       </CardHeader>

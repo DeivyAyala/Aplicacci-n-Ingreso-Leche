@@ -1,7 +1,12 @@
-// import { configureStore } from "@reduxjs/toolkit"
+import { configureStore } from "@reduxjs/toolkit"
+import { uiSlice } from "./ui/uiSlice"
 
-// export const store = configureStore({
-//     reducer:{
-//         ingresos: ...,
-//     }
-// })
+export const store = configureStore({
+    
+    reducer:{
+        ui: uiSlice.reducer,
+    }
+
+})
+
+// console.log("Redux store cargado:", store.getState());

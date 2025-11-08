@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+// import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { IngresoLecheApp } from './IngresoLecheApp'
@@ -6,8 +6,8 @@ import { IngresoLecheApp } from './IngresoLecheApp'
 
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <IngresoLecheApp/>
-  </StrictMode>,
+  // </StrictMode>,
 )
 

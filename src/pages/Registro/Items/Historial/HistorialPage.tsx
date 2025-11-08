@@ -12,12 +12,39 @@ import { RemisionFilters } from "./components/RemisionFilters"
 
 // import { Header } from "../../Components/Header"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
-import { Registros } from "../../Data/Registros"
+
 import { exportDataExcel } from "../../Helpers/ExportDataExcel"
+import { useIngreso } from "../../hook/useIngreso"
 
 
 
 export const HistorialPage =() => {
+
+  const { data } = useIngreso()
+
+  const registros = (data?.ingresos || []).map((item) => {
+   const fecha = new Date(item.customDate)
+   const date = fecha.toISOString().split("T")[0]
+   const time = fecha.toISOString().split("T")[1].slice(0, 5)
+
+   return {
+     id: item._id,
+     date,
+     time,
+     // 🔹 Convertimos los objetos en strings
+     provider: item.provider?.name || "Sin proveedor",
+     volume: item.volume,
+     realVolume: item.realVolume,
+     user: item.user?.name || "Sin usuario",
+     notes: Array.isArray(item.notes) ? item.notes : [],
+     supervisor: item.supervisor || "",
+     analyst: item.analyst || "",
+     tank: item.tank || "",
+   }
+  })
+
+
+
   const [searchTerm, setSearchTerm] = useState("")
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({
@@ -31,7 +58,7 @@ export const HistorialPage =() => {
 
   
 
-  const filtroRegistros = Registros.filter((registro) => {
+  const filtroRegistros = registros.filter((registro) => {
     const matchesSearch =
       registro.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       registro.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,6 +74,7 @@ export const HistorialPage =() => {
     return matchesSearch && matchesDateFrom && matchesDateTo && matchesProvider && matchesTank && matchesUser
   })
 
+  
 
   return (
     <div className="min-h-screen bg-amber-50/30">
