@@ -5,39 +5,48 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
 import { Separator } from "@radix-ui/react-select"
 import { Mail} from "lucide-react"
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { Link, useNavigate } from "react-router"
 import { SocialButton } from "./ui/SocialButton"
 import { PasswordField } from "./ui/PasswordField"
 import { HeaderFooter } from "../components/HeaderFooter"
 import { Titulo } from "../components/Titulo"
-import { useForm } from "@/pages/hook/useForm"
+
+import { toast } from "sonner"
+import { useAuthStore } from "../../store/auth.store"
 
 
-
-
-
-
-const formData = {
-  email: '',
-  password: ''
-}
 
 export const LoginPage = () => {
 
   const navigate = useNavigate()
-  const {email, password, onInputChange} = useForm(formData)
+  const { login, user } = useAuthStore()
+  
   const [Isloading, setIsloading] = useState(false)
+  const [isPosting, setIsPosting] = useState(false)
 
-  const onSumit = (e: any) =>{
+
+  const handleLogin = async(e: FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
-    console.log({email, password})
-    setIsloading(true)
-    setTimeout(()=>{
-    setIsloading(false)
-    navigate("/")
-  }, 1000)
-}
+    setIsPosting(true)
+    const formData = new FormData(e.target as HTMLFormElement);
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const isValid = await login(email, password);
+    if(isValid){
+      if(!user) return
+      if(user.rol === 'Administrador'){
+        navigate("/adm/inicio")
+      } else if( user.rol === 'Operador' ){
+        navigate("/operador/inicio")
+      }else {
+        navigate("/")
+      }
+      return
+    }
+    toast.error('Correo o Contrasena no validos')
+    setIsPosting(false)
+  }
 
  const handleSocialLogin = ()=>{
     setIsloading(true)
@@ -106,7 +115,7 @@ export const LoginPage = () => {
             </div>
 
             {/* Formulario de login */}
-            <form onSubmit={onSumit} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
 
               <div className="space-y-2">
                 <Label htmlFor="email">Correo electrónico</Label>
@@ -117,8 +126,6 @@ export const LoginPage = () => {
                     type="email"
                     placeholder="tu@empresa.com"
                     name="email"
-                    value={email}
-                    onChange={onInputChange}
                     className="pl-10 h-11"
                     required
                   />
@@ -128,8 +135,7 @@ export const LoginPage = () => {
               <div className="space-y-2">
                 <Label htmlFor="password">Contraseña</Label>
                 <PasswordField 
-                  onChange={onInputChange} 
-                  value={password} 
+                  value={user?.password} 
                   name="password"
                 />
               </div>
@@ -155,9 +161,9 @@ export const LoginPage = () => {
               <Button
                 type="submit"
                 className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground"
-                disabled={Isloading}
+                disabled={isPosting}
               >
-                {Isloading ? (
+                {isPosting ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                     <span>Iniciando sesión...</span>

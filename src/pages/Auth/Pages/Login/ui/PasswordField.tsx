@@ -5,9 +5,9 @@ import { useState } from 'react';
 
 
 interface props{
-    value: string,
-    name:string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    value?: string,
+    name?:string,
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const PasswordField = ({value, name, onChange}: props) => {

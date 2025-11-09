@@ -3,7 +3,6 @@ import {
   ClipboardListIcon,
   HistoryIcon,
   BarChart3Icon,
-  SettingsIcon,
   LogOutIcon,
   UserIcon,
   MenuIcon,
@@ -16,19 +15,27 @@ import {
 import { Button } from "../components/ui/button"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation, useNavigate } from "react-router"
+import { useAuthStore } from "@/pages/Auth/store/auth.store"
 
 interface DashboardAdmProps {
   role?: string
   userName?: string
 }
 
-export const DashboardAdm = ({
+export const  DashboardAdm = ({
   role = "Administrador",
   userName = "Juan Pérez",
 }: DashboardAdmProps) => {
   const location = useLocation()
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768)
+  const {user, logout } = useAuthStore()
+
+  const handleLogout = () => {
+    logout()
+    navigate("/auth/login")
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,7 +54,6 @@ export const DashboardAdm = ({
     { name: "Usuarios", path: "/adm/usuario", icon: UsersIcon  },
     { name: "Personal", path: "/adm/personal", icon: PersonStanding  },
     { name: "Reportes", path: "/adm/reportes", icon: BarChart3Icon },
-    { name: "Configuración", path: "/adm/configuracion", icon: SettingsIcon },
     
   ]
 
@@ -131,13 +137,14 @@ export const DashboardAdm = ({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#1E1E1E]">
-                    {userName}
+                    {user?.name || userName}
                   </p>
-                  <p className="text-xs text-[#A78B7C] capitalize">{role}</p>
+                  <p className="text-xs text-[#A78B7C] capitalize">{user?.rol || role}</p>
                 </div>
               </div>
 
               <Button
+                onClick={handleLogout}
                 variant="outline"
                 size="sm"
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-[#FECACA] text-[#DC2626] bg-white hover:bg-[#FEE2E2] hover:text-[#B91C1C]"
