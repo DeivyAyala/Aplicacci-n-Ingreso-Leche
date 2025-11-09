@@ -4,47 +4,52 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
 import {  Separator } from "@radix-ui/react-select"
-import { User,  EyeOff, Eye, Lock, Mail } from "lucide-react"
-import { useState } from "react"
+import { User, Mail } from "lucide-react"
+import { useState, type FormEvent } from "react"
 
 import { Link, useNavigate } from "react-router"
 // import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
 import { Titulo } from "../components/Titulo"
-import { useForm } from "@/pages/hook/useForm"
+import { toast } from "sonner"
+import { useAuthStore } from "../../store/auth.store"
+import { PasswordField } from "../Login/ui/PasswordField"
 
 
 
 
 
 
-const formData = {
-  nombre : '',
-  apellido: '',
-  contraseña: '',
-  email: ''
-}
+
 
 export const RegisterPage = () => {
   const navigate = useNavigate()
-  const [IsLoading, setIsLoading] = useState(false);
-  const [role] = useState("Operador")
+  const { register, user } = useAuthStore()
+  const [isPosting, setIsPosting] = useState(false)
 
-  const [showPassword, setShowPassword] = useState(false)
-  const {nombre, apellido, contraseña, email, onInputChange}= useForm(formData)
-
-  const onSumbit = (e:any) =>{
-    e.preventDefault();
-    console.log({nombre, apellido, contraseña, email, role})
-    setIsLoading(true)
-    setTimeout(()=>{
-      setIsLoading(false)
-      navigate('/')
-    }, 1000)
+  const handleRegister = async(e: FormEvent<HTMLFormElement>) =>{
+    e.preventDefault()
+    setIsPosting(true)
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get('name') as string
+    const lastName = formData.get('lastName') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const isValid = await register(name, lastName, email, password);
+    if(isValid){
+      if(!user) return
+      if(user.rol === 'Administrador'){
+        navigate("/adm/inicio")
+      } else if( user.rol === 'Operador' ){
+        navigate("/operador/inicio")
+      }else {
+        navigate("/")
+      }
+      return
+    }
+    toast.error('Correo ya esta Registrado')
+    setIsPosting(false)
   }
 
-  // const onLogin = () =>{
-  //   navigate('auth/login')
-  // }
 
 
   return (
@@ -56,7 +61,7 @@ export const RegisterPage = () => {
         />
 
           <CardContent className="space-y-4">
-            <form onSubmit={onSumbit} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 
                 <div className="space-y-2">
@@ -64,12 +69,10 @@ export const RegisterPage = () => {
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="nombre"
+                      id="name"
                       type="text"
                       placeholder="Juan"
-                      name="nombre"
-                      value={nombre}
-                      onChange={onInputChange}
+                      name="name"
                       className="pl-10 h-11"
                       required
                     />
@@ -81,12 +84,10 @@ export const RegisterPage = () => {
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="apellido"
+                      id="lastName"
                       type="text"
                       placeholder="Pérez"
-                      name="apellido"
-                      value={apellido}
-                      onChange={onInputChange}
+                      name="lastName"
                       className="pl-10 h-11"
                       required
                     />
@@ -102,56 +103,18 @@ export const RegisterPage = () => {
                     type="email"
                     placeholder="tu@empresa.com"
                     name="email"
-                    value={email}
-                    onChange={onInputChange}
                     className="pl-10 h-11"
                     required
                   />
                 </div>
               </div>
-
-              {/* <div className="space-y-2">
-                <Label htmlFor="role">Rol</Label>
-                <div className="relative">
-                  <UserCheck className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
-                  <Select value={role} disabled>
-                    <SelectTrigger className="pl-10 h-11">
-                      <SelectValue placeholder="Rol" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="operador">Operador</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div> */}
-
               <div className="space-y-2">
                 <Label htmlFor="password">Contraseña</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="contraseña"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    name="contraseña"
-                    value={contraseña}
-                    onChange={onInputChange}
-                    className="pl-10 pr-10 h-11"
-                    required
+                  <PasswordField 
+                    value={user?.password}
+                    name="password"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
                 </div>
               </div>
 
@@ -173,9 +136,9 @@ export const RegisterPage = () => {
               <Button
                 type="submit"
                 className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground"
-                disabled={IsLoading}
+                disabled={isPosting}
               >
-                {IsLoading ? (
+                {isPosting ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                     <span>Creando cuenta...</span>
@@ -194,7 +157,6 @@ export const RegisterPage = () => {
               <Button
                 variant="link"
                 className="px-0 text-primary hover:text-primary/80 font-medium"
-                // onClick={onLogin}
               >
                 <Link to="/auth/login">
                    Iniciar sesión
