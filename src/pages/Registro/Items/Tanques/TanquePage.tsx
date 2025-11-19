@@ -3,7 +3,6 @@ import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { EyeIcon, SearchIcon } from "lucide-react"
 import { SearchHeader } from "../../Components/SearchHeader"
 import { useState } from "react"
-import type { Tank } from "./types/Tank"
 import { AvatarWithName } from "../../Components/AvatarWithName"
 import { StatusBadge } from "../../Components/StatusBadge"
 import { ActionMenu } from "../../Components/ActionMenu"
@@ -12,9 +11,10 @@ import { CustomTable } from "../../Components/CustomTable"
 import { CreateTanque } from "./components/CreateTanque"
 import { EditTanque } from "./components/EditTanque"
 import { ViewTanque } from "./components/ViewTanque"
+import type { TankProps } from "./types/Tank"
 
 
-const initialTanks: Tank[] = [
+const initialTanks: TankProps[] = [
   {
     id: "1",
     name: "Tanque 1",
@@ -35,7 +35,7 @@ const initialTanks: Tank[] = [
 
 export const TanquePage = () => {
     const [searchTerm, setSearchTerm] = useState("")
-    const [tanks, setTanks] = useState<Tank[]>(initialTanks)
+    const [tanks, setTanks] = useState<TankProps[]>(initialTanks)
 
     const [newTank  , setNewTank] = useState({
       name: "",
@@ -43,8 +43,8 @@ export const TanquePage = () => {
       capacity: 0,
     })
 
-    const [selectedEditTank, setSelectedEditTank] = useState<Tank | null>(null)
-    const [selectedTank, setSelectedTank] = useState<Tank | null>(null)
+    const [selectedEditTank, setSelectedEditTank] = useState<TankProps | null>(null)
+    const [selectedTank, setSelectedTank] = useState<TankProps | null>(null)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isViewModalOpen, setIsViewModalOpen] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -80,7 +80,7 @@ export const TanquePage = () => {
 
       }
     }
-    const handleSaveEdit = (updatedProvider: Tank) => {
+    const handleSaveEdit = (updatedProvider: TankProps) => {
       setTanks((prev) =>
         prev.map((t) => (t.id === updatedProvider.id ? updatedProvider : t))
       )
@@ -188,13 +188,7 @@ export const TanquePage = () => {
           isOpen = {isViewModalOpen}
           onClose = {() => setIsViewModalOpen(false)} 
           tank={selectedTank} 
-        />
-
-
-
-
-
-          
+        />     
 
       </div>
     )
