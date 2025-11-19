@@ -3,6 +3,7 @@ import type { Provider } from "../Items/Proveedor/types/Provider"
 import type { User } from "../Items/Usuarios/types/User"
 
 export interface PropsRegitros {
+  _id?: string;
   id?: string
   date: string
   time: string
@@ -14,4 +15,5 @@ export interface PropsRegitros {
   supervisor?: string
   analyst?: string
   tank?: string
+  customDate?: string
 }

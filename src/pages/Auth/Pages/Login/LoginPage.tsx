@@ -24,6 +24,7 @@ export const LoginPage = () => {
   
   const [Isloading, setIsloading] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
+  const [password, setPassword] = useState("12345678")
 
 
   const handleLogin = async(e: FormEvent<HTMLFormElement>) =>{
@@ -135,8 +136,10 @@ export const LoginPage = () => {
               <div className="space-y-2">
                 <Label htmlFor="password">Contraseña</Label>
                 <PasswordField 
-                  value={user?.password} 
+                  // value={user?.password} 
+                  value={password}
                   name="password"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 

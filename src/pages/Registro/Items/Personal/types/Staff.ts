@@ -1,5 +1,4 @@
 
-
 export type StaffRole = "Calidad" | "Supervisor";
 
 export interface StaffProps {
@@ -8,7 +7,7 @@ export interface StaffProps {
     email: string
     phone?: string
     role: StaffRole
-    imageUrl: string | null
+    imageUrl?: string | null
     active: boolean 
     createdAt? : string
     updatedAt?: string

@@ -1,4 +1,4 @@
-export interface Tank {
+export interface TankProps {
     id: string
     name: string
     active: boolean

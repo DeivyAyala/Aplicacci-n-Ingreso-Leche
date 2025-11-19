@@ -14,7 +14,7 @@ import { RemisionFilters } from "./components/RemisionFilters"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 
 import { exportDataExcel } from "../../Helpers/ExportDataExcel"
-import { useIngreso } from "../../hook/useIngreso"
+import { useIngreso } from "../../hook/useIngresos"
 
 
 
@@ -31,7 +31,6 @@ export const HistorialPage =() => {
      id: item._id,
      date,
      time,
-     // 🔹 Convertimos los objetos en strings
      provider: item.provider?.name || "Sin proveedor",
      volume: item.volume,
      realVolume: item.realVolume,
