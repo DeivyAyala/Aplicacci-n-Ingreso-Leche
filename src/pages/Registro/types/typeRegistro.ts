@@ -1,5 +1,7 @@
 // import type { StaffProps } from "../Items/Personal/types/Staff"
+import type { StaffProps } from "../Items/Personal/types/Staff";
 import type { Provider } from "../Items/Proveedor/types/Provider"
+import type { TankProps } from "../Items/Tanques/types/Tank";
 import type { User } from "../Items/Usuarios/types/User"
 
 export interface PropsRegitros {
@@ -12,8 +14,8 @@ export interface PropsRegitros {
   realVolume: number
   user: User
   notes?: string[]
-  supervisor?: string
-  analyst?: string
-  tank?: string
+  supervisor?: StaffProps
+  analyst?: StaffProps
+  tank?: TankProps
   customDate?: string
 }

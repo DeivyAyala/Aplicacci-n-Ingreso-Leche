@@ -1,9 +1,8 @@
 import { gestionApi } from "@/api/gestionApi";
-import type { PropsRegitros } from "../types/ingresoShema";
+import type { PropsRegitros } from "../types/typeRegistro";
 
 
-
-export const getIngresoById = async (id: string): Promise<PropsRegitros> => {
+export const getIngresoById = async (id: string, ): Promise<PropsRegitros> => {
     if( !id ) throw new Error('ID es requerido')
       
         

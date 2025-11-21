@@ -2,6 +2,7 @@
 export type StaffRole = "Calidad" | "Supervisor";
 
 export interface StaffProps {
+    _id?: string
     id: string
     name: string
     email: string

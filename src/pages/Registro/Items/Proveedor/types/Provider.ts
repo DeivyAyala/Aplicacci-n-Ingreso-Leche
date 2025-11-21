@@ -1,4 +1,5 @@
 export interface Provider {
+  _id?: string
   id: string
   name: string
   nit: string

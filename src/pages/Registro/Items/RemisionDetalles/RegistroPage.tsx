@@ -8,19 +8,23 @@ import { GeneralInfoCard } from "./components/GeneralInfoCard"
 import { VolumenCard } from "./components/VolumenCard"
 import { Button } from "@/components/ui/button"
 import { useIngreso } from "./hook/useIngreso"
-
 import { toast } from "sonner"
 import { useEffect, useState } from "react"
 import { useOptions } from "@/pages/hook/useOptions"
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 import type { PropsRegitros } from "../../types/typeRegistro"
+import { useQueryClient } from "@tanstack/react-query"
 
 
 
 export const RegistroPage = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient();
   const { id } = useParams()
-  const { isLoading, data, mutation } = useIngreso(id || '')
+
+
+  
+  const { isLoading, data , mutation } = useIngreso(id || '')
   const { providers, supervisors, analysts, tanks, loading: loadingOptions } = useOptions()
 
   const providerList   = providers 
@@ -33,40 +37,31 @@ export const RegistroPage = () => {
   const [formData, setFormData] = useState<PropsRegitros | null>(null)
 
   useEffect(() => {
-  if (!data?.ingreso) return;
+    if (!data?.ingreso) return;
 
-  const ingreso = data.ingreso;
+    const ingreso = data.ingreso;
+    const fecha = new Date(ingreso.customDate);
 
-  // Convertir customDate a date + time
-  const fecha = new Date(ingreso.customDate);
+    const date = fecha.toISOString().split("T")[0];
+    const time = fecha.toISOString().split("T")[1].slice(0, 5);
 
-  const date = fecha.toISOString().split("T")[0];
-  const time = fecha.toISOString().split("T")[1].slice(0, 5);
+    const base: PropsRegitros = {
+      id: ingreso._id,
+      date,
+      time,
+      customDate: ingreso.customDate,
+      provider: ingreso.provider,
+      supervisor: ingreso.supervisor,
+      analyst: ingreso.analyst,
+      tank: ingreso.tank,
+      user: ingreso.user,
+      volume: ingreso.volume,
+      realVolume: ingreso.realVolume,
+      notes: ingreso.notes ?? []
+    };
 
-  const base: PropsRegitros = {
-    id: ingreso._id,
-    date,
-    time,
-    customDate: ingreso.customDate,
-    provider: ingreso.provider,
-    supervisor: ingreso.supervisor,
-    analyst: ingreso.analyst,
-    tank: ingreso.tank,
-    user: ingreso.user,
-    volume: ingreso.volume,
-    realVolume: ingreso.realVolume,
-    notes: ingreso.notes ?? []
-  };
-
-  setFormData(base);
-}, [data]);
-
-
-  // DEBUG: ver shapes (quita en prod)
-  useEffect(() => {
-    console.log('providerList', providerList)
-    console.log('formData', formData)
-  }, [providerList, formData])
+    setFormData(base);
+  }, [data]);
 
   if (isLoading || loadingOptions || !formData) {
     return <CustomFullScreenLoading/>
@@ -95,9 +90,9 @@ export const RegistroPage = () => {
   }
 
   const handleSumbit = async (ingresoLike: Partial<PropsRegitros>) => {
-    // prepara payload: backend espera ids simples para relaciones
     const payload: any = {
       ...ingresoLike,
+      notes: ingresoLike.notes ?? [],
       customDate: ingresoLike.customDate, 
       provider: (ingresoLike.provider as any)?._id ?? (ingresoLike.provider as any) ?? "",
       supervisor: (ingresoLike.supervisor as any)?._id ?? (ingresoLike.supervisor as any) ?? "",
@@ -107,8 +102,8 @@ export const RegistroPage = () => {
 
     await mutation.mutateAsync(payload, {
       onSuccess: (res) => {
+        queryClient.invalidateQueries(["ingreso", res.id]); 
         toast.success('Registro actualizado correctamente')
-        navigate(`/adm/registro/${res.id}`)
       },
       onError: (err) => {
         console.error(err)
@@ -122,6 +117,29 @@ export const RegistroPage = () => {
     await handleSumbit(formData)
     setIsEditing(false)
   }
+
+  const handleAddNote = (note: string) => {
+  setFormData(prev =>
+    prev
+      ? ({
+          ...prev,
+          notes: [...(prev.notes ?? []), note],
+        } as PropsRegitros)
+      : prev
+  )
+}
+
+const handleRemoveNote = (index: number) => {
+  setFormData(prev =>
+    prev
+      ? ({
+          ...prev,
+          notes: prev.notes?.filter((_, i) => i !== index) ?? [],
+        } as PropsRegitros)
+      : prev
+  )
+}
+
 
   const onBack = () => navigate("/adm/historial")
 
@@ -151,13 +169,31 @@ export const RegistroPage = () => {
               analysts={analystList}
               tanks={tankList}
             />
-            <VolumenCard remission={formData} isEditing={isEditing} onCustomChange={onCustomChange} />
+            <VolumenCard 
+              remission={formData} 
+              isEditing={isEditing} 
+              onCustomChange={onCustomChange} 
+            />
           </div>
 
           <div className="space-y-6">
-            <QuickActions handleDelete={() => {}} isEditing={isEditing} onClickEditing={() => setIsEditing(v => !v)} />
-            <Firma user={formData.user.name} date={formData.date} time={formData.time} />
-            <Notes notes={formData.notes} onAddNote={() => {}} onRemoveNote={() => {}} />
+            <QuickActions 
+              handleDelete={() => {}} 
+              isEditing={isEditing} 
+              onClickEditing={() => setIsEditing(v => !v)} 
+            />
+            <Firma 
+              user={formData.user.name} 
+              date={formData.date} 
+              time={formData.time} 
+            />
+
+            <Notes
+              isEditing={isEditing}
+              notes={formData.notes} 
+              onAddNote={handleAddNote} 
+              onRemoveNote={handleRemoveNote} 
+            />
           </div>
         </div>
       </main>

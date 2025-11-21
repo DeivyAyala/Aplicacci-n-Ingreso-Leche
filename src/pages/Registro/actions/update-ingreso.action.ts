@@ -1,5 +1,6 @@
 import { gestionApi } from "@/api/gestionApi";
-import type { PropsRegitros } from "../types/ingresoShema";
+import type { PropsRegitros } from "../types/typeRegistro";
+
 
 export const updateIngresoAction = async(
     ingresoLike : Partial<PropsRegitros>

@@ -1,4 +1,5 @@
 export interface TankProps {
+    _id?: string
     id: string
     name: string
     active: boolean
