@@ -185,7 +185,7 @@ export const LoginPage = () => {
               <Button 
                 variant="link" 
                 className="px-0 text-primary hover:text-primary/80 font-medium">
-                <Link to="/auth/crearCuenta">
+                <Link to="/auth/register">
                   Crear cuenta nueva
                 </Link>
               </Button>
