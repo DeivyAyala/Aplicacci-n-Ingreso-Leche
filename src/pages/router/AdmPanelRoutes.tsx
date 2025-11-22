@@ -1,14 +1,14 @@
 import { Route, Routes } from "react-router"
-import { InicioPage } from "../Admin/Items/Inicio/InicioPage"
-import { IngresoPage } from "../Admin/Items/Ingreso/IngresoPage"
+import { InicioPage } from "../Admin/Items/dashboard/InicioPage"
+import { IngresoPage } from "../Admin/Items/reception/IngresoPage"
 
 
-import { RegistroPage } from "../Admin/Items/RemisionDetalles/RegistroPage"
-import { ProveedorPage } from "../Admin/Items/Proveedor/ProveedorPage"
-import { UsuarioPage } from "../Admin/Items/Usuarios/UsuarioPage"
-import { TanquePage } from "../Admin/Items/Tanques/TanquePage"
-import { PersonalPage } from "../Admin/Items/Personal/PersonalPage"
-import { RemissionPage } from "../Admin/Items/Historial/RemissionPage"
+import { RegistroPage } from "../Admin/Items/remissionDetails/RegistroPage"
+import { ProveedorPage } from "../Admin/Items/provider/ProveedorPage"
+import { UsuarioPage } from "../Admin/Items/users/UsuarioPage"
+import { TanquePage } from "../Admin/Items/tanks/TanquePage"
+import { PersonalPage } from "../Admin/Items/staff/PersonalPage"
+import { RemissionPage } from "../Admin/Items/remissions/RemissionPage"
 
 export const AdmPanelRoutes = () => {
   return (
