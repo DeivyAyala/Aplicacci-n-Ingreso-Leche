@@ -7,10 +7,11 @@ import type { User, UserRole } from "./types/User"
 import { AvatarWithName } from "../../Components/AvatarWithName"
 import { CustomTable } from "../../Components/CustomTable"
 import { ActionMenu } from "../../Components/ActionMenu"
-import { EditUsuario } from "./components/EditUsusario"
-import { CreateUsuario } from "./components/CreateUsuario"
+
 import { ViewUser } from "./components/ViewUser"
 import { Button } from "@/components/ui/button"
+import { CreateUser } from "./components/CreateUser"
+import { EditUser } from "./components/EditUser"
 
 
 
@@ -39,7 +40,7 @@ const initialUsers: User[] = [
   }
 ]
 
-export const UsuarioPage = () => {
+export const UserPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [users, setUsers] = useState<User[]>(initialUsers)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -191,7 +192,7 @@ export const UsuarioPage = () => {
         />
       </main>
 
-      <CreateUsuario
+      <CreateUser
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         previewImage={previewImage}
@@ -208,7 +209,7 @@ export const UsuarioPage = () => {
         user={selectedUser}
       />
 
-      <EditUsuario
+      <EditUser
         open = {isEditModalOpen}
         onClose = { ()=> setIsEditModalOpen(false) }
         user={selectedUser}

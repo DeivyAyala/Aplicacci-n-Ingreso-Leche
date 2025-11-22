@@ -6,13 +6,13 @@ import type { User } from "../types/User"
 
 
 
-interface PropsViewUsuario {
+interface PropsViewUser {
   isOpen: boolean
   onClose: () => void
   user: User | null | undefined
 }
 
-export const ViewUser = ({ isOpen, onClose, user }: PropsViewUsuario) => {
+export const ViewUser = ({ isOpen, onClose, user }: PropsViewUser) => {
      if (!user) return null
   return (
     <CustomModal open={isOpen} onClose={onClose} title="Detalles del usuario" size="md">

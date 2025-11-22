@@ -6,7 +6,7 @@ interface propsFirma {
     time: string
 }
 
-export const Firma = ( {user, date, time}: propsFirma ) => {
+export const Firm = ( {user, date, time}: propsFirma ) => {
   return (
     <div>
         {user && (

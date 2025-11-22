@@ -22,15 +22,11 @@ import { Link } from "react-router"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { Registros } from "../../Data/Registros"
 
-export const InicioPage = () => {
+export const DashboardPage = () => {
 
   const totaLitros = Registros.reduce((acc, i) => acc + i.realVolume, 0)
   const totalProveedores = new Set(Registros.map(i => i.provider)).size
-  // const promedioGrasa = (Registros.reduce((acc, i)=> acc + i.fat, 0)/Registros.length).toFixed(2)
-  // const promedioProteina = (Registros.reduce((acc, i)=> acc + i.protein, 0)/Registros.length).toFixed(2)
-  // const temperaturaPromedio = (Registros.reduce((acc, i)=> acc + i.temperature, 0)/Registros.length).toFixed(2)
-  // const pHPromedio = (Registros.reduce((acc, i)=> acc + i.pH, 0)/Registros.length).toFixed(2)
-  // const densidadPromedio = (Registros.reduce((acc, i)=> acc + i.density, 0)/Registros.length).toFixed(4)
+
 
   return (
     <>

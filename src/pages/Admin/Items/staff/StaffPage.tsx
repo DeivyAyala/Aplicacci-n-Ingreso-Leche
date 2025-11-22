@@ -36,7 +36,7 @@ const initialStaff: StaffProps[] = [
   }
 ]
 
-export const PersonalPage = () => {
+export const StaffPage = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [staff, setStaff] = useState<StaffProps[]>(initialStaff)
     const [isModalOpen, setIsModalOpen] = useState(false)

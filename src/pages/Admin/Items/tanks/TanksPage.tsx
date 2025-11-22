@@ -8,10 +8,10 @@ import { StatusBadge } from "../../Components/StatusBadge"
 import { ActionMenu } from "../../Components/ActionMenu"
 import { Button } from "@/components/ui/button"
 import { CustomTable } from "../../Components/CustomTable"
-import { CreateTanque } from "./components/CreateTanque"
-import { EditTanque } from "./components/EditTanque"
-import { ViewTanque } from "./components/ViewTanque"
 import type { TankProps } from "./types/Tank"
+import { CreateTank } from "./components/CreateTank"
+import { EditTank } from "./components/EditTank"
+import { ViewTank } from "./components/ViewTank"
 
 
 const initialTanks: TankProps[] = [
@@ -33,7 +33,7 @@ const initialTanks: TankProps[] = [
   },
 ]
 
-export const TanquePage = () => {
+export const TanksPage = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [tanks, setTanks] = useState<TankProps[]>(initialTanks)
 
@@ -171,20 +171,20 @@ export const TanquePage = () => {
             emptyMessage="No se encontraron Tanques" 
           />
         </main>
-        <CreateTanque
+        <CreateTank
           isModalOpen = {isModalOpen}
           setIsModalOpen={setIsModalOpen}
           newTank={newTank}
           setNewTank={setNewTank}
           handleCreate={handleCreate}
         />
-        <EditTanque
+        <EditTank
           open = {isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           tank={selectedEditTank}
           onSave={handleSaveEdit}
         />
-        <ViewTanque
+        <ViewTank
           isOpen = {isViewModalOpen}
           onClose = {() => setIsViewModalOpen(false)} 
           tank={selectedTank} 

@@ -13,7 +13,7 @@ interface UserForm {
   imageUrl?: string
 }
 
-interface PropsCreateUsuario {
+interface PropsCreateUser {
   isModalOpen: boolean
   setIsModalOpen: (value: boolean) => void
   previewImage: string | null
@@ -23,7 +23,7 @@ interface PropsCreateUsuario {
   handleCreate: () => void
 }
 
-export const CreateUsuario = ({
+export const CreateUser = ({
   isModalOpen,
   setIsModalOpen,
   previewImage,
@@ -31,7 +31,7 @@ export const CreateUsuario = ({
   newUser,
   setNewUser,
   handleCreate,
-}: PropsCreateUsuario) => {
+}: PropsCreateUser) => {
   return (
     <CustomModal
       open={isModalOpen}

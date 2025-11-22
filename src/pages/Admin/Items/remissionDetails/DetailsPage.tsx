@@ -3,7 +3,7 @@ import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { useNavigate, useParams } from "react-router"
 import { Notes } from "./components/Notes"
 import { QuickActions } from "./components/QuickActions"
-import { Firma } from "./components/Firma"
+
 import { GeneralInfoCard } from "./components/GeneralInfoCard"
 import { VolumenCard } from "./components/VolumenCard"
 import { Button } from "@/components/ui/button"
@@ -14,10 +14,11 @@ import { useOptions } from "@/pages/hook/useOptions"
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 import type { PropsRegitros } from "../../types/typeRegistro"
 import { useQueryClient } from "@tanstack/react-query"
+import { Firm } from "./components/Firm"
 
 
 
-export const RegistroPage = () => {
+export const DetailsPage = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient();
   const { id } = useParams()
@@ -182,7 +183,7 @@ const handleRemoveNote = (index: number) => {
               isEditing={isEditing} 
               onClickEditing={() => setIsEditing(v => !v)} 
             />
-            <Firma 
+            <Firm 
               user={formData.user.name} 
               date={formData.date} 
               time={formData.time} 

@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/layouts/DashboardLayout"
 import { DashboardOperadorLayout } from "@/layouts/DashboardOperadorLayout"
-import type { User } from "@/pages/Admin/Items/Usuarios/types/User"
+import type { User } from "@/pages/Admin/Items/users/types/User"
 import { AdmPanelRoutes } from "@/pages/router/AdmPanelRoutes"
 import { AuthLoginRoutes } from "@/pages/router/AuthLoginRoutes"
 import { OperadorRoutes } from "@/pages/router/OperadorRoutes"

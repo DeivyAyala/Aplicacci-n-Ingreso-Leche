@@ -2,13 +2,13 @@ import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { StatusBadge } from "@/pages/Admin/Components/StatusBadge"
 import type { TankProps } from "../types/Tank"
 
-interface PropsViewTanque {
+interface PropsViewTank {
   isOpen: boolean
   onClose: () => void
   tank: TankProps | null | undefined
 }
 
-export const ViewTanque = ({ isOpen, onClose, tank }: PropsViewTanque) => {
+export const ViewTank = ({ isOpen, onClose, tank }: PropsViewTank) => {
   if (!tank) return null
 
   return (

@@ -14,12 +14,12 @@ interface propsFirma {
     ) => void
 }
 
-export const FirmaFrom = ({formState, onCustomChange}: propsFirma ) => {
+export const NotesFrom = ({formState, onCustomChange}: propsFirma ) => {
   return (
    <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
         <CardTitulo 
             icono={<CheckCircleIcon className="h-5 w-5" />}
-            title="Evaluación y Firma"
+            title="Notas"
         />
         <CardContent className="p-3 space-y-4">
           <div className="space-y-2">

@@ -22,7 +22,7 @@ interface propsCreateProveedor {
     handleCreate: () => void
 }
 
-export const CreateProveedor = ({
+export const CreateProvider = ({
     isModalOpen,
     setIsModalOpen, 
     previewImage, 

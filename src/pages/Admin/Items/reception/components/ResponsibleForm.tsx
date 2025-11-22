@@ -13,7 +13,7 @@ interface PropsResponsables {
   ) => void
 }
 
-export const ResponsablesForm = ({ formState, onCustomChange }: PropsResponsables) => {
+export const ResponsibleForm = ({ formState, onCustomChange }: PropsResponsables) => {
   return (
     <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
       <CardTitulo 

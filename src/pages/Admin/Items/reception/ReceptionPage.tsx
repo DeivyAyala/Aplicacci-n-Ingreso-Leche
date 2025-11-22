@@ -9,7 +9,7 @@ import {
 
 import { InfGeneralFrom } from "./components/InfGeneralFrom"
 import { VolumenForm } from "./components/VolumenForm"
-import { FirmaFrom } from "./components/FirmaFrom"
+
 
 import { useNavigate } from "react-router"
 
@@ -18,7 +18,9 @@ import { ingresoSchema, type PropsRegitros } from "../../types/ingresoShema"
 // import { Header } from "../../Components/Header"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { useForm } from "@/pages/hook/useForm"
-import { ResponsablesForm } from "./components/ResponsablesForm"
+
+import { NotesFrom } from "./components/NotesFrom"
+import { ResponsibleForm } from "./components/ResponsibleForm"
 
 const emptyIngresoForm: PropsRegitros = {
   id: "",
@@ -37,7 +39,7 @@ const emptyIngresoForm: PropsRegitros = {
 
 
 
-export const IngresoPage = () => {
+export const ReceptionPage = () => {
   const {formState, onInputChange, onCustomChange, onResetForm} = useForm(emptyIngresoForm)
   const navigate = useNavigate()
 
@@ -101,13 +103,13 @@ export const IngresoPage = () => {
               onCustomChange={onCustomChange}
             />
 
-            <ResponsablesForm
+            <ResponsibleForm
               formState={formState} 
               onCustomChange={onCustomChange}     
             />
 
             {/* Evaluación y Firma */}
-            <FirmaFrom
+            <NotesFrom
               formState={formState}
               onCustomChange={onCustomChange}
             />

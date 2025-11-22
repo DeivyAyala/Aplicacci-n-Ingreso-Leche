@@ -8,7 +8,7 @@ interface TankForm {
   active: boolean
 }
 
-interface PropsCreateTanque {
+interface PropsCreateTank {
   isModalOpen: boolean
   setIsModalOpen: (value: boolean) => void
   newTank: TankForm
@@ -16,13 +16,13 @@ interface PropsCreateTanque {
   handleCreate: () => void
 }
 
-export const CreateTanque = ({
+export const CreateTank = ({
   isModalOpen,
   setIsModalOpen,
   newTank,
   setNewTank,
   handleCreate,
-}: PropsCreateTanque) => {
+}: PropsCreateTank) => {
   return (
     <CustomModal
       open={isModalOpen}

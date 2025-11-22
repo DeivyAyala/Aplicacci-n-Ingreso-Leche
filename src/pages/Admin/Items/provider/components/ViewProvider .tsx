@@ -11,7 +11,7 @@ interface PropsViewProveedor {
   provider: Provider | null | undefined
 }
 
-export const ViewProveedor = ({ isOpen, onClose, provider }: PropsViewProveedor) => {
+export const ViewProvider = ({ isOpen, onClose, provider }: PropsViewProveedor) => {
   if (!provider) return null
 
   return (

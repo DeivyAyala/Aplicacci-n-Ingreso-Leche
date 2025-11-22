@@ -9,10 +9,12 @@ import { StatusBadge } from "../../Components/StatusBadge"
 import { ActionMenu } from "../../Components/ActionMenu"
 import { CustomTable } from "../../Components/CustomTable"
 import { Button } from "@/components/ui/button"
-import { CreateProveedor } from "./components/CreateProveedor"
-import { ViewProveedor } from "./components/ViewProveedor "
+
 import type { Provider } from "./types/Provider"
-import { EditProveedor } from "./components/EditProveedor"
+
+import { CreateProvider } from "./components/CreateProvider"
+import { EditProvider } from "./components/EditProvider"
+import { ViewProvider } from "./components/ViewProvider "
 
 
 
@@ -45,7 +47,7 @@ const initialProviders: Provider[] = [
 ]
 
 
-export const ProveedorPage = () => {
+export const ProviderPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [providers, setProviders] = useState<Provider[]>(initialProviders)
@@ -205,7 +207,7 @@ export const ProveedorPage = () => {
       </main>
 
       {/* Modales */}
-      <CreateProveedor 
+      <CreateProvider 
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         previewImage={previewImage}
@@ -215,13 +217,13 @@ export const ProveedorPage = () => {
         handleCreate={handleCreate}
       />
 
-      <ViewProveedor 
+      <ViewProvider 
         isOpen = {isViewModalOpen}
         onClose = {() => setIsViewModalOpen(false)}  
         provider = {selectedProvider}
       />
 
-      <EditProveedor 
+      <EditProvider 
         open = {isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         provider={selectedEditProvider}

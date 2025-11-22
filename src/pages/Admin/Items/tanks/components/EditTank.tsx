@@ -4,14 +4,14 @@ import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import type { TankProps } from "../types/Tank"
 import { SimpleSwitch as Switch } from "@/components/ui/SimpleSwitch"
 
-interface PropsEditTanque {
+interface PropsEditTank {
   open: boolean
   onClose: () => void
   tank: TankProps | null
   onSave: (updated: TankProps) => void
 }
 
-export const EditTanque = ({ open, onClose, tank, onSave }: PropsEditTanque) => {
+export const EditTank = ({ open, onClose, tank, onSave }: PropsEditTank) => {
   const [form, setForm] = useState<Partial<TankProps>>({})
 
   useEffect(() => {
