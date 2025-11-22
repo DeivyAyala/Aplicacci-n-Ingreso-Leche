@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router"
-import { InicioPage } from "../Registro/Items/Inicio/InicioPage"
-import { IngresoPage } from "../Registro/Items/Ingreso/IngresoPage"
-import { HistorialPage } from "../Registro/Items/Historial/HistorialPage"
-import { ReportesPage } from "../Registro/Items/Reportes/ReportesPage"
-import { RegistroPage } from "../Registro/Items/RemisionDetalles/RegistroPage"
-import { ProveedorPage } from "../Registro/Items/Proveedor/ProveedorPage"
-import { UsuarioPage } from "../Registro/Items/Usuarios/UsuarioPage"
-import { TanquePage } from "../Registro/Items/Tanques/TanquePage"
-import { PersonalPage } from "../Registro/Items/Personal/PersonalPage"
+import { InicioPage } from "../Admin/Items/Inicio/InicioPage"
+import { IngresoPage } from "../Admin/Items/Ingreso/IngresoPage"
+import { HistorialPage } from "../Admin/Items/Historial/HistorialPage"
+import { ReportesPage } from "../Admin/Items/Reportes/ReportesPage"
+import { RegistroPage } from "../Admin/Items/RemisionDetalles/RegistroPage"
+import { ProveedorPage } from "../Admin/Items/Proveedor/ProveedorPage"
+import { UsuarioPage } from "../Admin/Items/Usuarios/UsuarioPage"
+import { TanquePage } from "../Admin/Items/Tanques/TanquePage"
+import { PersonalPage } from "../Admin/Items/Personal/PersonalPage"
 
 export const AdmPanelRoutes = () => {
   return (
