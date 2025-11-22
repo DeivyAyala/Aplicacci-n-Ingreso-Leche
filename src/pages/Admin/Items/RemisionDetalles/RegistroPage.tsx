@@ -141,7 +141,7 @@ const handleRemoveNote = (index: number) => {
 }
 
 
-  const onBack = () => navigate("/adm/historial")
+  const onBack = () => navigate("/adm/remission")
 
   return (
     <div className="min-h-screen bg-amber-50/30">

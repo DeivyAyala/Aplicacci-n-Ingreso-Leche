@@ -2,7 +2,6 @@ import {
   HomeIcon,
   ClipboardListIcon,
   HistoryIcon,
-  BarChart3Icon,
   LogOutIcon,
   UserIcon,
   MenuIcon,
@@ -48,12 +47,11 @@ export const  DashboardAdm = ({
   const navItems = [
     { name: "Inicio", path: "/adm/inicio", icon: HomeIcon },
     { name: "Ingresos de Leche", path: "/adm/ingreso", icon: ClipboardListIcon },
-    { name: "Historial", path: "/adm/historial", icon: HistoryIcon },
+    { name: "Remisiones", path: "/adm/remission", icon: HistoryIcon },
     { name: "Proveedores", path: "/adm/proveedor", icon: FactoryIcon },
     { name: "Tanques", path: "/adm/tanque", icon: Cylinder  },
     { name: "Usuarios", path: "/adm/usuario", icon: UsersIcon  },
     { name: "Personal", path: "/adm/personal", icon: PersonStanding  },
-    { name: "Reportes", path: "/adm/reportes", icon: BarChart3Icon },
     
   ]
 

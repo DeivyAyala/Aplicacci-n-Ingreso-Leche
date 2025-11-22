@@ -18,7 +18,7 @@ import { useIngreso } from "../../hook/useIngresos"
 
 
 
-export const HistorialPage =() => {
+export const RemissionPage =() => {
 
   const { data } = useIngreso()
 
