@@ -1,5 +1,6 @@
 import { useMemo } from "react"
-import { Registros } from "../Registro/Data/Registros"
+import { Registros } from "../Admin/Data/Registros"
+
 
 
 export const useRegistroById = (id?:string) => {

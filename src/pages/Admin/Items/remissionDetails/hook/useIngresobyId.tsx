@@ -1,0 +1,34 @@
+
+import { getIngresoById } from "@/pages/Admin/actions/get-ingreso-by-id.action"
+import { updateIngresoAction } from "@/pages/Admin/actions/update-ingreso.action"
+import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
+import { useMutation, useQuery } from "@tanstack/react-query"
+
+export const useIngreso = (id: string) => {
+
+  const isCreating = id === 'new'
+
+  const query = useQuery({
+   queryKey: ['ingreso', { id }],
+   queryFn: () => getIngresoById(id),
+   retry: false,
+   staleTime: 1000 * 60 * 5, // 5 minutos 
+   enabled: !isCreating && !!id,
+   refetchOnMount: 'always',
+   
+   
+  })
+  //TODO mutacion 
+  const mutation = useMutation({
+   mutationFn: updateIngresoAction,
+   onSuccess : ( ingreso: PropsRegitros) => {
+     console.log('Todo Salio Bien', ingreso)
+   }
+  })
+
+  return {
+    ...query,
+    mutation,
+    isCreating
+  }
+}

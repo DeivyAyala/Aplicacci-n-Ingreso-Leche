@@ -1,69 +1,117 @@
 
-import React from "react"
 import { Button } from "@/components/ui/button"
-
 import {
   SaveIcon,
   ArrowLeftIcon,
 } from "lucide-react"
 
-import { InfGeneralFrom } from "./components/InfGeneralFrom"
 import { VolumenForm } from "./components/VolumenForm"
-
-
 import { useNavigate } from "react-router"
-
-import { ingresoSchema, type PropsRegitros } from "../../types/ingresoShema"
-
-// import { Header } from "../../Components/Header"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
-import { useForm } from "@/pages/hook/useForm"
-
 import { NotesFrom } from "./components/NotesFrom"
 import { ResponsibleForm } from "./components/ResponsibleForm"
-
-const emptyIngresoForm: PropsRegitros = {
-  id: "",
-  date: "",
-  time: "",
-  provider: "",
-  volume: "" as unknown as number, 
-  realVolume: "" as unknown as number,
-  user: "",
-  supervisor: "",
-  analyst: "",
-  notes:[],
-  tank: ""
-
-}
+import { useOptions } from "@/pages/hook/useOptions"
+import type { PropsRegitros } from "../../types/typeRegistro"
+import { useForm } from "react-hook-form"
+import { InfGeneralFrom } from "./components/InfGeneralFrom"
+import { useEffect } from "react"
+import { useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { useCreateRemission } from "../../hook/useCreateRemission"
 
 
 
 export const ReceptionPage = () => {
-  const {formState, onInputChange, onCustomChange, onResetForm} = useForm(emptyIngresoForm)
+  
   const navigate = useNavigate()
+  const queryClient = useQueryClient();
+  
+
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<PropsRegitros>({
+    defaultValues: {
+      provider: undefined,
+      tank: undefined,
+      supervisor: undefined,
+      analyst: undefined
+
+    },
+  });
+
+  useEffect(() => {
+    register("provider", {
+      validate: (value) =>
+        value?._id ? true : "Debe seleccionar un proveedor",
+    });
+    register("tank", {
+      validate: (value) =>
+        value?._id ? true : "Debe seleccionar un Tanque",
+    });
+    register("supervisor", {
+      validate: (value) =>
+        value?._id ? true : "Debe seleccionar un Supervisor",
+    });
+    register("analyst", {
+      validate: (value) =>
+        value?._id ? true : "Debe seleccionar un Analista de Laboratorio",
+    });
+  }, [register]);
+
+
+  const { createRemission, isPending } = useCreateRemission()
+  const { providers, supervisors, analysts, tanks, loading: loadingOptions } = useOptions()
+  
+  const formState = watch();
 
   const onBack = () =>{
     navigate('/adm/inicio')
   }
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const result = ingresoSchema.safeParse(formState)
+  
 
-    if(!result.success){
-      console.log("Errores de Validación", result.error.format())
-      return
+
+
+  const onSubmit = async (data: PropsRegitros) => {
+    const customDate = new Date(`${data.date}T${data.time}:00`).toISOString();
+
+    const payload = {
+      provider: data.provider?._id,
+      tank: data.tank?._id,
+      supervisor: data.supervisor?._id,
+      analyst: data.analyst?._id,
+      volume: Number(data.volume),
+      realVolume: Number(data.realVolume),
+      customDate,
+      notes: data.notes ?? []
     }
-    console.log("Datos Validados:", formState)
-    onResetForm()
-  }
+
+    try {
+      toast.loading("Creando registro...");
+
+      await createRemission(payload);
+
+      toast.dismiss();
+      toast.success("Registro creado correctamente");
+
+      // Invalidar para refrescar la lista
+      await queryClient.invalidateQueries({ queryKey: ["ingresos"] });
+      await queryClient.refetchQueries({ queryKey: ["ingresos"] });
+
+
+      // Navegar automáticamente
+      navigate("/adm/remission");
+      reset();
+      
+    } catch (err) {
+      console.error(err);
+      toast.dismiss();
+      toast.error("Error al crear el registro");
+    }
+  };
+
 
   return (
 
     <>
-    {/*Header */}
-    {/* <Header/> */}
     
     {/* Titulo */}
     <CustomJumbotron
@@ -86,32 +134,38 @@ export const ReceptionPage = () => {
         </div>
 
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-8 lg:grid-cols-2">
 
             {/* Información General */}
             <InfGeneralFrom 
               formState={formState}
-              onInputChange={onInputChange}
-              onCustomChange={onCustomChange}
+              providers={providers}
+              register={register}
+              setValue={setValue}
+              errors={errors}
             />
 
             {/* Volúmenes */}
             <VolumenForm 
               formState={formState}
-              onInputChange={onInputChange}
-              onCustomChange={onCustomChange}
+              tank={tanks}
+              register={register}
+              setValue={setValue}
+              errors={errors}
             />
 
             <ResponsibleForm
               formState={formState} 
-              onCustomChange={onCustomChange}     
+              setValue={setValue}
+              supervisor={supervisors}    
+              analyst={analysts}
+              errors={errors}
             />
 
             {/* Evaluación y Firma */}
             <NotesFrom
-              formState={formState}
-              onCustomChange={onCustomChange}
+              register={register}
             />
           </div>
 
@@ -127,6 +181,7 @@ export const ReceptionPage = () => {
             </Button>
             <Button
               type="submit"
+              disabled={isPending}
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8"
             >
               <SaveIcon className="h-4 w-4 mr-2" />

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import type { PropsRegitros } from "../Registro/types/typeRegistro"
+import type { PropsRegitros } from "../Admin/types/typeRegistro"
 
-// import type { PropsRegitros } from "../Registro/types/typeRegistro"
 
 
 export const useForm = (initialForm: PropsRegitros) => {

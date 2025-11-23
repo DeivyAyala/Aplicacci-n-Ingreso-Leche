@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import { gestionApi } from "@/api/gestionApi"
 import { toast } from "sonner"
-import type { Provider } from "../Registro/Items/Proveedor/types/Provider"
-import type { StaffProps } from "../Registro/Items/Personal/types/Staff"
-import type { TankProps } from "../Registro/Items/Tanques/types/Tank"
+import type { Provider } from "../Admin/Items/provider/types/Provider"
+import type { StaffProps } from "../Admin/Items/staff/types/Staff"
+import type { TankProps } from "../Admin/Items/tanks/types/Tank"
+
 
 
 
@@ -37,11 +38,8 @@ export const useOptions = () => {
           }))
         )
 
-        // 🔥 Staff
         setSupervisors(sup.data.personal ?? [])
         setAnalysts(anal.data.personal ?? [])
-
-        // 🔥 Tanques
         setTanks(tanq.data.tanques ?? [])
 
       } catch (error: any) {

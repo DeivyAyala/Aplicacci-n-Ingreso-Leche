@@ -2,18 +2,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CardTitulo } from "./CardTitulo"
 import { UserCog, FlaskConical } from "lucide-react"
 import { Label } from "@radix-ui/react-label"
-import type { PropsRegitros } from "@/pages/Admin/types/ingresoShema"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
+import type { StaffProps } from "../../staff/types/Staff"
+import type { UseFormSetValue } from "react-hook-form"
 
 interface PropsResponsables {
   formState: PropsRegitros
-  onCustomChange: <K extends keyof PropsRegitros>(
-    field: K,
-    value: PropsRegitros[K]
-  ) => void
+  supervisor: StaffProps[]
+  analyst: StaffProps[]
+  // register: UseFormRegister<PropsRegitros>
+  setValue: UseFormSetValue<PropsRegitros>
+  errors: any
 }
 
-export const ResponsibleForm = ({ formState, onCustomChange }: PropsResponsables) => {
+export const ResponsibleForm = ({ formState, supervisor, analyst, setValue, errors }: PropsResponsables) => {
   return (
     <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
       <CardTitulo 
@@ -28,21 +31,33 @@ export const ResponsibleForm = ({ formState, onCustomChange }: PropsResponsables
             <UserCog className="h-4 w-4" />
             Supervisor de Turno
           </Label>
-          <Select 
-            value={formState.supervisor || ""} 
-            onValueChange={(value) => onCustomChange("supervisor", value)}
+          <Select
+            value={formState.supervisor?._id ?? ""}
+            onValueChange={(value) => {
+              const found = supervisor.find(p => p._id === value)
+              if (found) {
+                setValue("supervisor", {
+                  _id: found._id!,
+                  name: found.name
+                })
+              }
+            }}
           >
-            <SelectTrigger className="border-amber-200 focus:border-amber-400 focus:ring-amber-400">
+            <SelectTrigger className="border-amber-200">
               <SelectValue placeholder="Seleccionar Supervisor" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="carlos_rojas">Carlos Rojas</SelectItem>
-              <SelectItem value="maria_quintero">María Quintero</SelectItem>
-              <SelectItem value="julian_garcia">Julián García</SelectItem>
-              <SelectItem value="laura_perez">Laura Pérez</SelectItem>
+              {supervisor.map((p) => (
+                <SelectItem key={p._id} value={p._id!}>
+                  {p.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
+        { errors.supervisor && (
+          <p className="text-red-500 text-sm">{errors.supervisor.message}</p>
+        )}
 
         {/* === Analista de Laboratorio === */}
         <div className="space-y-2">
@@ -50,20 +65,32 @@ export const ResponsibleForm = ({ formState, onCustomChange }: PropsResponsables
             <FlaskConical className="h-4 w-4" />
             Analista de Laboratorio
           </Label>
-          <Select 
-            value={formState.analyst || ""} 
-            onValueChange={(value) => onCustomChange("analyst", value)}
+         <Select
+            value={formState.analyst?._id ?? ""}
+            onValueChange={(value) => {
+              const found = analyst.find(p => p._id === value)
+              if (found) {
+                setValue("analyst", {
+                  _id: found._id!,
+                  name: found.name
+                })
+              }
+            }}
           >
-            <SelectTrigger className="border-amber-200 focus:border-amber-400 focus:ring-amber-400">
-              <SelectValue placeholder="Seleccionar Analista" />
+            <SelectTrigger className="border-amber-200">
+              <SelectValue placeholder="Seleccionar Analista de Laboratorio" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="andres_mendez">Andrés Méndez</SelectItem>
-              <SelectItem value="sofia_castro">Sofía Castro</SelectItem>
-              <SelectItem value="camilo_ramos">Camilo Ramos</SelectItem>
-              <SelectItem value="natalia_ortega">Natalia Ortega</SelectItem>
+              {analyst.map((p) => (
+                <SelectItem key={p._id} value={p._id!}>
+                  {p.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
+          { errors.analyst && (
+            <p className="text-red-500 text-sm">{errors.analyst.message}</p>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -3,69 +3,103 @@ import { CardTitulo } from "./CardTitulo"
 import { CalendarIcon, TruckIcon } from "lucide-react"
 import { InputCard } from "./InputCard"
 import { Label } from "@radix-ui/react-label"
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { PropsRegitros } from "@/pages/Admin/types/ingresoShema"
-
+import type { Provider } from "../../provider/types/Provider"
+import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
+import type { UseFormRegister, UseFormSetValue } from "react-hook-form"
 
 interface propsInfo {
-    formState: PropsRegitros
-    onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
-    onCustomChange: <K extends keyof PropsRegitros>(
-        field: K,
-        value: PropsRegitros[K]
-    ) => void
+  formState: PropsRegitros
+  providers: Provider[]
+  register: UseFormRegister<PropsRegitros>
+  setValue: UseFormSetValue<PropsRegitros>
+  errors: any
 }
 
+export const InfGeneralFrom = ({ providers, register, setValue, formState, errors }: propsInfo) => {
 
+  const today = new Date().toISOString().split("T")[0];
 
-export const InfGeneralFrom = ({formState, onInputChange, onCustomChange}: propsInfo) => {
   return (
-     <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
-        <CardTitulo
-            icono = {<CalendarIcon className="h-5 w-5" />}
-            title="Información General" 
-        />
+    <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
+      <CardTitulo
+        icono={<CalendarIcon className="h-5 w-5" />}
+        title="Información General"
+      />
 
-        <CardContent className="p-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-                <InputCard 
-                  name="date" 
-                  title="Fecha Llegada del Proveedor" 
-                  type="date" 
-                  value={formState.date} 
-                  className="text-amber-800 font-medium" 
-                  onInputChange={onInputChange} 
-                />
-                <InputCard 
-                  name="time" 
-                  title="Hora Llegada del Proveedor" 
-                  type="time" 
-                  value={formState.time} 
-                  className="text-amber-800 font-medium" 
-                  onInputChange={onInputChange}
-                />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="provider" className="text-amber-800 font-medium flex items-center gap-2">
-                      <TruckIcon className="h-4 w-4" />
-                      Proveedor
-                    </Label>
-                    <Select value={formState.provider} onValueChange={(value) => onCustomChange("provider", value)}>
-                      <SelectTrigger className="border-amber-200 focus:border-amber-400 focus:ring-amber-400">
-                        <SelectValue placeholder="Seleccionar proveedor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="proveedor1">Finca La Esperanza</SelectItem>
-                        <SelectItem value="proveedor2">Hacienda San José</SelectItem>
-                        <SelectItem value="proveedor3">Granja Los Alpes</SelectItem>
-                        <SelectItem value="proveedor4">Finca El Paraíso</SelectItem>
-                      </SelectContent>
-                    </Select>
-                </div>
-            </div>
-        </CardContent>
+      <CardContent className="p-6 space-y-4">
+
+        {/* Fecha y hora */}
+        <div className="grid grid-cols-2 gap-4">
+          <InputCard
+            title="Fecha Llegada del Proveedor"
+            type="date"
+            min={today}
+            register={register("date", {
+              required: "La fecha es obligatoria",
+              validate: (value) =>
+                value >= today || "No puedes seleccionar un día anterior al actual"
+            })}
+            className="text-amber-800 font-medium"
+          />
+          {errors.date && (
+            <p className="text-red-500 text-sm">{errors.date.message}</p>
+          )}
+
+          <InputCard
+            title="Hora Llegada del Proveedor"
+            type="time"
+            className="text-amber-800 font-medium"
+            register={register("time", {
+              required: "La hora es obligatoria"
+            })}
+          />
+          {errors.time && (
+            <p className="text-red-500 text-sm">{errors.time.message}</p>
+          )}
+        </div>
+
+        {/* Select de Proveedor */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-amber-800 font-medium flex items-center gap-2">
+              <TruckIcon className="h-4 w-4" />
+              Proveedor
+            </Label>
+
+            <Select
+              value={formState.provider?._id ?? ""}
+              onValueChange={(value) => {
+                const found = providers.find(p => p._id === value)
+                if (found) {
+                  setValue("provider", {
+                    _id: found._id!,
+                    name: found.name
+                  })
+                }
+              }}
+            >
+              <SelectTrigger className="border-amber-200">
+                <SelectValue placeholder="Seleccionar proveedor" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {providers.map((p) => (
+                  <SelectItem key={p._id} value={p._id!}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            { errors.provider && (
+              <p className="text-red-500 text-sm">{errors.provider.message}</p>
+            )}
+
+          </div>
+        </div>
+
+      </CardContent>
     </Card>
-  )
-}
+  );
+};

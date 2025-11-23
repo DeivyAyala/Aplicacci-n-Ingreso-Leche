@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BadgeCheck, BarrelIcon, CalendarIcon, ClockIcon, EditIcon, SaveIcon, TruckIcon, UserCheck } from "lucide-react"
 import { InputCard } from "./InputsCard"
 import type { PropsRegitros } from '../../../types/typeRegistro'
-import type { Provider } from "../../Proveedor/types/Provider"
-import type { StaffProps } from "../../Personal/types/Staff"
-import type { TankProps } from "../../Tanques/types/Tank"
+import type { Provider } from "../../provider/types/Provider"
+import type { StaffProps } from "../../staff/types/Staff"
+import type { TankProps } from "../../tanks/types/Tank"
+
 
 
 interface GeneralInfoProps {

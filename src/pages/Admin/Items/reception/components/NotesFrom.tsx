@@ -4,17 +4,16 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@radix-ui/react-label"
 import { Textarea } from "@/components/ui/textarea"
 import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
+import type { UseFormRegister } from "react-hook-form"
 
 
 interface propsFirma {
-    formState: PropsRegitros
-    onCustomChange: <K extends keyof PropsRegitros>(
-        field: K,
-        value: PropsRegitros[K]
-    ) => void
+  // formState: PropsRegitros
+  register: UseFormRegister<PropsRegitros>;
+  // errors: FieldErrors<PropsRegitros>;
 }
 
-export const NotesFrom = ({formState, onCustomChange}: propsFirma ) => {
+export const NotesFrom = ({register}: propsFirma ) => {
   return (
    <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
         <CardTitulo 
@@ -30,10 +29,8 @@ export const NotesFrom = ({formState, onCustomChange}: propsFirma ) => {
               <Textarea
                 id="user"
                 placeholder="Obervaciones"
-                value={formState.user}
-                onChange={(e) => onCustomChange("user", e.target.value)}
                 className="border-amber-200 focus:border-amber-400 focus:ring-amber-400 min-h-[100px]"
-                required
+                {...register("notes")}
               />
           </div>
         </CardContent>

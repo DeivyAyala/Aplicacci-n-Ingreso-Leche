@@ -3,11 +3,10 @@ import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { useNavigate, useParams } from "react-router"
 import { Notes } from "./components/Notes"
 import { QuickActions } from "./components/QuickActions"
-
 import { GeneralInfoCard } from "./components/GeneralInfoCard"
 import { VolumenCard } from "./components/VolumenCard"
 import { Button } from "@/components/ui/button"
-import { useIngreso } from "./hook/useIngreso"
+import { useIngreso } from "./hook/useIngresobyId"
 import { toast } from "sonner"
 import { useEffect, useState } from "react"
 import { useOptions } from "@/pages/hook/useOptions"
@@ -42,6 +41,7 @@ export const DetailsPage = () => {
 
     const ingreso = data.ingreso;
     const fecha = new Date(ingreso.customDate);
+    
 
     const date = fecha.toISOString().split("T")[0];
     const time = fecha.toISOString().split("T")[1].slice(0, 5);
@@ -120,15 +120,15 @@ export const DetailsPage = () => {
   }
 
   const handleAddNote = (note: string) => {
-  setFormData(prev =>
-    prev
-      ? ({
-          ...prev,
-          notes: [...(prev.notes ?? []), note],
-        } as PropsRegitros)
-      : prev
-  )
-}
+    setFormData(prev =>
+      prev
+        ? ({
+            ...prev,
+            notes: [...(prev.notes ?? []), note],
+          } as PropsRegitros)
+        : prev
+    )
+  }
 
 const handleRemoveNote = (index: number) => {
   setFormData(prev =>

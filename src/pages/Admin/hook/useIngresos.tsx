@@ -3,10 +3,11 @@ import { getIngresosActions } from "../actions/get-ingresos.action"
 
 export const useIngreso = () => {
  //TODO: Viene Logica
- 
-
   return useQuery({
-    queryKey: ['ingreso'],
-    queryFn: getIngresosActions
+    queryKey: ['ingresos'],
+    refetchOnWindowFocus: true,
+    queryFn: getIngresosActions,
+    refetchOnMount: "always",
+    refetchOnReconnect: true,
   })
 }
