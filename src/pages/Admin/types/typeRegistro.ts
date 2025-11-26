@@ -14,7 +14,7 @@ export interface PropsRegitros {
   volume: number
   realVolume: number
   user: Partial<User>
-  notes?: string[]
+  notes?: string[] 
   supervisor?: Partial<StaffProps>
   analyst?: Partial<StaffProps>
   tank?: Partial<TankProps>

@@ -14,6 +14,7 @@ import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 import type { PropsRegitros } from "../../types/typeRegistro"
 import { useQueryClient } from "@tanstack/react-query"
 import { Firm } from "./components/Firm"
+import { useDeleteRemission } from "../../hook/useDeleteRemission"
 
 
 
@@ -26,6 +27,12 @@ export const DetailsPage = () => {
   
   const { isLoading, data , mutation } = useIngreso(id || '')
   const { providers, supervisors, analysts, tanks, loading: loadingOptions } = useOptions()
+  const { deleteRemission, isPending } = useDeleteRemission() 
+
+  const handleDelete = () => {
+    deleteRemission(id)
+    navigate('/adm/remission')
+  }
 
   const providerList   = providers 
   const supervisorList = supervisors
@@ -64,7 +71,7 @@ export const DetailsPage = () => {
     setFormData(base);
   }, [data]);
 
-  if (isLoading || loadingOptions || !formData) {
+  if (isLoading || loadingOptions || !formData || isPending) {
     return <CustomFullScreenLoading/>
   }
 
@@ -142,6 +149,7 @@ const handleRemoveNote = (index: number) => {
 }
 
 
+
   const onBack = () => navigate("/adm/remission")
 
   return (
@@ -179,7 +187,7 @@ const handleRemoveNote = (index: number) => {
 
           <div className="space-y-6">
             <QuickActions 
-              handleDelete={() => {}} 
+              handleDelete={handleDelete} 
               isEditing={isEditing} 
               onClickEditing={() => setIsEditing(v => !v)} 
             />

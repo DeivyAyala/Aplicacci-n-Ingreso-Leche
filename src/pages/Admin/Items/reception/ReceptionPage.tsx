@@ -18,6 +18,7 @@ import { useEffect } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useCreateRemission } from "../../hook/useCreateRemission"
+import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 
 
 
@@ -58,7 +59,7 @@ export const ReceptionPage = () => {
 
 
   const { createRemission, isPending } = useCreateRemission()
-  const { providers, supervisors, analysts, tanks, loading: loadingOptions } = useOptions()
+  const { providers, supervisors, analysts, tanks} = useOptions()
   
   const formState = watch();
 
@@ -85,7 +86,6 @@ export const ReceptionPage = () => {
     }
 
     try {
-      toast.loading("Creando registro...");
 
       await createRemission(payload);
 
@@ -107,6 +107,10 @@ export const ReceptionPage = () => {
       toast.error("Error al crear el registro");
     }
   };
+
+  if (isPending) {
+    return <CustomFullScreenLoading message="Creando remisión..." />;
+  }
 
 
   return (

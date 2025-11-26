@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface propsFirma {
-    user: string
+    user: string | undefined
     date: string
     time: string
 }

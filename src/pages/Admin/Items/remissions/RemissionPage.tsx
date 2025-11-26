@@ -134,7 +134,11 @@ export const RemissionPage =() => {
        {/* Lista de Remisiones */}
         <div className="grid gap-6 grid-cols-2 [@media(max-width:460px)]:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filtroRegistros.map((registro, index) => (
-            <RemisionCard key={registro.id} registro={registro} index={index + 1}/>
+            <RemisionCard 
+              key={registro.id} 
+              registro={registro} 
+              index={index + 1}
+            />
           ))}
         </div>
 

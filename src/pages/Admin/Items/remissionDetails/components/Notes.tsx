@@ -5,7 +5,7 @@ import { PlusIcon, StickyNoteIcon, TrashIcon } from "lucide-react"
 import { useState } from "react"
 
 interface PropsNotes {
-  notes: string[]
+  notes?: string[] 
   onAddNote: (note: string) => void
   onRemoveNote: (index: number) => void
   isEditing: boolean
@@ -56,7 +56,7 @@ export const Notes = ({ notes, onAddNote, onRemoveNote, isEditing }: PropsNotes)
 
         {/* Lista de notas */}
         <div className="space-y-2">
-          {notes.map((note, index) => (
+          {(notes ?? []).map((note, index) => (
             <div 
               key={index} 
               className="p-3 bg-amber-50 border border-amber-200 rounded-lg group"
@@ -78,7 +78,7 @@ export const Notes = ({ notes, onAddNote, onRemoveNote, isEditing }: PropsNotes)
             </div>
           ))}
 
-          {notes.length === 0 && (
+          {(notes ?? []).length === 0 && (
             <p className="text-sm text-amber-600 text-center py-4">
               No hay notas registradas
             </p>
