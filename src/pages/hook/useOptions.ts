@@ -20,8 +20,8 @@ export const useOptions = () => {
       try {
         const [prov, sup, anal, tanq] = await Promise.all([
           gestionApi.get("/proveedor"),
-          gestionApi.get("/personal?rol=Supervisor"),
-          gestionApi.get("/personal?rol=Calidad"),
+          gestionApi.get("/personal?role=Supervisor"),
+          gestionApi.get("/personal?role=Calidad"),
           gestionApi.get("/tanque"),
         ])
 

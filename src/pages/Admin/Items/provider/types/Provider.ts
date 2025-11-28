@@ -7,7 +7,7 @@ export interface Provider {
   phone: string
   inCharge: string
   active: boolean
-  imageUrl: string | null
+  imageUrl?: string | null
   createdAt? : string
   updatedAt?: string
 }

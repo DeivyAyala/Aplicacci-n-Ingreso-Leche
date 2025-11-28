@@ -9,9 +9,10 @@ interface PropsEditStaff {
   onClose: () => void
   staff: StaffProps | null
   onSave: (updated: StaffProps) => void
+  setSelectedFileEdit: React.Dispatch<React.SetStateAction<File | null>>
 }
 
-export const EditStaff = ({ open, onClose, staff, onSave }: PropsEditStaff) => {
+export const EditStaff = ({ open, onClose, staff, onSave, setSelectedFileEdit }: PropsEditStaff) => {
   const [form, setForm] = useState<Partial<StaffProps>>({})
   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
@@ -23,21 +24,23 @@ export const EditStaff = ({ open, onClose, staff, onSave }: PropsEditStaff) => {
   }, [staff])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      setSelectedFileEdit?.(file); // <- enviamos el File real al StaffPage
+
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, imageUrl: reader.result as string }))
-        setPreviewImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleDeleteImage = () => {
-    setPreviewImage(null)
-    setForm((prev) => ({ ...prev, imageUrl: null }))
-  }
+    setPreviewImage(null);
+    setSelectedFileEdit?.(null);
+  };
+
 
   const handleSave = () => {
     if (!staff) return
@@ -55,13 +58,14 @@ export const EditStaff = ({ open, onClose, staff, onSave }: PropsEditStaff) => {
       <div className="space-y-4">
         {/* Imagen */}
         <div className="flex flex-col items-center">
-          {form.imageUrl ? (
+          {previewImage ? (
             <div className="relative">
               <img
-                src={form.imageUrl}
+                src={previewImage}
                 alt="Vista previa"
                 className="w-24 h-24 rounded-full object-cover border border-amber-300 shadow-sm"
               />
+          
               <button
                 onClick={handleDeleteImage}
                 className="absolute -top-2 -right-2 bg-white border border-amber-300 rounded-full p-1 hover:bg-amber-100"

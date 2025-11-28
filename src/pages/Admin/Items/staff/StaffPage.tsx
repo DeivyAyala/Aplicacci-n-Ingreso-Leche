@@ -12,111 +12,151 @@ import { CreateStaff, type StaffForm } from "./components/CreateStaff "
 import type { StaffProps } from "./types/Staff"
 import { EditStaff } from './components/EditStaff';
 import { ViewStaff } from "./components/ViewStaff"
+import { useGetStaff } from "../../hook/useGetStaff"
+import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
+import { useCreateStaff } from "../../hook/useCreateStaff"
+import { useUploadStaffImage } from "../../hook/useUploadStaffImage"
+import { useEditStaff } from "../../hook/useEditStaff"
+import { useForm } from "react-hook-form"
 
-const initialStaff: StaffProps[] = [
-  {
-      id: "1",
-      name: "yefree Ayala",
-      email: "yefree@gmail.com",
-      phone: "3135567782",
-      active: true,
-      role: "Calidad",
-      imageUrl: "https://randomuser.me/api/portraits/women/6.jpg",
-     
-  },
-   {
-      id: "2",
-      name: "Ferney Ayala",
-      email: "Ferneye@gmail.com",
-      phone: "318490495",
-      active: true,
+
+
+
+export const StaffPage = () => {
+  const [searchTerm, setSearchTerm] = useState("")
+  const { data: staff = [], isLoading } = useGetStaff();
+  const { createStaffAsync, isPending: creating } = useCreateStaff();
+  const { uploadStaffImageAsync, isPending: uploading } = useUploadStaffImage();
+  const { editStaffAsync, isPending: editing   } = useEditStaff()
+  const [selectedFileEdit, setSelectedFileEdit] = useState<File | null>(null);
+
+  
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedStaff, setselectedStaff] = useState<StaffProps | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectEditStaff, setSelectEditStaff] = useState<StaffProps | null>(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [newStaff, setNewStaff] = useState({
+      name: "",
+      email: "",
+      phone: "",
       role: "Supervisor",
-      imageUrl: "https://randomuser.me/api/portraits/men/34.jpg",
-   
+  } as StaffForm);
+  const filteredStaff = staff.filter((s) =>
+    s.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const [form, setForm] = useState<Partial<StaffProps>>({})
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<StaffProps>()
+
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  setSelectedFile(file); // <-- guardar file real
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setPreviewImage(reader.result as string);
+  };
+  reader.readAsDataURL(file);
+};
+
+  const handleCreate = async () => {
+    try {
+      let uploadedImageUrl = null;
+
+      // 1. Crear staff SIN imagen
+      const cleanStaff = {
+        name: newStaff.name,
+        email: newStaff.email,
+        phone: newStaff.phone,
+        role: newStaff.role,
+        // 👀 Importante: NO enviar imageUrl aquí
+      };
+
+      console.log("Payload enviado al backend:", cleanStaff);
+
+      // 1. Crear el staff sin imagen
+      const newStaffCreated = await createStaffAsync(cleanStaff);
+
+      // 2. Si hay imagen, subirla con el id recién creado
+
+      if (selectedFile) {
+        uploadedImageUrl = await uploadStaffImageAsync({
+          id: newStaffCreated._id,      // <- YA EXISTE
+          image: selectedFile           // <- File real
+        });
+      }
+
+      console.log("Imagen seleccionada:", selectedFile);
+
+      setIsModalOpen(false);
+
+    } catch (error : any) {
+      console.error("Error al subir imagen:", error.response?.data || error);
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    const Staff = staff.find((s) => s.id === id)
+    if (Staff) {
+      setSelectEditStaff(Staff)
+      setIsEditModalOpen(true)
+    }
   }
-]
+  const handleSaveEdit = async (updated: StaffProps) => {
+    try {
+      let finalImageUrl = updated.imageUrl;
 
-export const StaffPage = () => {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [staff, setStaff] = useState<StaffProps[]>(initialStaff)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedStaff, setselectedStaff] = useState<StaffProps | null>(null)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [selectEditStaff, setSelectEditStaff] = useState<StaffProps | null>(null)
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-    const [previewImage, setPreviewImage] = useState<string | null>(null)
-    const [newStaff, setNewStaff] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        role: "Supervisor",
-    } as StaffForm);
-    const filteredStaff = staff.filter((staff) => 
-      staff.name.toLowerCase().includes(searchTerm.toLowerCase())
+      // Si el usuario subió una nueva imagen, hacer upload
+      if (selectedFileEdit) {
+        finalImageUrl = await uploadStaffImageAsync({
+          id: updated._id,
+          image: selectedFileEdit,
+        });
+      }
+
+      await editStaffAsync({
+        id: updated._id,
+        name: updated.name,
+        email: updated.email,
+        phone: updated.phone,
+        role: updated.role,
+        active: updated.active,
+        imageUrl: finalImageUrl,
+      });
+
+      setIsEditModalOpen(false);
+      setSelectedFileEdit(null);
+
+    } catch (error) {
+      console.error("Error al editar personal:", error);
+    }
+  };
+
+  const handleView = (id: string) => {
+    const staffFound = staff.find((p) => p._id === id);
+    if (staffFound) {
+      setselectedStaff(staffFound);
+      setIsViewModalOpen(true);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    setStaff(staff.filter((s) => s.id !== id))
+  }
+  const handleToggleActive = (id: string) => {
+    setStaff(
+      staff.map((s) =>
+        s.id === id ? { ...s, active: !s.active } : s
+      )
     )
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-       const file = e.target.files?.[0]
-       if (file) {
-         const reader = new FileReader()
-         reader.onloadend = () => 
-           setPreviewImage(reader.result as string)
-           setNewStaff((prev) => ({ ...prev, imageUrl: reader.result as string }))
-       }
-     }
-
-    const handleCreate = () => {
-        if (!newStaff.name) return
-        const newItem = {
-            ...newStaff,
-            id: Date.now().toString(),
-            imageUrl: "https://randomuser.me/api/portraits/lego/1.jpg",
-            active: true,
-            role: newStaff.role as "Calidad" | "Supervisor",
-        }
-        setStaff([...staff, newItem])
-        setNewStaff({name: "",email: "", phone: "",  role: "Supervisor",  })
-        setPreviewImage(null)
-        setIsModalOpen(false)
-    }
-
-    const handleEdit = (id: string) => {
-      const Staff = staff.find((s) => s.id === id)
-      if (Staff) {
-        setSelectEditStaff(Staff)
-        setIsEditModalOpen(true)
-      }
-    }
-
-    const handleSaveEdit = (updatedProvider: StaffProps) => {
-      setStaff((prev) =>
-        prev.map((s) => (s.id === updatedProvider.id ? updatedProvider : s))
-      )
-    }
-    const handleView = (id: string) => {
-      const Staff = staff.find((p) => p.id === id)
-      if (Staff) {
-        setselectedStaff(Staff)
-        setIsViewModalOpen(true)
-      }
-    }
-
-
-
-    
-
-
-    const handleDelete = (id: string) => {
-      setStaff(staff.filter((s) => s.id !== id))
-    }
-
-    const handleToggleActive = (id: string) => {
-      setStaff(
-        staff.map((s) =>
-          s.id === id ? { ...s, active: !s.active } : s
-        )
-      )
-    }
+  }
    
 
     const columns = [
@@ -142,7 +182,7 @@ export const StaffPage = () => {
       label: "Ver",
       render: (s: any) => (
         <Button
-          onClick={() => handleView(s.id)}
+          onClick={() => handleView(s._id)}
           variant="outline"
           size="icon"
           className="border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg"
@@ -154,6 +194,9 @@ export const StaffPage = () => {
   ]
     
 
+  if (isLoading) {
+    return <CustomFullScreenLoading message ={'Cargando Personal....'} />;
+  }
 
 
 
@@ -199,6 +242,7 @@ export const StaffPage = () => {
                 onClose={() => setIsEditModalOpen(false)}
                 staff={selectEditStaff}
                 onSave={handleSaveEdit}
+                setSelectedFileEdit={setSelectedFileEdit}
             /> 
             <ViewStaff
                 isOpen = {isViewModalOpen}

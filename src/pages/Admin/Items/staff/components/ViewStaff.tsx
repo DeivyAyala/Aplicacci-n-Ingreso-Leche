@@ -11,6 +11,17 @@ interface PropsViewStaff {
 export const ViewStaff = ({ isOpen, onClose, staff }: PropsViewStaff) => {
   if (!staff) return null
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "—"
+
+    const date = new Date(dateString)
+    return date.toLocaleString("es-CO", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    })
+  }
+
+
   return (
     <CustomModal open={isOpen} onClose={onClose} title="Detalles del personal" size="md">
       <div className="flex flex-col items-center gap-4 text-center">
@@ -52,11 +63,11 @@ export const ViewStaff = ({ isOpen, onClose, staff }: PropsViewStaff) => {
 
           <p>
             <span className="font-semibold text-amber-900">Fecha de creación:</span>{" "}
-            {staff.createdAt || "—"}
+            {formatDate(staff.createdAt)}
           </p>
           <p>
             <span className="font-semibold text-amber-900">Última actualización:</span>{" "}
-            {staff.updatedAt || "—"}
+            {formatDate(staff.updatedAt)}
           </p>
         </div>
       </div>

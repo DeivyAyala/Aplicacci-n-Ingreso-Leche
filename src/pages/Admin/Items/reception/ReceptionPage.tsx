@@ -60,6 +60,7 @@ export const ReceptionPage = () => {
 
   const { createRemission, isPending } = useCreateRemission()
   const { providers, supervisors, analysts, tanks} = useOptions()
+  console.log('Supervisor', supervisors, 'Calidad', analysts)
   
   const formState = watch();
 
