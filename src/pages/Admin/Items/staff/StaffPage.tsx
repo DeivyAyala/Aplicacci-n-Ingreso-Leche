@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { EyeIcon, SearchIcon } from "lucide-react"
 import { SearchHeader } from "../../Components/SearchHeader"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AvatarWithName } from "../../Components/AvatarWithName"
 import { ActionMenu } from "../../Components/ActionMenu"
 import { Button } from "@/components/ui/button"
@@ -17,19 +17,21 @@ import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 import { useCreateStaff } from "../../hook/useCreateStaff"
 import { useUploadStaffImage } from "../../hook/useUploadStaffImage"
 import { useEditStaff } from "../../hook/useEditStaff"
-import { useForm } from "react-hook-form"
-
-
+import { useDeleteStaff } from "../../hook/useDeleteStaff"
+import { toast } from "sonner"
+import { ConfirmModal } from "../../Components/ConfirmModal"
+import { useStaffStore } from "../../store/staffStore"
 
 
 export const StaffPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const { data: staff = [], isLoading } = useGetStaff();
   const { createStaffAsync, isPending: creating } = useCreateStaff();
   const { uploadStaffImageAsync, isPending: uploading } = useUploadStaffImage();
   const { editStaffAsync, isPending: editing   } = useEditStaff()
   const [selectedFileEdit, setSelectedFileEdit] = useState<File | null>(null);
+  const { deleteStaffAsync, isPending: deleting } = useDeleteStaff();
 
+  const { staff, setStaff, toggleStaffActive, updateStaff } = useStaffStore();
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedStaff, setselectedStaff] = useState<StaffProps | null>(null)
@@ -37,20 +39,19 @@ export const StaffPage = () => {
   const [selectEditStaff, setSelectEditStaff] = useState<StaffProps | null>(null)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [newStaff, setNewStaff] = useState({
-      name: "",
-      email: "",
-      phone: "",
-      role: "Supervisor",
-  } as StaffForm);
+  const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+  const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
+
+  
   const filteredStaff = staff.filter((s) =>
     s.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [form, setForm] = useState<Partial<StaffProps>>({})
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<StaffProps>()
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+ 
+
+  const { data: fetchedStaff = [], isLoading } = useGetStaff();
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,44 +67,29 @@ export const StaffPage = () => {
   reader.readAsDataURL(file);
 };
 
-  const handleCreate = async () => {
-    try {
-      let uploadedImageUrl = null;
+const handleCreate = async (formData: StaffForm) => {
+  try {
+    let uploadedImageUrl = null;
 
-      // 1. Crear staff SIN imagen
-      const cleanStaff = {
-        name: newStaff.name,
-        email: newStaff.email,
-        phone: newStaff.phone,
-        role: newStaff.role,
-        // 👀 Importante: NO enviar imageUrl aquí
-      };
+    const newStaffCreated = await createStaffAsync(formData);
 
-      console.log("Payload enviado al backend:", cleanStaff);
-
-      // 1. Crear el staff sin imagen
-      const newStaffCreated = await createStaffAsync(cleanStaff);
-
-      // 2. Si hay imagen, subirla con el id recién creado
-
-      if (selectedFile) {
-        uploadedImageUrl = await uploadStaffImageAsync({
-          id: newStaffCreated._id,      // <- YA EXISTE
-          image: selectedFile           // <- File real
-        });
-      }
-
-      console.log("Imagen seleccionada:", selectedFile);
-
-      setIsModalOpen(false);
-
-    } catch (error : any) {
-      console.error("Error al subir imagen:", error.response?.data || error);
+    // validar el ID ANTES de subir la imagen
+    if (selectedFile && newStaffCreated._id) {
+      uploadedImageUrl = await uploadStaffImageAsync({
+        id: newStaffCreated._id,   // ahora typescript sabe que es string
+        image: selectedFile
+      });
     }
-  };
+
+    setIsModalOpen(false);
+  } catch (error: any) {
+    console.error("Error al crear personal:", error.response?.data || error);
+  }
+};
+
 
   const handleEdit = (id: string) => {
-    const Staff = staff.find((s) => s.id === id)
+    const Staff = staff.find((s) => s._id === id)
     if (Staff) {
       setSelectEditStaff(Staff)
       setIsEditModalOpen(true)
@@ -111,13 +97,18 @@ export const StaffPage = () => {
   }
   const handleSaveEdit = async (updated: StaffProps) => {
     try {
+      if (!updated._id) {
+        toast.error("ID inválido");
+        return;
+      }
+
       let finalImageUrl = updated.imageUrl;
 
-      // Si el usuario subió una nueva imagen, hacer upload
+      // ✔ Solo subimos imagen si existe
       if (selectedFileEdit) {
         finalImageUrl = await uploadStaffImageAsync({
           id: updated._id,
-          image: selectedFileEdit,
+          image: selectedFileEdit, // TS ya está feliz
         });
       }
 
@@ -131,13 +122,18 @@ export const StaffPage = () => {
         imageUrl: finalImageUrl,
       });
 
+      updateStaff({ ...updated, imageUrl: finalImageUrl });
+
       setIsEditModalOpen(false);
       setSelectedFileEdit(null);
+      toast.success(`Personal "${updated.name}" fue actualizado`);
 
     } catch (error) {
-      console.error("Error al editar personal:", error);
+      console.error("Error al editar:", error);
     }
   };
+  
+
 
   const handleView = (id: string) => {
     const staffFound = staff.find((p) => p._id === id);
@@ -147,15 +143,67 @@ export const StaffPage = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
-    setStaff(staff.filter((s) => s.id !== id))
-  }
-  const handleToggleActive = (id: string) => {
-    setStaff(
-      staff.map((s) =>
-        s.id === id ? { ...s, active: !s.active } : s
-      )
-    )
+  const handleDelete = async () => {
+    if (!staffToDelete) return;
+
+    try {
+      await deleteStaffAsync(staffToDelete);
+
+      toast.success("Personal eliminado correctamente");
+
+      setOpenConfirmDelete(false);
+      setStaffToDelete(null);
+
+    } catch (error) {
+      console.error("Error eliminando personal:", error);
+      toast.error("Error al eliminar personal");
+    }
+  };
+
+  
+
+// cuando cargue la data desde el backend → guardarla en Zustand
+  useEffect(() => {
+    if (fetchedStaff.length > 0) {
+      setStaff(fetchedStaff);
+    }
+  }, [fetchedStaff]);
+  
+  
+  
+    const handleToggleActive = async (id: string) => {
+    const staffFound = staff.find((s) => s._id === id);
+    if (!staffFound) return;
+    
+    const newActiveState = !staffFound.active;
+    
+    try {
+      // ✔ 1. Actualizar en backend solo el campo 'active'
+      await editStaffAsync({
+        id,
+        active: newActiveState,
+      });
+    
+      // ✔ 2. Actualizar estado global (UI)
+      toggleStaffActive(id);
+    
+      // ✔ 3. Toast adecuado
+      if (newActiveState) {
+        toast.success(`Personal "${staffFound.name}" fue activado`);
+      } else {
+        toast.warning(`Personal "${staffFound.name}" fue desactivado`);
+      }
+    
+    } catch (error) {
+      console.error("Error al actualizar active:", error);
+      toast.error("Hubo un error al cambiar el estado");
+    }
+  };
+
+
+ 
+  if(creating || uploading || editing ) {
+    return <CustomFullScreenLoading/>
   }
    
 
@@ -171,9 +219,12 @@ export const StaffPage = () => {
       render: (s: any) => (
         <ActionMenu
             isActive={s.active}
-            onToggleActive={() => handleToggleActive(s.id)}
-            onDelete={() => handleDelete(s.id)}
-            onEdit={() => handleEdit(s.id)}
+            onToggleActive={() => handleToggleActive(s._id)}
+            onDelete={() =>{
+            setStaffToDelete(s._id);   // guardar id
+            setOpenConfirmDelete(true); // abrir modal
+          }}
+            onEdit={() => handleEdit(s._id)}
         />
       ),
     },
@@ -201,7 +252,8 @@ export const StaffPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-amber-50/30">
+    <>
+      <div className="min-h-screen bg-amber-50/30">
         <CustomJumbotron 
             title="Personal"
             subtitle="Información completa sobre el Personal de la empresa"
@@ -233,9 +285,9 @@ export const StaffPage = () => {
                 setIsModalOpen={setIsModalOpen}
                 previewImage={previewImage}
                 handleImageChange={handleImageChange}
-                newStaff={newStaff}
-                setNewStaff={setNewStaff}
                 handleCreate={handleCreate}
+                setSelectedFile={setSelectedFile} 
+                setPreviewImage={setPreviewImage}   
             />
             <EditStaff
                 open = {isEditModalOpen}
@@ -249,10 +301,18 @@ export const StaffPage = () => {
                 onClose = {() => setIsViewModalOpen(false)}  
                 staff = {selectedStaff}
             />
-
-
-
         </main>
-    </div>
+      </div>
+
+      <ConfirmModal
+        open={openConfirmDelete}
+        onCancel={() => setOpenConfirmDelete(false)}
+        onConfirm={handleDelete}
+        title="Eliminar Personal"
+        message="¿Estás seguro de que deseas eliminar este miembro del personal? Esta acción no se puede deshacer."
+        confirmText={deleting ? "Eliminando..." : "Eliminar"}
+      />
+    </>
+
   )
 }

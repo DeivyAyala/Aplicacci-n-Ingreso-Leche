@@ -1,25 +1,19 @@
 import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { useEffect } from "react"
+import type { StaffProps } from "../types/Staff"
 
-export type StaffRole = "Calidad" | "Supervisor"
-
-export interface StaffForm {
-  name: string
-  email: string
-  phone?: string
-  role: StaffRole
-  imageUrl?: string | null
-}
 
 interface PropsCreateStaff {
   isModalOpen: boolean
   setIsModalOpen: (value: boolean) => void
   previewImage: string | null
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  newStaff: StaffForm
-  setNewStaff: React.Dispatch<React.SetStateAction<StaffForm>>
-  handleCreate: () => void
+  handleCreate: (formData: StaffProps) => void
+  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>
+  setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export const CreateStaff = ({
@@ -27,10 +21,40 @@ export const CreateStaff = ({
   setIsModalOpen,
   previewImage,
   handleImageChange,
-  newStaff,
-  setNewStaff,
-  handleCreate
+  handleCreate, 
+  setPreviewImage,
+  setSelectedFile
 }: PropsCreateStaff) => {
+  
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<StaffProps>({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      role: "Supervisor",
+      imageUrl: null
+    }
+  })
+
+  // resetea el formulario cuando se abre/cierra
+useEffect(() => {
+  if (!isModalOpen) {
+    reset();              // limpiamos el formulario
+    setPreviewImage(null) // limpiamos imagen
+    setSelectedFile(null) // limpiamos file en el padre (debes pasarlo como prop)
+  }
+}, [isModalOpen]);
+
+
+  const onSubmit = (data: StaffProps) => {
+    handleCreate(data)
+  }
+
   return (
     <CustomModal
       open={isModalOpen}
@@ -38,7 +62,8 @@ export const CreateStaff = ({
       onClose={() => setIsModalOpen(false)}
       size="md"
     >
-      <div className="space-y-3">
+      <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
+        
         {/* Imagen */}
         <div className="flex flex-col items-center">
           {previewImage ? (
@@ -52,6 +77,7 @@ export const CreateStaff = ({
               <ImageIcon className="w-6 h-6" />
             </div>
           )}
+
           <label className="mt-3 cursor-pointer text-sm text-amber-700 font-medium hover:underline">
             <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             Subir imagen
@@ -59,52 +85,60 @@ export const CreateStaff = ({
         </div>
 
         {/* Nombre */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Nombre del personal"
-          value={newStaff.name}
-          onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-        />
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Nombre"
+            {...register("name", { required: "El nombre es obligatorio" })}
+          />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+        </div>
 
-        {/* Correo */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Correo electrónico"
-          value={newStaff.email}
-          onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
-        />
+        {/* Email */}
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Correo electrónico"
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: { value: /\S+@\S+\.\S+/, message: "Correo inválido" }
+            })}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        </div>
 
         {/* Teléfono */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Teléfono"
-          value={newStaff.phone || ""}
-          onChange={(e) => setNewStaff({ ...newStaff, phone: e.target.value })}
-        />
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Teléfono"
+            {...register("phone", {
+              required: "El teléfono es obligatorio",
+              minLength: { value: 7, message: "Teléfono demasiado corto" }
+            })}
+          />
+          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+        </div>
 
         {/* Rol */}
         <select
           className="w-full border rounded-lg px-3 py-2"
-          value={newStaff.role}
-          onChange={(e) =>
-            setNewStaff({ ...newStaff, role: e.target.value as StaffRole })
-          }
+          {...register("role", { required: "El rol es obligatorio" })}
         >
-          <option value="">Seleccionar rol</option>
-          <option value="Calidad">Calidad</option>
           <option value="Supervisor">Supervisor</option>
+          <option value="Calidad">Calidad</option>
         </select>
 
         {/* Botón */}
         <div className="flex justify-end pt-3">
           <Button
-            onClick={handleCreate}
+            type="submit"
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >
             Guardar
           </Button>
         </div>
-      </div>
+      </form>
     </CustomModal>
   )
 }
