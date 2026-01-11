@@ -55,37 +55,37 @@ export const StaffPage = () => {
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  setSelectedFile(file); // <-- guardar file real
-
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    setPreviewImage(reader.result as string);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setSelectedFile(file); // <-- guardar file real
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
 
-const handleCreate = async (formData: StaffForm) => {
-  try {
-    let uploadedImageUrl = null;
+  const handleCreate = async (formData: StaffForm) => {
+    try {
+      let uploadedImageUrl = null;
 
-    const newStaffCreated = await createStaffAsync(formData);
+      const newStaffCreated = await createStaffAsync(formData);
 
-    // validar el ID ANTES de subir la imagen
-    if (selectedFile && newStaffCreated._id) {
-      uploadedImageUrl = await uploadStaffImageAsync({
-        id: newStaffCreated._id,   // ahora typescript sabe que es string
-        image: selectedFile
-      });
+      // validar el ID ANTES de subir la imagen
+      if (selectedFile && newStaffCreated._id) {
+        uploadedImageUrl = await uploadStaffImageAsync({
+          id: newStaffCreated._id,   // ahora typescript sabe que es string
+          image: selectedFile
+        });
+      }
+
+      setIsModalOpen(false);
+    } catch (error: any) {
+      console.error("Error al crear personal:", error.response?.data || error);
     }
-
-    setIsModalOpen(false);
-  } catch (error: any) {
-    console.error("Error al crear personal:", error.response?.data || error);
-  }
-};
+  };
 
 
   const handleEdit = (id: string) => {
@@ -95,6 +95,7 @@ const handleCreate = async (formData: StaffForm) => {
       setIsEditModalOpen(true)
     }
   }
+
   const handleSaveEdit = async (updated: StaffProps) => {
     try {
       if (!updated._id) {
@@ -108,7 +109,7 @@ const handleCreate = async (formData: StaffForm) => {
       if (selectedFileEdit) {
         finalImageUrl = await uploadStaffImageAsync({
           id: updated._id,
-          image: selectedFileEdit, // TS ya está feliz
+          image: selectedFileEdit, 
         });
       }
 
@@ -171,7 +172,7 @@ const handleCreate = async (formData: StaffForm) => {
   
   
   
-    const handleToggleActive = async (id: string) => {
+  const handleToggleActive = async (id: string) => {
     const staffFound = staff.find((s) => s._id === id);
     if (!staffFound) return;
     
@@ -223,7 +224,7 @@ const handleCreate = async (formData: StaffForm) => {
             onDelete={() =>{
             setStaffToDelete(s._id);   // guardar id
             setOpenConfirmDelete(true); // abrir modal
-          }}
+            }}
             onEdit={() => handleEdit(s._id)}
         />
       ),

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon, TrashIcon } from "lucide-react"
 import type { Provider } from "../types/Provider"
+import { useForm } from "react-hook-form"
 
 
 interface PropsEditProveedor {
@@ -10,62 +11,91 @@ interface PropsEditProveedor {
   onClose: () => void
   provider: Provider | null
   onSave: (updated: Provider) => void
+  setSelectedFileEdit: React.Dispatch<React.SetStateAction<File | null>>
 }
 
-export const EditProvider = ({ open, onClose, provider, onSave }: PropsEditProveedor) => {
+export const EditProvider = ({ open, onClose, provider, onSave, setSelectedFileEdit }: PropsEditProveedor) => {
 
-  const [form, setForm] = useState<Partial<Provider>>({})
+  // const [form, setForm] = useState<Partial<Provider>>({})
   const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors }
+  } = useForm<Provider>({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      nit: "",
+      address: "",
+      active: true,
+      imageUrl: null,
+      inCharge: ""
+    }
+  })
 
     useEffect(() => {
     if (provider) {
-      setForm(provider)
+      reset(provider)
       setPreviewImage(provider.imageUrl || null)
     }
   }, [provider])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, imageUrl: reader.result as string }))
-      }
-      reader.readAsDataURL(file)
-    }
+    if(!file) return
+
+    setSelectedFileEdit(file)
+    const reader = new FileReader()
+    reader.onloadend = () => setPreviewImage(reader.result as string)
+    reader.readAsDataURL(file)
   }
 
   const handleDeleteImage = () => {
     setPreviewImage(null)
-    setForm((prev) => ({ ...prev, imageUrl: null }))
+    setSelectedFileEdit(null)
+    setValue("imageUrl", null)
   }
 
-  const handleSave = () => {
-    if (!provider) return
-    onSave({
-      ...provider,
-      ...form,
+  const onSumbit = (data: Provider) => {
+    // Aquí puedes manejar el guardado de los datos editados
+    onSave({ 
+      ...data,
       imageUrl: previewImage ?? null,
-      updatedAt: new Date().toISOString().split("T")[0],
-    })
+      updatedAt: new Date().toISOString(),
+     })
     onClose()
   }
 
+  // const handleSave = () => {
+  //   if (!provider) return
+  //   onSave({
+  //     ...provider,
+  //     ...form,
+  //     imageUrl: previewImage ?? null,
+  //     updatedAt: new Date().toISOString().split("T")[0],
+  //   })
+  //   onClose()
+  // }
+
   return (
     <CustomModal open={open} title="Editar proveedor" onClose={onClose} size="md">
-      <div className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit(onSumbit)} >
         {/* Imagen */}
         <div className="flex flex-col items-center">
-          {form.imageUrl ? (
+          { previewImage ? (
             <div className="relative">
               <img
-                src={form.imageUrl}
-                alt="Vista previa"
+                src={previewImage}
                 className="w-24 h-24 rounded-full object-cover border border-amber-300 shadow-sm"
               />
               <button
-                onClick={handleDeleteImage}
-                className="absolute -top-2 -right-2 bg-white border border-amber-300 rounded-full p-1 hover:bg-amber-100"
+              type="button"
+              onClick={handleDeleteImage}
+              className="absolute -top-2 -right-2 bg-white border border-amber-300 rounded-full p-1 hover:bg-amber-100"
               >
                 <TrashIcon className="w-4 h-4 text-red-600" />
               </button>
@@ -76,49 +106,82 @@ export const EditProvider = ({ open, onClose, provider, onSave }: PropsEditProve
             </div>
           )}
           <label className="mt-3 cursor-pointer text-sm text-amber-700 font-medium hover:underline">
-            <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-            {form.imageUrl ? "Cambiar imagen" : "Subir imagen"}
+            <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+            Cambiar imagen            
           </label>
         </div>
 
         {/* Campos editables */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Nombre del proveedor"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="NIT"
-          value={form.nit}
-          onChange={(e) => setForm({ ...form, nit: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Correo electrónico"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Teléfono"
-          value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Encargado"
-          value={form.inCharge}
-          onChange={(e) => setForm({ ...form, inCharge: e.target.value })}
-        />
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Nombre del proveedor"
+            {...register("name", { required: "El nombre es obligatorio" })}
+          />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+        </div>
+
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Dirección"
+            {...register("address")}
+          />
+        </div> 
+        
+         <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="NIT"
+            {...register("nit", { 
+              required: "El NIT es obligatorio",
+              minLength: { value: 7, message: "NIT demasiado corto" }
+            })}
+          />
+          {errors.nit && <p className="text-red-500 text-sm">{errors.nit.message}</p>}
+        </div>
+
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Correo electrónico"
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: { value: /\S+@\S+\.\S+/, message: "Correo inválido" }  
+            })}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        </div>
+
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Teléfono"
+            {...register("phone", {
+              required: "El teléfono es obligatorio",
+              minLength: { value: 7, message: "Teléfono demasiado corto" }
+            })}
+          />
+          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>} 
+        </div> 
+
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Encargado"
+            {...register("inCharge")}
+          />
+        </div>  
 
         <div className="flex justify-end pt-3">
-          <Button onClick={handleSave} className="bg-amber-600 hover:bg-amber-700 text-white">
+          <Button 
+            type="submit"
+            className="bg-amber-600 hover:bg-amber-700 text-white"
+            >
             Guardar cambios
           </Button>
         </div>
-      </div>
+      </form>
     </CustomModal>
   )
 }

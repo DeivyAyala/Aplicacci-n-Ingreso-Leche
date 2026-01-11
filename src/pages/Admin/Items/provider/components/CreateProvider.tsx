@@ -1,15 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon } from "lucide-react"
+import type { Provider } from "../types/Provider"
+import { useForm } from "react-hook-form"
+import { useEffect } from "react"
 
-interface ProviderForm {
-  name: string
-  nit: string
-  email: string
-  phone: string
-  inCharge: string
-  imageUrl?: string
-}
+
 
 
 interface propsCreateProveedor {
@@ -17,9 +13,11 @@ interface propsCreateProveedor {
     setIsModalOpen: (value: boolean) => void
     previewImage: string | null
     handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-    newProvider: ProviderForm
-    setNewProvider:  React.Dispatch<React.SetStateAction<ProviderForm>>
-    handleCreate: () => void
+    handleCreate: (formData: Provider) => void
+    setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>
+    setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
+
+    
 }
 
 export const CreateProvider = ({
@@ -27,11 +25,39 @@ export const CreateProvider = ({
     setIsModalOpen, 
     previewImage, 
     handleImageChange, 
-    newProvider, 
-    setNewProvider, 
-    handleCreate
+    handleCreate,
+    setSelectedFile,
+    setPreviewImage
 }: propsCreateProveedor) => {
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<Provider>({
+    defaultValues: {
+      name: "",
+      nit: "",
+      email: "",
+      imageUrl: null,
+      phone: "",
+      inCharge: "",
+      address: "",
+    }
+  })
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      reset();              // limpiamos el formulario
+      setPreviewImage(null) // limpiamos imagen
+      setSelectedFile(null) // limpiamos file en el padre (debes pasarlo como prop)
+    }
+  }, [isModalOpen]);  
+
+  const onSubmit = (data: Provider) => {
+    handleCreate(data)
+  }
 
   return (
     <CustomModal
@@ -40,8 +66,8 @@ export const CreateProvider = ({
         onClose={() => setIsModalOpen(false)}
         size="md"
       >
-        <div className="space-y-3">
-              {/* Imagen */}
+        <form  className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
+
           <div className="flex flex-col items-center">
             {previewImage ? (
               <img
@@ -59,55 +85,81 @@ export const CreateProvider = ({
               Subir imagen
             </label>
         </div>
+
+        {/* Nombre del proveedor*/ }
+        <div>
           <input
             className="w-full border rounded-lg px-3 py-2"
             placeholder="Nombre del proveedor"
-            value={newProvider.name}
-            onChange={(e) =>
-              setNewProvider({ ...newProvider, name: e.target.value })
-            }
+            {...register("name", {required: "El nombre es obligatorio" })}
           />
+          {errors.name && (<p className="text-red-500 text-sm">{errors.name.message}</p>)}
+        </div>
+
+        {/* Dirección del proveedor*/ }
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Dirección"
+            {...register("address")}
+          />
+        </div> 
+        {/* NIT del proveedor*/ }
+        <div>
           <input
             className="w-full border rounded-lg px-3 py-2"
             placeholder="NIT"
-            value={newProvider.nit}
-            onChange={(e) =>
-              setNewProvider({ ...newProvider, nit: e.target.value })
-            }
+            {...register("nit", { 
+              required: "El NIT es obligatorio",
+              minLength: { value: 7, message: "NIT demasiado corto" }
+            })}
           />
+          {errors.nit && <p className="text-red-500 text-sm">{errors.nit.message}</p>}
+        </div>
+          {/* Email del proveedor*/ }
+        <div>
           <input
             className="w-full border rounded-lg px-3 py-2"
             placeholder="Correo electrónico"
-            value={newProvider.email}
-            onChange={(e) =>
-              setNewProvider({ ...newProvider, email: e.target.value })
-            }
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: { value: /\S+@\S+\.\S+/, message: "Correo inválido" }  
+            })}
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        </div>
+
+        {/* Teléfono del proveedor*/ }
+        <div>
           <input
             className="w-full border rounded-lg px-3 py-2"
             placeholder="Teléfono"
-            value={newProvider.phone}
-            onChange={(e) =>
-              setNewProvider({ ...newProvider, phone: e.target.value })
-            }
+            {...register("phone", {
+              required: "El teléfono es obligatorio",
+              minLength: { value: 7, message: "Teléfono demasiado corto" }
+            })}
           />
+          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>} 
+        </div> 
+        
+        {/* Encargado del proveedor*/ }
+        <div>
           <input
             className="w-full border rounded-lg px-3 py-2"
             placeholder="Encargado"
-            value={newProvider.inCharge}
-            onChange={(e) =>
-              setNewProvider({ ...newProvider, inCharge: e.target.value })
-            }
+            {...register("inCharge")}
           />
+        </div>  
+
           <div className="flex justify-end pt-3">
             <Button
-              onClick={handleCreate}
+              type="submit"
               className="bg-amber-600 hover:bg-amber-700 text-white"
             >
               Guardar
             </Button>
           </div>
-        </div>
+        </form>
       </CustomModal>
   )
 }

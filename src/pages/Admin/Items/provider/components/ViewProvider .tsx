@@ -27,10 +27,12 @@ export const ViewProvider = ({ isOpen, onClose, provider }: PropsViewProveedor) 
         {/* Información */}
         <div className="w-full text-left space-y-2">
           <p><span className="font-semibold text-amber-900">Nombre:</span> {provider.name}</p>
+          <p><span className="font-semibold text-amber-900">Direccion:</span> {provider.address}</p>
           <p><span className="font-semibold text-amber-900">NIT:</span> {provider.nit}</p>
           <p><span className="font-semibold text-amber-900">Correo:</span> {provider.email}</p>
           <p><span className="font-semibold text-amber-900">Teléfono:</span> {provider.phone}</p>
           <p><span className="font-semibold text-amber-900">Encargado:</span> {provider.inCharge}</p>
+
           <p className="flex items-center gap-2">
             <span className="font-semibold text-amber-900">Estado:</span>
             <StatusBadge active={provider.active} />

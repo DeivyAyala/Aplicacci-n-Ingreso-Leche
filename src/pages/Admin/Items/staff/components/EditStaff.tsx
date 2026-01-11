@@ -16,7 +16,7 @@ interface PropsEditStaff {
 export const EditStaff = ({ open, onClose, staff, onSave, setSelectedFileEdit }: PropsEditStaff) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
-    const {
+  const {
     register,
     handleSubmit,
     setValue,
