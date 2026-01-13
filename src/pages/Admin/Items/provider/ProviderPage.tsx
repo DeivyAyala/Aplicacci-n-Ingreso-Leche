@@ -147,6 +147,7 @@ const handleCreate = async (formData: Provider) => {
         imageUrl: finalImageUrl,
       });
 
+      
       setIsEditModalOpen(false); 
       setSelectedFileEdit(null);
       toast.success(`Proveedor "${updated.name}" actualizado con éxito`);
