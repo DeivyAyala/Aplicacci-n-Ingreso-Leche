@@ -70,17 +70,6 @@ export const EditProvider = ({ open, onClose, provider, onSave, setSelectedFileE
     onClose()
   }
 
-  // const handleSave = () => {
-  //   if (!provider) return
-  //   onSave({
-  //     ...provider,
-  //     ...form,
-  //     imageUrl: previewImage ?? null,
-  //     updatedAt: new Date().toISOString().split("T")[0],
-  //   })
-  //   onClose()
-  // }
-
   return (
     <CustomModal open={open} title="Editar proveedor" onClose={onClose} size="md">
       <form className="space-y-4" onSubmit={handleSubmit(onSumbit)} >

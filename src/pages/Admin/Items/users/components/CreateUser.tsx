@@ -1,26 +1,19 @@
 import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon } from "lucide-react"
-import type { UserRole } from "../types/User"
+import type { User } from "../types/User"
+import { useForm } from "react-hook-form"
+import { useEffect } from "react"
 
-interface UserForm {
-  name: string
-  lastName: string
-  email: string
-  phone: string
-  rol: UserRole
-  password: string
-  imageUrl?: string
-}
 
 interface PropsCreateUser {
   isModalOpen: boolean
   setIsModalOpen: (value: boolean) => void
   previewImage: string | null
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  newUser: UserForm
-  setNewUser: React.Dispatch<React.SetStateAction<UserForm>>
-  handleCreate: () => void
+  handleCreate: (formData: User) => void
+  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>
+  setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export const CreateUser = ({
@@ -28,10 +21,40 @@ export const CreateUser = ({
   setIsModalOpen,
   previewImage,
   handleImageChange,
-  newUser,
-  setNewUser,
   handleCreate,
+  setSelectedFile,
+  setPreviewImage
 }: PropsCreateUser) => {
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<User>({
+    defaultValues: {
+      name: "",
+      lastName: "",
+      email: "",
+      password: "",
+      phone: "",
+      rol: "Operador",
+      imageUrl: null
+    }
+  })
+
+  useEffect(() => {
+    if(!isModalOpen){
+      reset()
+      setPreviewImage(null)
+      setSelectedFile(null)
+    }
+  }, [ isModalOpen ])
+
+  const onSunmit = (data: User) => {
+    handleCreate(data)
+  }
+
   return (
     <CustomModal
       open={isModalOpen}
@@ -39,7 +62,7 @@ export const CreateUser = ({
       onClose={() => setIsModalOpen(false)}
       size="md"
     >
-      <div className="space-y-3">
+      <form className="space-y-3" onSubmit={handleSubmit(onSunmit)} >
         {/* Imagen */}
         <div className="flex flex-col items-center">
           {previewImage ? (
@@ -60,59 +83,75 @@ export const CreateUser = ({
         </div>
 
         {/* Campos */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Nombre"
-          value={newUser.name}
-          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Apellidos"
-          value={newUser.lastName}
-          onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Correo electrónico"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-        />
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Nombre"
+           {...register("name", {required: "El nombre es obligatorio" })}
+          />
+          {errors.name && (<p className="text-red-500 text-sm">{errors.name.message}</p>)}
+        </div>
+        
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Apellidos"
+             {...register("lastName", {required: "El Apellido es obligatorio" })}
+          />
+          {errors.lastName && (<p className="text-red-500 text-sm">{errors.lastName.message}</p>)}
+        </div>
+        
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Correo electrónico"
+           {...register("email", {
+              required: "El Email es obligatorio", 
+              pattern: { value: /\S+@\S+\.\S+/, message: "Correo inválido" }  
+            })}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        </div>
+        
         <input
           className="w-full border rounded-lg px-3 py-2"
           placeholder="Teléfono"
-          value={newUser.phone}
-          onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+          {...register("phone")}
         />
 
         {/* Rol */}
         <select
           className="w-full border rounded-lg px-3 py-2 bg-white"
-          value={newUser.rol}
-          onChange={(e) => setNewUser({ ...newUser, rol: e.target.value as UserRole })}
+          {...register("rol")}
+          defaultValue="Operador"
         >
-          <option value="Administrador">Administrador</option>
           <option value="Operador">Operador</option>
+          <option value="Administrador">Administrador</option>
         </select>
 
+
         {/* Contraseña predeterminada */}
-        <input
-          type="password"
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Contraseña predeterminada"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-        />
+        <div>
+          <input
+            type="password"
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Contraseña predeterminada"
+            {...register("password", { required: true, minLength: 6 })}
+          />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+        </div>
+        
+
 
         <div className="flex justify-end pt-3">
           <Button
-            onClick={handleCreate}
+            type="submit"
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >
             Guardar
           </Button>
         </div>
-      </div>
+      </form>
     </CustomModal>
   )
 }

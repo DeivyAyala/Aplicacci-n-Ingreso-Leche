@@ -130,16 +130,29 @@ export const  DashboardAdm = ({
             {/* Usuario y logout */}
             <div className="border-t border-[#F6E9DA] p-5">
               <div className="flex items-center gap-3 mb-4 bg-[#FFF4E5] p-3 rounded-xl">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFD9B5]">
-                  <UserIcon className="h-5 w-5 text-[#EA580C]" />
+    
+              {/* Avatar */}
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFD9B5] overflow-hidden">
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={`${user.name} avatar`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <UserIcon className="h-5 w-5 text-[#EA580C]" />
+                  )}
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1E1E1E]">
-                    {user?.name || userName}
-                  </p>
-                  <p className="text-xs text-[#A78B7C] capitalize">{user?.rol || role}</p>
-                </div>
+              {/* Info */}
+              <div>
+                <p className="text-sm font-semibold text-[#1E1E1E]">
+                  {user?.name || userName}
+                </p>
+                <p className="text-xs text-[#A78B7C] capitalize">
+                  {user?.rol || role}
+                </p>
               </div>
+            </div>
 
               <Button
                 onClick={handleLogout}

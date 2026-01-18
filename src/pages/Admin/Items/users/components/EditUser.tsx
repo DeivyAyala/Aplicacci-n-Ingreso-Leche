@@ -2,67 +2,88 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon, TrashIcon } from "lucide-react"
-import type { User, UserRole } from "../types/User"
+import type { User } from "../types/User"
+import { useForm } from "react-hook-form"
 
 interface PropsEditUser {
   open: boolean
   onClose: () => void
   user: User | null
   onSave: (updated: User) => void
+  setSelectedFileEdit: React.Dispatch<React.SetStateAction<File | null>>
 }
 
-export const EditUser = ({ open, onClose, user, onSave }: PropsEditUser) => {
-  const [form, setForm] = useState<Partial<User>>({})
+export const EditUser = ({ open, onClose, user, onSave, setSelectedFileEdit }: PropsEditUser) => {
+
   const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors }
+    } = useForm<User>({
+    defaultValues: {
+      name: "",
+      lastName:"",
+      email: "",
+      phone: "",
+      // password:"",
+      rol:"Operador",
+      imageUrl: null,
+    }
+  })
 
   useEffect(() => {
     if (user) {
-      setForm(user)
+      reset(user)
       setPreviewImage(user.imageUrl || null)
     }
   }, [user])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, imageUrl: reader.result as string }))
-      }
-      reader.readAsDataURL(file)
-    }
+    if(!file) return
+
+    setSelectedFileEdit(file)
+    const reader = new FileReader()
+    reader.onloadend = () => setPreviewImage(reader.result as string)
+    reader.readAsDataURL(file)
+
   }
 
   const handleDeleteImage = () => {
     setPreviewImage(null)
-    setForm((prev) => ({ ...prev, imageUrl: null }))
+    setSelectedFileEdit(null)
+    setValue("imageUrl", null)
   }
 
-  const handleSave = () => {
-    if (!user) return
-    onSave({
-      ...user,
-      ...form,
+  const onSumbit = (data: User) => {
+    // Aquí puedes manejar el guardado de los datos editados
+    onSave({ 
+      ...data,
       imageUrl: previewImage ?? null,
-    } as User)
+      updatedAt: new Date().toISOString(),
+     })
     onClose()
   }
 
   return (
     <CustomModal open={open} title="Editar usuario" onClose={onClose} size="md">
-      <div className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit(onSumbit)}>
         {/* Imagen */}
         <div className="flex flex-col items-center">
-          {form.imageUrl ? (
+          { previewImage ? (
             <div className="relative">
               <img
-                src={form.imageUrl}
-                alt="Vista previa"
+                src={previewImage}
                 className="w-24 h-24 rounded-full object-cover border border-amber-300 shadow-sm"
               />
               <button
-                onClick={handleDeleteImage}
-                className="absolute -top-2 -right-2 bg-white border border-amber-300 rounded-full p-1 hover:bg-amber-100"
+              type="button"
+              onClick={handleDeleteImage}
+              className="absolute -top-2 -right-2 bg-white border border-amber-300 rounded-full p-1 hover:bg-amber-100"
               >
                 <TrashIcon className="w-4 h-4 text-red-600" />
               </button>
@@ -73,53 +94,77 @@ export const EditUser = ({ open, onClose, user, onSave }: PropsEditUser) => {
             </div>
           )}
           <label className="mt-3 cursor-pointer text-sm text-amber-700 font-medium hover:underline">
-            <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-            {form.imageUrl ? "Cambiar imagen" : "Subir imagen"}
+            <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+            Cambiar imagen            
           </label>
         </div>
 
         {/* Campos editables */}
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Nombre"
-          value={form.name || ""}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Apellidos"
-          value={form.lastName || ""}
-          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-        />
-        <input
-          className="w-full border rounded-lg px-3 py-2"
-          placeholder="Correo electrónico"
-          value={form.email || ""}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Nombre"
+           {...register("name", {required: "El nombre es obligatorio" })}
+          />
+          {errors.name && (<p className="text-red-500 text-sm">{errors.name.message}</p>)}
+        </div>
+
+         <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Apellidos"
+             {...register("lastName", {required: "El Apellido es obligatorio" })}
+          />
+          {errors.lastName && (<p className="text-red-500 text-sm">{errors.lastName.message}</p>)}
+        </div>
+
+        <div>
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Correo electrónico"
+           {...register("email", {
+              required: "El Email es obligatorio", 
+              pattern: { value: /\S+@\S+\.\S+/, message: "Correo inválido" }  
+            })}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        </div>
+
         <input
           className="w-full border rounded-lg px-3 py-2"
           placeholder="Teléfono"
-          value={form.phone || ""}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          {...register("phone")}
         />
 
         {/* Rol */}
         <select
           className="w-full border rounded-lg px-3 py-2 bg-white"
-          value={form.rol || "Operador"}
-          onChange={(e) => setForm({ ...form, rol: e.target.value as UserRole })}
+          {...register("rol")}
+          defaultValue="Operador"
         >
-          <option value="Administrador">Administrador</option>
           <option value="Operador">Operador</option>
+          <option value="Administrador">Administrador</option>
         </select>
+        
+        {/* <div>
+          <input
+            type="password"
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Contraseña predeterminada"
+            {...register("password", { required: true, minLength: 6 })}
+          />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+        </div> */}
 
         <div className="flex justify-end pt-3">
-          <Button onClick={handleSave} className="bg-amber-600 hover:bg-amber-700 text-white">
-            Guardar cambios
+          <Button
+            type="submit"
+            className="bg-amber-600 hover:bg-amber-700 text-white"
+          >
+            Guardar
           </Button>
         </div>
-      </div>
+      </form>
     </CustomModal>
   )
 }

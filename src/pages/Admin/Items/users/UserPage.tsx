@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
 import { EyeIcon, SearchIcon } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SearchHeader } from "../../Components/SearchHeader"
-import type { User, UserRole } from "./types/User"
+import type { User } from "./types/User"
 import { AvatarWithName } from "../../Components/AvatarWithName"
 import { CustomTable } from "../../Components/CustomTable"
 import { ActionMenu } from "../../Components/ActionMenu"
@@ -12,113 +12,151 @@ import { ViewUser } from "./components/ViewUser"
 import { Button } from "@/components/ui/button"
 import { CreateUser } from "./components/CreateUser"
 import { EditUser } from "./components/EditUser"
+import { useUsersStore } from "../../store/usersStore"
+import { useGetUsers } from "../../hook/useGetUsers"
+import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
+import { useCreateUser } from "../../hook/useCreateUser"
+import { useUploadUserImage } from "../../hook/useUploadUserImage"
+import { toast } from "sonner"
+import { useEditUser } from "../../hook/useEdithUser"
+import { useDeleteUser } from "../../hook/useDeleteUser"
+import { ConfirmModal } from "../../Components/ConfirmModal"
 
 
-
-const initialUsers: User[] = [
-  {
-      id: "1",
-      name: "yefree",
-      lastName: "Ayala",
-      email: "yefree@gmail.com",
-      password: "123456",
-      phone: "3135567782",
-      rol: "Administrador",
-      imageUrl: "https://randomuser.me/api/portraits/women/6.jpg",
-     
-  },
-   {
-      id: "2",
-      name: "Ferney",
-      lastName: "Ayala",
-      email: "Ferneye@gmail.com",
-      password: "123456",
-      phone: "318490495",
-      rol: "Operador",
-      imageUrl: "https://randomuser.me/api/portraits/men/34.jpg",
-   
-  }
-]
 
 export const UserPage = () => {
+
+  const { users, setUsers, updateUser } = useUsersStore()
+  const { createUserAsync, isPending: creating } = useCreateUser()
+  const { uploadUserImageAsync,  isPending: uploading  } = useUploadUserImage()
+  const { editUserAsync, isPending: editing } = useEditUser()
+  const [selectedFileEdit, setSelectedFileEdit] = useState<File | null>(null);
+  const { deleteUserAsync, isPending: deleting } = useDeleteUser()
+
+
   const [searchTerm, setSearchTerm] = useState("")
-  const [users, setUsers] = useState<User[]>(initialUsers)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedEditUser, setSelectedEditUser] = useState<User | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-  const [newUser, setNewUser] = useState<{
-  name: string
-  lastName: string
-  email: string
-  phone: string
-  rol: UserRole
-  password: string
-  imageUrl?: string
-}>({
-  name: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  rol: "Operador",
-  password: "",
-  imageUrl: "",
-})
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+
+  const { data: fetchedUsers = [], isLoading } = useGetUsers()
+
+
+  useEffect(() => {
+    if(fetchedUsers.length > 0) {
+      setUsers(fetchedUsers)
+    }
+  }, [fetchedUsers])
 
   const [previewImage, setPreviewImage] = useState<string | null>(null)
+   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const filteredUsers = users.filter((user) => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  //Crear Ususario
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => 
-        setPreviewImage(reader.result as string)
-        setNewUser((prev) => ({ ...prev, imageUrl: reader.result as string }))
+    if(!file) return
+
+    setSelectedFile(file)
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string)
     }
+    reader.readAsDataURL(file)
   }
-  const handleCreate = () => {
-    if (!newUser.name) return
-    const newItem = {
-      ...newUser,
-      id: Date.now().toString(),
-      imageUrl: "https://randomuser.me/api/portraits/lego/1.jpg",
-      rol: newUser.rol as "Administrador" | "Operador",
+  //Crear Ususario
+const handleCreate = async (formData: User) => {
+  try {
+    const dataToSend = {
+      name: formData.name.trim(),
+      lastName: formData.lastName.trim(),
+      email: formData.email.trim(),
+      password: formData.password.trim(),
+      phone: formData.phone?.trim(),
+      rol: formData.rol || "Operador",
     }
-    setUsers([...users, newItem])
-    setNewUser({ 
-      name: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      rol: "Operador",
-      password: "",
-      imageUrl: ""  })
-    setPreviewImage(null)
+
+    console.log("DATA LIMPIA:", dataToSend)
+
+    const newCreatedUser = await createUserAsync(dataToSend)
+
+    if (selectedFile && newCreatedUser._id) {
+      await uploadUserImageAsync({
+        id: newCreatedUser._id,
+        image: selectedFile,
+      })
+    }
+
     setIsModalOpen(false)
+    toast.success(`Usuario "${newCreatedUser.name}" creado correctamente`)
+  } catch (error) {
+    console.error("Error al crear el Usuario:", error)
+    toast.error("Error al crear el Usuario")
   }
+}
+
 
   //Editar Ususario 
   const handleEdit = (id: string) => {
-    const user = users.find((p) => p.id === id)
-    if (user) {
-      setSelectedUser(user)
+    const User = users.find((u) => u._id === id)
+    if (User) {
+      setSelectedEditUser(User)
       setIsEditModalOpen(true)
     }
   }
-  const handleSaveEdit = (updatedUser: User) => {
-    setUsers((prev) =>
-      prev.map((p) => (p.id === updatedUser.id ? updatedUser : p))
-    )
+  const handleSaveEdit = async(updated: User) => {
+    try {
+      if(!updated._id){
+        toast.error("El Usuario no tiene ID")
+        return
+      }
+
+      let finalImageUrl = updated.imageUrl;
+
+      if(selectedFileEdit) {
+        finalImageUrl = await uploadUserImageAsync({
+          id: updated._id,
+          image: selectedFileEdit,
+        });
+      }
+
+      await editUserAsync({
+        id: updated._id,
+        name: updated.name,
+        lastName: updated.lastName,
+        email: updated.email,
+        phone: updated.phone,
+        password: updated.password,
+        rol: updated.rol,
+        imageUrl: finalImageUrl,
+      })
+
+      updateUser({
+        ...updated,
+        imageUrl: finalImageUrl
+      });
+
+      setIsEditModalOpen(false)
+      setSelectedEditUser(null)
+      toast.success(`Usuario "${updated.name}" actualizado con éxito`)
+
+    } catch (error) {
+      toast.error("Error al editar el usuario");
+      console.error("Error al editar:", error);
+    }
   }
 
   //Ver Ususario
   const handleView = (id: string) => {
-    const user = users.find((p) => p.id === id)
+    const user = users.find((p) => p._id === id)
     if (user) {
       setSelectedUser(user)
       setIsViewModalOpen(true)
@@ -126,9 +164,24 @@ export const UserPage = () => {
   }
 
   //Eliminar Ususario
-  const handleDelete = (id: string) => {
-    setUsers(users.filter((p) => p.id !== id))
+  const handleDelete = async() => {
+    if(!userToDelete) return;
+    try {
+      await deleteUserAsync(userToDelete)
+      toast.success("Usuario eliminado correctamente")
+      setOpenConfirmDelete(false)
+      setUserToDelete(null)
+    } catch (error) {
+      console.error("Error eliminando usuario:", error);
+      toast.error("Error al eliminar usuario");
+    }
   }
+
+
+  if(creating || uploading || editing) {
+    return <CustomFullScreenLoading/>
+  }
+
   const columns = [
     { key: "name", label: "Nombre", render: (u: any) => <AvatarWithName name={u.name} imageUrl={u.imageUrl} /> },
     {key: "lastName", label: "Apellido" },
@@ -139,8 +192,11 @@ export const UserPage = () => {
       label: "Acciones",
       render: (u: any) => (
         <ActionMenu
-          onDelete={() => handleDelete(u.id)}
-          onEdit={() => handleEdit(u.id)}
+          onEdit={() => handleEdit(u._id)}
+          onDelete={() => {
+            setUserToDelete(u._id)
+            setOpenConfirmDelete(true)
+          }}
         />
       ),
     },
@@ -149,7 +205,7 @@ export const UserPage = () => {
       label: "Ver",
       render: (u: any) => (
         <Button
-          onClick={() => handleView(u.id)}
+          onClick={() => handleView(u._id)}
           variant="outline"
           size="icon"
           className="border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg"
@@ -159,66 +215,80 @@ export const UserPage = () => {
       ),
     },
   ]
-    
+
+
+  
+  if(isLoading) {
+    return <CustomFullScreenLoading message={'Cargando usuarios...'} />
+  }
 
   return (
-    <div className="min-h-screen bg-amber-50/30">
-      <CustomJumbotron 
-          title="Usuarios"
-          subtitle="Información completa sobre los Usuarios"
-      />
-      <main className="container mx-auto px-6 py-8" >
-            {/* Header */}
-        <Card className="border-amber-200 mb-8">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-amber-900">
-                <SearchIcon className="h-5 w-5" />
-                Gestión de Usuarios
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <SearchHeader 
-                    title="Usuario"
-                    searchTerm ={searchTerm}
-                    onSearchChange={setSearchTerm} 
-                    onCreateClick={() => setIsModalOpen(true)}
-                />
-            </CardContent>
-        </Card>
-        <CustomTable
-            data={filteredUsers}
-            columns={columns}
-            emptyMessage="No se encontraron Usuarios"
+    <>
+      <div className="min-h-screen bg-amber-50/30">
+        <CustomJumbotron 
+            title="Usuarios"
+            subtitle="Información completa sobre los Usuarios"
         />
-      </main>
+        <main className="container mx-auto px-6 py-8" >
+              {/* Header */}
+          <Card className="border-amber-200 mb-8">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-amber-900">
+                  <SearchIcon className="h-5 w-5" />
+                  Gestión de Usuarios
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <SearchHeader 
+                      title="Usuario"
+                      searchTerm ={searchTerm}
+                      onSearchChange={setSearchTerm} 
+                      onCreateClick={() => setIsModalOpen(true)}
+                  />
+              </CardContent>
+          </Card>
+          <CustomTable
+              data={filteredUsers}
+              columns={columns}
+              emptyMessage="No se encontraron Usuarios"
+          />
+        </main>
 
-      <CreateUser
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        previewImage={previewImage}
-        handleImageChange={handleImageChange}
-        newUser={newUser}
-        setNewUser={setNewUser}
-        handleCreate={handleCreate}
-        
+        <CreateUser
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          previewImage={previewImage}
+          handleImageChange={handleImageChange}
+          handleCreate={handleCreate}
+          setSelectedFile={setSelectedFile}
+          setPreviewImage={setPreviewImage}
+
+        />
+
+        <ViewUser
+          isOpen = {isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          user={selectedUser}
+        />
+
+        <EditUser
+          open = {isEditModalOpen}
+          onClose = { ()=> setIsEditModalOpen(false) }
+          user={selectedEditUser}
+          onSave={handleSaveEdit}
+          setSelectedFileEdit={setSelectedFileEdit}
+        />
+      </div>
+      <ConfirmModal
+        open={openConfirmDelete}
+        onCancel={() => setOpenConfirmDelete(false)}
+        onConfirm={handleDelete}
+        title="Eliminar Usuario"
+        message="¿Estás seguro de que deseas eliminar este ususario? Esta acción no se puede deshacer."
+        confirmText={deleting ? "Eliminando..." : "Eliminar"}
       />
+    </>
 
-      <ViewUser
-        isOpen = {isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
-        user={selectedUser}
-      />
-
-      <EditUser
-        open = {isEditModalOpen}
-        onClose = { ()=> setIsEditModalOpen(false) }
-        user={selectedUser}
-        onSave={handleSaveEdit}
-      />
-
-
-
-    </div>
 
 
   )

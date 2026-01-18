@@ -6,7 +6,7 @@ export const registerAction = async(
     name: string, 
     lastName: string, 
     email: string, 
-    password: string ): Promise<LoginInterface> => {
+    password: string): Promise<LoginInterface> => {
 
     try {
         const { data } = await gestionApi.post('/auth/new', {
