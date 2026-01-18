@@ -35,6 +35,7 @@ export const useOptions = () => {
             email: p.email ?? "",
             phone: p.phone ?? "",
             address: p.address ?? "",
+            active: p.active ,
           }))
         )
 

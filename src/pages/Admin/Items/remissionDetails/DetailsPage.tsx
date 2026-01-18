@@ -27,6 +27,7 @@ export const DetailsPage = () => {
   
   const { isLoading, data , mutation } = useIngreso(id || '')
   const { providers, supervisors, analysts, tanks, loading: loadingOptions } = useOptions()
+  
   const { deleteRemission, isPending } = useDeleteRemission() 
 
   const handleDelete = () => {
@@ -58,14 +59,17 @@ export const DetailsPage = () => {
       date,
       time,
       customDate: ingreso.customDate,
-      provider: ingreso.provider,
-      supervisor: ingreso.supervisor,
-      analyst: ingreso.analyst,
-      tank: ingreso.tank,
-      user: ingreso.user,
+
+      provider: ingreso.provider ?? { _id: "", name: "Proveedor eliminado" },
+      supervisor: ingreso.supervisor ?? { _id: "", name: "Supervisor eliminado" },
+      analyst: ingreso.analyst ?? { _id: "", name: "Analista eliminado" },
+      tank: ingreso.tank ?? { _id: "", name: "Tanque eliminado" },
+
+      user: ingreso.user ?? { _id: "", name: "Usuario eliminado" },
+
       volume: ingreso.volume,
       realVolume: ingreso.realVolume,
-      notes: ingreso.notes ?? []
+      notes: ingreso.notes ?? [],
     };
 
     setFormData(base);
@@ -122,6 +126,10 @@ export const DetailsPage = () => {
 
   const handleSave = async () => {
     if (!formData) return
+      if (!formData.provider) {
+      toast.error("Debes seleccionar un proveedor activo");
+      return;
+    }
     await handleSumbit(formData)
     setIsEditing(false)
   }
@@ -161,7 +169,10 @@ const handleRemoveNote = (index: number) => {
         </Button>
       </div>
 
-      <CustomJumbotron title="Detalles de Remisión" subtitle={`Registro de ${formData.provider.name} - ${formData.date}`} />
+      <CustomJumbotron 
+        title="Detalles de Remisión" 
+        subtitle={`Registro de ${formData.provider?.name ?? "Proveedor eliminado"} - ${formData.date}`} 
+      />
 
       <main className="container mx-auto px-6 py-8">
         <div className="grid gap-8 lg:grid-cols-3">

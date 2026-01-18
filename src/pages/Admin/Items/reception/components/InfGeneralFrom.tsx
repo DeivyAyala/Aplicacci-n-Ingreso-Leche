@@ -20,6 +20,9 @@ export const InfGeneralFrom = ({ providers, register, setValue, formState, error
 
   const today = new Date().toISOString().split("T")[0];
 
+  const activeProviders = providers.filter(p => p.active)
+
+
   return (
     <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
       <CardTitulo
@@ -84,13 +87,18 @@ export const InfGeneralFrom = ({ providers, register, setValue, formState, error
               </SelectTrigger>
 
               <SelectContent>
-                {providers.map((p) => (
+                {activeProviders.map((p) => (
                   <SelectItem key={p._id} value={p._id!}>
                     {p.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {/* {isCurrentInactive && (
+              <p className="text-amber-600 text-sm">
+                ⚠️ Este proveedor está inactivo. Debes seleccionar uno nuevo para continuar.
+              </p>
+            )} */}
             
             { errors.provider && (
               <p className="text-red-500 text-sm">{errors.provider.message}</p>

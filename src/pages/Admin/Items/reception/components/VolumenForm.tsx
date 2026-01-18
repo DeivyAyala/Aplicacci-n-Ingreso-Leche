@@ -18,6 +18,9 @@ interface propsVolumen {
 }
 
 export const VolumenForm = ({formState, tank, register, setValue, errors }: propsVolumen) => {
+
+  const activeTanks = tank.filter(t => t.active)
+
   return (
      <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
         <CardTitulo 
@@ -78,7 +81,7 @@ export const VolumenForm = ({formState, tank, register, setValue, errors }: prop
                 </SelectTrigger>
 
                 <SelectContent>
-                  {tank.map((p) => (
+                  {activeTanks.map((p) => (
                     <SelectItem key={p._id} value={p._id!}>
                       {p.name}
                     </SelectItem>

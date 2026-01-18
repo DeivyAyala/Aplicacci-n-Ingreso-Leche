@@ -36,6 +36,9 @@ export const GeneralInfoCard = ({
   tanks,
 }: GeneralInfoProps) => {
 
+  
+
+
   return (
     <Card className="border-amber-200">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -46,13 +49,30 @@ export const GeneralInfoCard = ({
 
         <div className="flex gap-2">
           {!isEditing ? (
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="border-amber-200 text-amber-700 hover:bg-amber-50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsEditing(true)} 
+              className="border-amber-200 text-amber-700 hover:bg-amber-50"
+            >
               <EditIcon className="h-4 w-4 mr-1" /> Editar
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(false)} className="border-gray-200 text-gray-700 hover:bg-gray-50">Cancelar</Button>
-              <Button size="sm" onClick={handleSave} className="bg-amber-600 text-white hover:bg-amber-700"><SaveIcon className="h-4 w-4 mr-1"/> Guardar</Button>
+              <Button 
+                variant="outline" size="sm" 
+                onClick={() => setIsEditing(false)} 
+                className="border-gray-200 text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={handleSave} 
+                className="bg-amber-600 text-white hover:bg-amber-700"
+              >
+                <SaveIcon className="h-4 w-4 mr-1"/> Guardar
+              </Button>
             </>
           )}
         </div>

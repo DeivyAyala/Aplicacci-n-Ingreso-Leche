@@ -17,6 +17,10 @@ interface PropsResponsables {
 }
 
 export const ResponsibleForm = ({ formState, supervisor, analyst, setValue, errors }: PropsResponsables) => {
+  
+  const activeSupervisor = supervisor.filter(s => s.active)
+  const activeAnalyst = analyst.filter(a => a.active)
+  
   return (
     <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
       <CardTitulo 
@@ -47,7 +51,7 @@ export const ResponsibleForm = ({ formState, supervisor, analyst, setValue, erro
               <SelectValue placeholder="Seleccionar Supervisor" />
             </SelectTrigger>
             <SelectContent>
-              {supervisor.map((p) => (
+              {activeSupervisor.map((p) => (
                 <SelectItem key={p._id} value={p._id!}>
                   {p.name}
                 </SelectItem>
@@ -81,7 +85,7 @@ export const ResponsibleForm = ({ formState, supervisor, analyst, setValue, erro
               <SelectValue placeholder="Seleccionar Analista de Laboratorio" />
             </SelectTrigger>
             <SelectContent>
-              {analyst.map((p) => (
+              {activeAnalyst.map((p) => (
                 <SelectItem key={p._id} value={p._id!}>
                   {p.name}
                 </SelectItem>
