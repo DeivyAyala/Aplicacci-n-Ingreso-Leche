@@ -18,6 +18,7 @@ interface GeneralInfoProps {
   handleSave: () => void
   setIsEditing: (value: boolean) => void
   isTankFull: boolean
+  isCapacityExceeded: boolean
   providers: Provider[]  // array directo
   supervisors: StaffProps[]
   analysts: StaffProps[]
@@ -32,6 +33,7 @@ export const GeneralInfoCard = ({
   handleSave,
   setIsEditing,
   isTankFull,
+  isCapacityExceeded,
   providers,
   supervisors,
   analysts,
@@ -125,7 +127,7 @@ export const GeneralInfoCard = ({
               <Button 
                 size="sm" 
                 onClick={handleSave} 
-                disabled={isTankFull}
+                disabled={isTankFull || isCapacityExceeded}
                 className="bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-60"
               >
                 <SaveIcon className="h-4 w-4 mr-1"/> Guardar

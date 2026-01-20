@@ -42,6 +42,7 @@ export const DetailsPage = () => {
 
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<PropsRegitros | null>(null)
+  const [originalRealVolume, setOriginalRealVolume] = useState(0)
 
   useEffect(() => {
     if (!data?.ingreso) return;
@@ -72,14 +73,27 @@ export const DetailsPage = () => {
     };
 
     setFormData(base);
+    setOriginalRealVolume(ingreso.realVolume ?? 0);
   }, [data]);
 
   const isSelectedTankFull = useMemo(() => {
     const selectedId = formData?.tank?._id
     if (!selectedId) return false
     const selected = tanks.find(t => t._id === selectedId)
-    return !!selected && selected.currentCapacity >= selected.capacity
-  }, [formData?.tank?._id, tanks])
+    if (!selected) return false
+    const adjustedCurrent = selected.currentCapacity - originalRealVolume
+    return adjustedCurrent >= selected.capacity
+  }, [formData?.tank?._id, tanks, originalRealVolume])
+  const isCapacityExceeded = useMemo(() => {
+    const selectedId = formData?.tank?._id
+    if (!selectedId) return false
+    const selected = tanks.find(t => t._id === selectedId)
+    if (!selected) return false
+    const realVolumeValue = Number(formData?.realVolume ?? 0)
+    if (realVolumeValue <= 0) return false
+    const adjustedCurrent = selected.currentCapacity - originalRealVolume
+    return adjustedCurrent + realVolumeValue > selected.capacity
+  }, [formData?.tank?._id, formData?.realVolume, tanks, originalRealVolume])
 
   if ( loadingOptions || !formData || isPending) {
     return <CustomFullScreenLoading/>
@@ -145,6 +159,10 @@ export const DetailsPage = () => {
       toast.error("El tanque seleccionado esta lleno. Selecciona otro tanque")
       return
     }
+    if (isCapacityExceeded) {
+      toast.error("Con este ingreso el tanque supera la capacidad maxima")
+      return
+    }
     await handleSumbit(formData)
     setIsEditing(false)
   }
@@ -200,6 +218,7 @@ const handleRemoveNote = (index: number) => {
               handleSave={handleSave}
               setIsEditing={setIsEditing}
               isTankFull={isSelectedTankFull}
+              isCapacityExceeded={isCapacityExceeded}
               providers={providers}
               supervisors={supervisors}
               analysts={analysts}
@@ -208,6 +227,7 @@ const handleRemoveNote = (index: number) => {
             <VolumenCard 
               remission={formData} 
               isEditing={isEditing} 
+              isCapacityExceeded={isCapacityExceeded}
               onCustomChange={onCustomChange} 
             />
           </div>

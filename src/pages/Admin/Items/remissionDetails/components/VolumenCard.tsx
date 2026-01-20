@@ -7,13 +7,14 @@ import type { PropsRegitros } from "../../../types/typeRegistro"
 interface propsVolumen {
     remission: PropsRegitros
     isEditing: boolean
+    isCapacityExceeded: boolean
     onCustomChange: <K extends keyof PropsRegitros>(
         field: K,
         value: PropsRegitros[K]
     ) => void
 }
 
-export const VolumenCard = ({remission, isEditing, onCustomChange}: propsVolumen) => {
+export const VolumenCard = ({remission, isEditing, isCapacityExceeded, onCustomChange}: propsVolumen) => {
   return (
    <Card className="border-amber-200">
         <CardHeader>
@@ -39,6 +40,11 @@ export const VolumenCard = ({remission, isEditing, onCustomChange}: propsVolumen
                 value={remission.realVolume}
                 onChange={(e) => onCustomChange("realVolume", Number(e.target.value))}
             />
+            {isEditing && isCapacityExceeded && (
+                <p className="text-red-500 text-sm md:col-span-2">
+                    Con este ingreso el tanque supera la capacidad maxima. Selecciona otro tanque o reduce el volumen.
+                </p>
+            )}
             <div className="md:col-span-2">
                 <div className="flex items-center gap-2 text-sm">
                     <span className="text-amber-700">Diferencia:</span>

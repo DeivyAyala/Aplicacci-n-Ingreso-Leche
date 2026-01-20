@@ -22,6 +22,11 @@ export const VolumenForm = ({formState, tank, register, setValue, errors }: prop
   const activeTanks = tank.filter(t => t.active)
   const selectedTank = tank.find(t => t._id === formState.tank?._id)
   const isSelectedTankFull = !!selectedTank && selectedTank.currentCapacity >= selectedTank.capacity
+  const realVolumeValue = Number(formState.realVolume ?? 0)
+  const isCapacityExceeded =
+    !!selectedTank &&
+    realVolumeValue > 0 &&
+    selectedTank.currentCapacity + realVolumeValue > selectedTank.capacity
 
   return (
      <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
@@ -52,13 +57,23 @@ export const VolumenForm = ({formState, tank, register, setValue, errors }: prop
                 placeholder="0"
                 min="0"
                 register={register("realVolume", {
-              validate: (value) => 
-                value > 0 || "El Volumen no puede ser menor o igual a 0"
+              validate: (value) => {
+                if (value <= 0) return "El Volumen no puede ser menor o igual a 0"
+                if (selectedTank && selectedTank.currentCapacity + Number(value) > selectedTank.capacity) {
+                  return "El volumen real supera la capacidad del tanque"
+                }
+                return true
+              }
             })}
                 className="text-amber-800 font-medium"
             />
             {errors&& (
               <p className="text-red-500 text-sm">{errors.realVolume}</p>
+            )}
+            {isCapacityExceeded && (
+              <p className="text-red-500 text-sm">
+                Con este ingreso el tanque supera la capacidad maxima. Selecciona otro tanque o reduce el volumen.
+              </p>
             )}
                 
             <div className="space-y-2">

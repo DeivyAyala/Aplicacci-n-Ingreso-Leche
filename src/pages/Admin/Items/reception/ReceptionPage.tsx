@@ -72,6 +72,13 @@ export const ReceptionPage = () => {
     const selected = tanks.find(t => t._id === formState.tank?._id)
     return !!selected && selected.currentCapacity >= selected.capacity
   }, [formState.tank?._id, tanks])
+  const isTankCapacityExceeded = useMemo(() => {
+    const selected = tanks.find(t => t._id === formState.tank?._id)
+    if (!selected) return false
+    const realVolumeValue = Number(formState.realVolume ?? 0)
+    if (realVolumeValue <= 0) return false
+    return selected.currentCapacity + realVolumeValue > selected.capacity
+  }, [formState.tank?._id, formState.realVolume, tanks])
 
   const onBack = () =>{
     navigate('/adm/inicio')
@@ -84,6 +91,10 @@ export const ReceptionPage = () => {
   const onSubmit = async (data: PropsRegitros) => {
     if (isSelectedTankFull) {
       toast.error("El tanque seleccionado esta lleno. Selecciona otro tanque")
+      return
+    }
+    if (isTankCapacityExceeded) {
+      toast.error("Con este ingreso el tanque supera la capacidad maxima")
       return
     }
     const customDate = new Date(`${data.date}T${data.time}:00`).toISOString();
@@ -199,7 +210,7 @@ export const ReceptionPage = () => {
             </Button>
             <Button
               type="submit"
-              disabled={isPending || isSelectedTankFull}
+              disabled={isPending || isSelectedTankFull || isTankCapacityExceeded}
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8"
             >
               <SaveIcon className="h-4 w-4 mr-2" />
