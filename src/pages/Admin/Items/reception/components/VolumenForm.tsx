@@ -20,6 +20,8 @@ interface propsVolumen {
 export const VolumenForm = ({formState, tank, register, setValue, errors }: propsVolumen) => {
 
   const activeTanks = tank.filter(t => t.active)
+  const selectedTank = tank.find(t => t._id === formState.tank?._id)
+  const isSelectedTankFull = !!selectedTank && selectedTank.currentCapacity >= selectedTank.capacity
 
   return (
      <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
@@ -72,7 +74,7 @@ export const VolumenForm = ({formState, tank, register, setValue, errors }: prop
                     setValue("tank", {
                       _id: found._id!,
                       name: found.name
-                    })
+                    }, { shouldValidate: true, shouldDirty: true })
                   }
                 }}
               >
@@ -81,13 +83,21 @@ export const VolumenForm = ({formState, tank, register, setValue, errors }: prop
                 </SelectTrigger>
 
                 <SelectContent>
-                  {activeTanks.map((p) => (
-                    <SelectItem key={p._id} value={p._id!}>
-                      {p.name}
-                    </SelectItem>
-                  ))}
+                  {activeTanks.map((p) => {
+                    const isFull = p.currentCapacity >= p.capacity
+                    return (
+                      <SelectItem key={p._id} value={p._id!} disabled={isFull}>
+                        {p.name}{isFull ? " (Lleno)" : ""}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectContent>
               </Select>
+              {isSelectedTankFull && (
+                <p className="text-red-500 text-sm">
+                  El tanque seleccionado esta lleno. Selecciona otro tanque.
+                </p>
+              )}
               { errors.tank && (
                 <p className="text-red-500 text-sm">{errors.tank.message}</p>
               )}

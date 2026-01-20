@@ -17,6 +17,7 @@ interface GeneralInfoProps {
   onCustomChange: <K extends keyof PropsRegitros>(field: K, value: PropsRegitros[K]) => void
   handleSave: () => void
   setIsEditing: (value: boolean) => void
+  isTankFull: boolean
   providers: Provider[]  // array directo
   supervisors: StaffProps[]
   analysts: StaffProps[]
@@ -30,6 +31,7 @@ export const GeneralInfoCard = ({
   onCustomChange,
   handleSave,
   setIsEditing,
+  isTankFull,
   providers,
   supervisors,
   analysts,
@@ -123,7 +125,8 @@ export const GeneralInfoCard = ({
               <Button 
                 size="sm" 
                 onClick={handleSave} 
-                className="bg-amber-600 text-white hover:bg-amber-700"
+                disabled={isTankFull}
+                className="bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-60"
               >
                 <SaveIcon className="h-4 w-4 mr-1"/> Guardar
               </Button>
@@ -337,8 +340,9 @@ export const GeneralInfoCard = ({
                   <option
                     key={String(t._id )}
                     value={String(t._id)}
+                    disabled={t.currentCapacity >= t.capacity}
                   >
-                    {t.name}
+                    {t.name}{t.currentCapacity >= t.capacity ? " (Lleno)" : ""}
                   </option>
                 ))}
               </select>
@@ -346,6 +350,12 @@ export const GeneralInfoCard = ({
               <span className="text-amber-900 pl-7">
                 {remission.tank?.name || "Sin tanque"}
               </span>
+            )}
+
+            {isEditing && isTankFull && (
+              <p className="text-red-500 text-[13px]">
+                El tanque seleccionado esta lleno. Selecciona otro tanque.
+              </p>
             )}
 
             {remission.tank &&

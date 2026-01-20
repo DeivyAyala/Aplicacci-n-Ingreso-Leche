@@ -9,6 +9,7 @@ import { DetailsPage } from "../Admin/Items/remissionDetails/DetailsPage"
 import { StaffPage } from "../Admin/Items/staff/StaffPage"
 import { TanksPage } from "../Admin/Items/tanks/TanksPage"
 import { UserPage } from "../Admin/Items/users/UserPage"
+import { MilkMovementsPage } from "../Admin/Items/milkMovements/MilkMovementsPage"
 
 export const AdmPanelRoutes = () => {
   return (
@@ -16,6 +17,7 @@ export const AdmPanelRoutes = () => {
       <Route path="adm/dashboard" element={<DashboardPage/>}/>
       <Route path="adm/reception" element={<ReceptionPage />} />
       <Route path="adm/remission" element={<RemissionPage />} />
+      <Route path="adm/milk-movements" element={<MilkMovementsPage />} />
       <Route path="adm/providers" element={ <ProviderPage/> }/>
       <Route path="adm/users" element={ <UserPage/> }/>
       <Route path="adm/tanks" element = { <TanksPage /> } />

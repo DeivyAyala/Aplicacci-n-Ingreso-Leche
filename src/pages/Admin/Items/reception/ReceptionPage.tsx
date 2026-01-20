@@ -14,7 +14,7 @@ import { useOptions } from "@/pages/hook/useOptions"
 import type { PropsRegitros } from "../../types/typeRegistro"
 import { useForm } from "react-hook-form"
 import { InfGeneralFrom } from "./components/InfGeneralFrom"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useCreateRemission } from "../../hook/useCreateRemission"
@@ -44,8 +44,14 @@ export const ReceptionPage = () => {
         value?._id ? true : "Debe seleccionar un proveedor",
     });
     register("tank", {
-      validate: (value) =>
-        value?._id ? true : "Debe seleccionar un Tanque",
+      validate: (value) => {
+        if (!value?._id) return "Debe seleccionar un Tanque"
+        const selected = tanks.find(t => t._id === value._id)
+        if (selected && selected.currentCapacity >= selected.capacity) {
+          return "El tanque seleccionado esta lleno. Selecciona otro tanque"
+        }
+        return true
+      },
     });
     register("supervisor", {
       validate: (value) =>
@@ -62,6 +68,10 @@ export const ReceptionPage = () => {
   const { providers, supervisors, analysts, tanks} = useOptions()
   
   const formState = watch();
+  const isSelectedTankFull = useMemo(() => {
+    const selected = tanks.find(t => t._id === formState.tank?._id)
+    return !!selected && selected.currentCapacity >= selected.capacity
+  }, [formState.tank?._id, tanks])
 
   const onBack = () =>{
     navigate('/adm/inicio')
@@ -72,6 +82,10 @@ export const ReceptionPage = () => {
 
 
   const onSubmit = async (data: PropsRegitros) => {
+    if (isSelectedTankFull) {
+      toast.error("El tanque seleccionado esta lleno. Selecciona otro tanque")
+      return
+    }
     const customDate = new Date(`${data.date}T${data.time}:00`).toISOString();
 
     const payload = {
@@ -185,7 +199,7 @@ export const ReceptionPage = () => {
             </Button>
             <Button
               type="submit"
-              disabled={isPending}
+              disabled={isPending || isSelectedTankFull}
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8"
             >
               <SaveIcon className="h-4 w-4 mr-2" />

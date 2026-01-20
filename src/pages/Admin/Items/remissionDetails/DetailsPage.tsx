@@ -8,7 +8,7 @@ import { VolumenCard } from "./components/VolumenCard"
 import { Button } from "@/components/ui/button"
 import { useIngreso } from "./hook/useIngresobyId"
 import { toast } from "sonner"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useOptions } from "@/pages/hook/useOptions"
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
 import type { PropsRegitros } from "../../types/typeRegistro"
@@ -74,6 +74,13 @@ export const DetailsPage = () => {
     setFormData(base);
   }, [data]);
 
+  const isSelectedTankFull = useMemo(() => {
+    const selectedId = formData?.tank?._id
+    if (!selectedId) return false
+    const selected = tanks.find(t => t._id === selectedId)
+    return !!selected && selected.currentCapacity >= selected.capacity
+  }, [formData?.tank?._id, tanks])
+
   if ( loadingOptions || !formData || isPending) {
     return <CustomFullScreenLoading/>
   }
@@ -81,7 +88,6 @@ export const DetailsPage = () => {
   if( isLoading ){
     return <CustomFullScreenLoading message="Cargando Detalles de la Remission"/>
   }
-
 
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -134,6 +140,10 @@ export const DetailsPage = () => {
       if (!formData.provider) {
       toast.error("Debes seleccionar un proveedor activo");
       return;
+    }
+    if (isSelectedTankFull) {
+      toast.error("El tanque seleccionado esta lleno. Selecciona otro tanque")
+      return
     }
     await handleSumbit(formData)
     setIsEditing(false)
@@ -189,6 +199,7 @@ const handleRemoveNote = (index: number) => {
               onCustomChange={onCustomChange}
               handleSave={handleSave}
               setIsEditing={setIsEditing}
+              isTankFull={isSelectedTankFull}
               providers={providers}
               supervisors={supervisors}
               analysts={analysts}

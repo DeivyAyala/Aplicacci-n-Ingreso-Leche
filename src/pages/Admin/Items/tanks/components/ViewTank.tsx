@@ -34,6 +34,9 @@ export const ViewTank = ({ isOpen, onClose, tank }: PropsViewTank) => {
             <span className="font-semibold text-amber-900">Estado:</span>
             <StatusBadge active={tank.active} />
           </p>
+          <p>
+            <span className="font-semibold text-amber-900">Capacidad Actual:</span> {tank.currentCapacity} litros
+          </p>
 
           <hr className="my-3 border-amber-200" />
 

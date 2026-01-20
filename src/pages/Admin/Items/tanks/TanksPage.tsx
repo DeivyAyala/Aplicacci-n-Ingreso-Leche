@@ -170,6 +170,7 @@ export const TanksPage = () => {
       { key: "name", label: "Nombre", render: (u: any) => <AvatarWithName name={u.name} 
           imageUrl= "https://img.freepik.com/vector-premium/tanque-almacenamiento-leche-isometrica_592324-1634.jpg" /> },
       { key: "capacity", label: "Capacidad (L)" },
+      {key: "currentCapacity", label: "Cap. Actual (L)"},
       { key: "estado", label: "Estado", render: (u: any) => <StatusBadge active={u.active} /> },
       {
         key: "acciones",
