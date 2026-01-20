@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   SearchIcon,
   DownloadIcon,
@@ -9,18 +9,25 @@ import {
 import { RemisionCard } from "./components/RemisionCard"
 import { SearchBox } from "./components/SearchBox"
 import { RemisionFilters } from "./components/RemisionFilters"
-
-// import { Header } from "../../Components/Header"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
-
 import { exportDataExcel } from "../../Helpers/ExportDataExcel"
 import { useIngreso } from "../../hook/useIngresos"
+import { useTanksStore } from "../../store/tanksStore"
+import { useGetTanks } from "../../hook/useGetTanks"
 
 
 
 export const RemissionPage =() => {
 
   const { data } = useIngreso()
+  const { tanks, setTanks } = useTanksStore()
+  const { data: fetchedTanks = []} = useGetTanks()
+  
+  useEffect(() => {
+      if (fetchedTanks.length > 0) {
+        setTanks(fetchedTanks)
+      }
+    }, [fetchedTanks])
 
   const registros = (data?.ingresos || []).map((item) => {
    const fecha = new Date(item.customDate)
@@ -38,7 +45,9 @@ export const RemissionPage =() => {
      notes: Array.isArray(item.notes) ? item.notes : [],
      supervisor: item.supervisor || "",
      analyst: item.analyst || "",
-     tank: item.tank || "",
+     tank: item.tank?._id || "",
+    tankName: item.tank?.name || "Sin tanque",
+
    }
   })
 
@@ -62,6 +71,7 @@ export const RemissionPage =() => {
       registro.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       registro.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
       registro.user.toLowerCase().includes(searchTerm.toLowerCase());
+      
 
     const matchesDateFrom = !filters.dateFrom || registro.date >= filters.dateFrom;
     const matchesDateTo = !filters.dateTo || registro.date <= filters.dateTo;
@@ -110,6 +120,7 @@ export const RemissionPage =() => {
               <RemisionFilters 
                 filters={filters} 
                 setFilters={setFilters}
+                tanks={tanks}
               />
             )}
           </CardContent>

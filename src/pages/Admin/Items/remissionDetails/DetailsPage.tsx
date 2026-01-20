@@ -35,10 +35,9 @@ export const DetailsPage = () => {
     navigate('/adm/remission')
   }
 
-  const providerList   = providers 
-  const supervisorList = supervisors
-  const analystList    = analysts
-  const tankList       = tanks
+
+
+  
 
 
   const [isEditing, setIsEditing] = useState(false)
@@ -75,9 +74,15 @@ export const DetailsPage = () => {
     setFormData(base);
   }, [data]);
 
-  if (isLoading || loadingOptions || !formData || isPending) {
+  if ( loadingOptions || !formData || isPending) {
     return <CustomFullScreenLoading/>
   }
+
+  if( isLoading ){
+    return <CustomFullScreenLoading message="Cargando Detalles de la Remission"/>
+  }
+
+
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -184,10 +189,10 @@ const handleRemoveNote = (index: number) => {
               onCustomChange={onCustomChange}
               handleSave={handleSave}
               setIsEditing={setIsEditing}
-              providers={providerList}
-              supervisors={supervisorList}
-              analysts={analystList}
-              tanks={tankList}
+              providers={providers}
+              supervisors={supervisors}
+              analysts={analysts}
+              tanks={tanks}
             />
             <VolumenCard 
               remission={formData} 

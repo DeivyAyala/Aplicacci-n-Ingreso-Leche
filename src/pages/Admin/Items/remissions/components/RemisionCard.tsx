@@ -53,7 +53,7 @@ export const RemisionCard = ({registro, index}: props) => {
                 </CardTitle>
                 <Badge className="bg-amber-100 text-amber-700 border border-amber-300">
                     <BarrelIcon className="h-3 w-3 mr-1" />
-                    {registro.tank.name}
+                    {registro.tankName}
                 </Badge>
             </div>
         </CardHeader>

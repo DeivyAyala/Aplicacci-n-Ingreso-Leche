@@ -5,18 +5,14 @@ import * as XLSX from "xlsx"
       "ID Remisión": registro.id,
       Fecha: registro.date,
       Hora: registro.time,
-      Proveedor: registro.provider,
       "Volumen Remisión (L)": registro.volume,
       "Volumen Real (L)": registro.realVolume,
-      "Grasa (%)": registro.fat,
-      "Proteína (%)": registro.protein,
-      "Temperatura (°C)": registro.temperature,
-      pH: registro.pH,
-      "Densidad (g/mL)": registro.density,
-      Calidad: registro.quality,
-      Usuario: registro.user,
-      "Precio por Litro": `$${registro.price}`,
-      "Notas": registro.notes.join(", ")
+      "Tanque": registro.tank.name,
+      Proveedor: registro.provider,
+      "Calidad": registro.analyst.name,
+      "Supervisor": registro.supervisor.name,
+      "Ususario de Registro": registro.user,
+      "Notas": registro.notes.join(", "),
     }))
 
 
@@ -27,20 +23,16 @@ import * as XLSX from "xlsx"
     //Definir ancho de columnas 
 
     const colWidths: { wch: number }[] = [
-    { wch: 12 }, // ID Remisión
+    { wch: 14 }, // ID Remisión
     { wch: 12 }, // Fecha
     { wch: 8 },  // Hora
+    { wch: 8 }, // Volumen Remisión
+    { wch: 8 }, // Volumen Real
+    { wch: 12 }, // Tanque
     { wch: 20 }, // Proveedor
-    { wch: 15 }, // Volumen Remisión
-    { wch: 15 }, // Volumen Real
-    { wch: 10 }, // Grasa
-    { wch: 10 }, // Proteína
-    { wch: 12 }, // Temperatura
-    { wch: 8 },  // pH
-    { wch: 12 },  // Densidad
-    { wch: 12 }, // Calidad
+    { wch: 20 }, // Calidad
+    { wch: 20 }, // Supervisor
     { wch: 15 }, // Usuario
-    { wch: 15 }, // Precio
     { wch: 30 }, // notas
   ];
   ws["!cols"] = colWidths;

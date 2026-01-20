@@ -36,6 +36,60 @@ export const GeneralInfoCard = ({
   tanks,
 }: GeneralInfoProps) => {
 
+  const activeProviders = providers.filter(p => p.active);
+  const activeSupervisors = supervisors.filter(s => s.active)
+  const activeAnalysts = analysts.filter(a => a.active)
+  const activeTanks = tanks.filter(t => t.active)
+
+  const providerOptions =
+    remission.provider &&
+    !activeProviders.find(p => p._id === remission.provider?._id)
+      ? [
+          {
+            _id: remission.provider._id,
+            name: `${remission.provider.name} (Inactivo)`
+          },
+          ...activeProviders
+        ]
+      : activeProviders;
+
+    
+  const supervisorOptions =
+    remission.supervisor &&
+    !activeSupervisors.find(p => p._id === remission.supervisor?._id)
+      ? [
+          {
+            _id: remission.supervisor._id,
+            name: `${remission.supervisor.name} (Inactivo)`
+          },
+          ...activeSupervisors
+        ]
+      : activeSupervisors;
+
+  const analystsOptions =
+    remission.analyst &&
+    !activeAnalysts.find(p => p._id === remission.analyst?._id)
+      ? [
+          {
+            _id: remission.analyst._id,
+            name: `${remission.analyst.name} (Inactivo)`
+          },
+          ...activeAnalysts
+        ]
+      : activeAnalysts;
+
+  const tanksOptions =
+    remission.tank &&
+    !activeTanks.find(p => p._id === remission.tank?._id)
+      ? [
+          {
+            _id: remission.tank._id,
+            name: `${remission.tank.name} (Inactivo)`
+          },
+          ...activeTanks
+        ]
+      : activeTanks;
+
   
 
 
@@ -90,30 +144,77 @@ export const GeneralInfoCard = ({
             <InputCard title="Hora" isEditing={isEditing} type="time" name="time" value={remission.time} onChange={onInputChange} />
           </div>
 
-          <div className="flex items-center gap-3">
-            <TruckIcon className="h-5 w-5 text-amber-600" />
+          <div className="flex flex-col gap-1">
+            {/* Título + icono */}
+            <div className="flex items-center gap-2">
+              <TruckIcon className="h-5 w-5 text-amber-600" />
+              <span className="font-semibold text-amber-900 text-sm">
+                Proveedor
+              </span>
+            </div>
+
+            {/* Selector o texto */}
             {isEditing ? (
               <select
                 className="border rounded-md p-2 w-full"
                 value={String(remission.provider?._id ?? "")}
                 onChange={e => {
                   const sel = String(e.target.value)
-                  const found = providers.find(p => String(p._id ?? p.id ?? "") === sel)
-                  onCustomChange("provider", found ? { _id: String(found._id ?? found.id), name: found.name } : { _id: sel, name: "" } as any)
+                  const found = providers.find(
+                    p => String(p._id ?? p.id ?? "") === sel
+                  )
+                  onCustomChange(
+                    "provider",
+                    found
+                      ? { _id: String(found._id ?? found.id), name: found.name }
+                      : ({ _id: sel, name: "" } as any)
+                  )
                 }}
               >
                 <option value="">Seleccionar proveedor</option>
-                {providers.map(p => <option key={String(p._id ?? p.id)} value={String(p._id ?? p.id)}>{p.name}</option>)}
+                {providerOptions.map(p => (
+                  <option
+                    key={String(p._id ?? p._id)}
+                    value={String(p._id ?? p._id)}
+                  >
+                    {p.name}
+                  </option>
+                ))}
               </select>
             ) : (
-              <span>{remission.provider?.name || "Sin proveedor"}</span>
+              <span className="text-amber-900 pl-7">
+                {remission.provider?.name || "Sin proveedor"}
+              </span>
+            )}
+
+            {/* Estados */}
+            {remission.provider &&
+              !providers.find(
+                p => p._id === remission.provider?._id && p.active
+              ) && (
+                <p className="text-amber-600 text-[13px]">
+                  ⚠️ Este proveedor está inactivo.
+                </p>
+            )}
+
+            {!remission.provider && (
+              <p className="text-red-500 text-[13px]">
+                ⚠️ El proveedor original fue eliminado.
+                Debes seleccionar un proveedor activo para continuar.
+              </p>
             )}
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <UserCheck className="h-5 w-5 text-amber-600" />
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <UserCheck className="h-5 w-5 text-amber-600" />
+              <span className="font-semibold text-amber-900 text-sm">
+                Supervisor
+              </span>
+            </div>
+                    
             {isEditing ? (
               <select
                 className="border rounded-md p-2 w-full"
@@ -121,19 +222,50 @@ export const GeneralInfoCard = ({
                 onChange={e => {
                   const sel = String(e.target.value)
                   const found = supervisors.find(s => String(s._id) === sel)
-                  onCustomChange("supervisor", found ? { _id: found._id, name: found.name } as any : { _id: sel, name: "" } as any)
+                  onCustomChange(
+                    "supervisor",
+                    found
+                      ? { _id: found._id, name: found.name }
+                      : ({ _id: sel, name: "" } as any)
+                  )
                 }}
               >
                 <option value="">Seleccionar supervisor</option>
-                {supervisors.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
+                {supervisorOptions.map(s => (
+                  <option key={s._id} value={s._id}>{s.name}</option>
+                ))}
               </select>
             ) : (
-              <span>{remission.supervisor?.name || "Sin supervisor"}</span>
+              <span className="text-amber-900 pl-7">
+                {remission.supervisor?.name || "Sin supervisor"}
+              </span>
+            )}
+          
+            {remission.supervisor &&
+              !supervisors.find(
+                s => s._id === remission.supervisor?._id && s.active
+              ) && (
+                <p className="text-amber-600 text-[13px]">
+                  ⚠️ Este supervisor está inactivo.
+                </p>
+            )}
+          
+            {!remission.supervisor && (
+              <p className="text-red-500 text-[13px]">
+                ⚠️ El supervisor original fue eliminado.
+                Debes seleccionar uno activo.
+              </p>
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <BadgeCheck className="h-5 w-5 text-amber-600" />
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <BadgeCheck className="h-5 w-5 text-amber-600" />
+              <span className="font-semibold text-amber-900 text-sm">
+                Analista de calidad
+              </span>
+            </div>
+
             {isEditing ? (
               <select
                 className="border rounded-md p-2 w-full"
@@ -141,36 +273,98 @@ export const GeneralInfoCard = ({
                 onChange={e => {
                   const sel = String(e.target.value)
                   const found = analysts.find(a => String(a._id) === sel)
-                  onCustomChange("analyst", found ? { _id: found._id, name: found.name } as any : { _id: sel, name: "" } as any)
+                  onCustomChange(
+                    "analyst",
+                    found
+                      ? { _id: found._id, name: found.name }
+                      : ({ _id: sel, name: "" } as any)
+                  )
                 }}
               >
                 <option value="">Seleccionar analista</option>
-                {analysts.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
+                {analystsOptions.map(a => (
+                  <option key={a._id} value={a._id}>{a.name}</option>
+                ))}
               </select>
             ) : (
-              <span>{remission.analyst?.name || "Sin analista"}</span>
+              <span className="text-amber-900 pl-7">
+                {remission.analyst?.name || "Sin analista"}
+              </span>
+            )}
+
+            {remission.analyst &&
+              !analysts.find(
+                a => a._id === remission.analyst?._id && a.active
+              ) && (
+                <p className="text-amber-600 text-[13px]">
+                  ⚠️ Este analista está inactivo.
+                </p>
+            )}
+
+            {!remission.analyst && (
+              <p className="text-red-500 text-[13px]">
+                ⚠️ El analista original fue eliminado.
+                Debes seleccionar uno activo.
+              </p>
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <BarrelIcon className="h-5 w-5 text-amber-600" />
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <BarrelIcon className="h-5 w-5 text-amber-600" />
+              <span className="font-semibold text-amber-900 text-sm">
+                Tanque
+              </span>
+            </div>
+
             {isEditing ? (
               <select
                 className="border rounded-md p-2 w-full"
                 value={String(remission.tank?._id ?? "")}
                 onChange={e => {
                   const sel = String(e.target.value)
-                  const found = tanks.find(t => String(t._id ?? t.id ?? "") === sel)
-                  onCustomChange("tank", found ? { _id: String(found._id ?? found.id), name: found.name } : { _id: sel, name: "" } as any)
+                  const found = tanks.find(t => String(t._id ?? t.id) === sel)
+                  onCustomChange(
+                    "tank",
+                    found
+                      ? { _id: String(found._id ?? found.id), name: found.name }
+                      : ({ _id: sel, name: "" } as any)
+                  )
                 }}
               >
                 <option value="">Seleccionar tanque</option>
-                {tanks.map(t => <option key={String(t._id ?? t.id)} value={String(t._id ?? t.id)}>{t.name}</option>)}
+                {tanksOptions.map(t => (
+                  <option
+                    key={String(t._id )}
+                    value={String(t._id)}
+                  >
+                    {t.name}
+                  </option>
+                ))}
               </select>
             ) : (
-              <span>{remission.tank?.name || "Sin tanque"}</span>
+              <span className="text-amber-900 pl-7">
+                {remission.tank?.name || "Sin tanque"}
+              </span>
+            )}
+
+            {remission.tank &&
+              !tanks.find(
+                t => t._id === remission.tank?._id && t.active
+              ) && (
+                <p className="text-amber-600 text-[13px]">
+                  ⚠️ Este tanque está inactivo.
+                </p>
+            )}
+
+            {!remission.tank && (
+              <p className="text-red-500 text-[13px]">
+                ⚠️ El tanque original fue eliminado.
+                Debes seleccionar uno activo.
+              </p>
             )}
           </div>
+
         </div>
       </CardContent>
     </Card>

@@ -114,7 +114,7 @@ export const ReceptionPage = () => {
 
 
   return (
-
+    
     <>
     
     {/* Titulo */}
