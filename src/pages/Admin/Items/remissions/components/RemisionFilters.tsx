@@ -14,7 +14,7 @@ type Filters = {
 interface props {
     filters: Filters,
     setFilters:  React.Dispatch<React.SetStateAction<Filters>>
-    tanks : TankProps
+    tanks : TankProps[]
 }
 
 
@@ -48,39 +48,23 @@ export const RemisionFilters = ({filters, setFilters, tanks}:props) => {
                 className="border-amber-200 focus:border-amber-400"
             />
         </FilterBox>
-
-<FilterBox title="Tanque">
-  <select
-    value={filters.tank}
-    onChange={(e) =>
-      setFilters({ ...filters, tank: e.target.value })
-    }
-    className="w-full px-3 py-2 border border-amber-200 rounded-md focus:border-amber-400 focus:ring-amber-400"
-  >
-    <option value="">Todos</option>
-
-    {tanks.map((tank) => (
-      <option key={tank._id} value={tank._id}>
-        {tank.name}
-      </option>
-    ))}
-  </select>
-</FilterBox>
-
-
-
-        {/* <FilterBox title="Tanque">
+        <FilterBox title="Tanque">
           <select
             value={filters.tank}
-            onChange={(e) => setFilters({ ...filters, tank: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, tank: e.target.value })
+            }
             className="w-full px-3 py-2 border border-amber-200 rounded-md focus:border-amber-400 focus:ring-amber-400"
           >
-              <option value="">Todos</option>
-              {tanks.map((q)=>(
-                <option key={q} value={q}>{q}</option>
-                ))}
+            <option value="">Todos</option>
+          
+            {tanks.map((tank) => (
+              <option key={tank._id} value={tank._id}>
+                {tank.name}
+              </option>
+            ))}
           </select>
-        </FilterBox> */}
+        </FilterBox>
         <FilterBox title="Usuario">
           <Input
             placeholder="Nombre del usuario"
