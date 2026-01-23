@@ -19,6 +19,7 @@ export const ActionMenu = ({
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const portalRef = useRef<HTMLDivElement>(null)
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
 
   useEffect(() => {
@@ -28,7 +29,9 @@ export const ActionMenu = ({
         menuRef.current &&
         !menuRef.current.contains(target) &&
         buttonRef.current &&
-        !buttonRef.current.contains(target)
+        !buttonRef.current.contains(target) &&
+        portalRef.current &&
+        !portalRef.current.contains(target)
       ) {
         setOpen(false)
       }
@@ -82,6 +85,7 @@ export const ActionMenu = ({
       {open &&
         createPortal(
           <div
+            ref={portalRef}
             className="fixed z-[9999] w-40 rounded-md border border-amber-200 bg-white shadow-lg"
             style={{
               top: `${menuPosition.top}px`,
