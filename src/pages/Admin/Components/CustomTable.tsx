@@ -18,61 +18,62 @@ export function CustomTable<T>({
   emptyMessage = "Sin datos disponibles",
 }: CustomTableProps<T>) {
   return (
-    <div className="w-full overflow-visible border border-amber-100 rounded-xl bg-white shadow-sm relative z-0">
-      <table className="min-w-full text-sm text-left border-collapse">
+    <div className="w-full border border-amber-100 rounded-xl bg-white shadow-sm relative z-0">
+      <div className="overflow-x-auto overflow-y-visible">
+        <table className="min-w-full text-sm text-left border-collapse">
 
-        <thead className="bg-amber-50 text-amber-800 font-semibold">
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={String(col.key)}
-                className="px-4 py-3 whitespace-nowrap border-b border-amber-100"
-              >
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        {/* Cuerpo */}
-        <tbody>
-          {data.length === 0 ? (
+          <thead className="bg-amber-50 text-amber-800 font-semibold">
             <tr>
-              <td
-                colSpan={columns.length}
-                className="text-center py-6 text-amber-700"
-              >
-                {emptyMessage}
-              </td>
+              {columns.map((col) => (
+                <th
+                  key={String(col.key)}
+                  className="px-4 py-3 whitespace-nowrap border-b border-amber-100"
+                >
+                  {col.label}
+                </th>
+              ))}
             </tr>
-          ) : (
-            data.map((item, index) => (
-              <tr
-                key={index}
-                className="hover:bg-amber-50 transition-colors border-b border-amber-100"
-              >
-                {columns.map((col) => (
-                  <td
-                    key={String(col.key)}
-                    className="px-4 py-3 text-amber-900 align-middle min-w-[100px] sm:min-w-[140px] md:min-w-[160px]"
-                  >
-                    {col.render ? (
-                      col.render(item)
-                    ) : (
-                      <span
-                        className="block truncate max-w-[100px] sm:max-w-[160px] md:max-w-[220px]"
-                        title={String((item as any)[col.key])}
-                      >
-                        {(item as any)[col.key]}
-                      </span>
-                    )}
-                  </td>
-                ))}
+          </thead>
+
+          <tbody>
+            {data.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-6 text-amber-700"
+                >
+                  {emptyMessage}
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.map((item, index) => (
+                <tr
+                  key={index}
+                  className="hover:bg-amber-50 transition-colors border-b border-amber-100"
+                >
+                  {columns.map((col) => (
+                    <td
+                      key={String(col.key)}
+                      className="px-4 py-3 text-amber-900 align-middle min-w-[140px] md:min-w-[160px]"
+                    >
+                      {col.render ? (
+                        col.render(item)
+                      ) : (
+                        <span
+                          className="block truncate max-w-[180px] md:max-w-[220px]"
+                          title={String((item as any)[col.key])}
+                        >
+                          {(item as any)[col.key]}
+                        </span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

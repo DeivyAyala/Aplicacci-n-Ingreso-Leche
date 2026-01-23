@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import { BanIcon, EditIcon, MoreVerticalIcon, TrashIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -9,14 +10,26 @@ interface ActionMenuProps {
   isActive?: boolean
 }
 
-export const ActionMenu = ({ onEdit, onToggleActive, onDelete, isActive }: ActionMenuProps) => {
+export const ActionMenu = ({
+  onEdit,
+  onToggleActive,
+  onDelete,
+  isActive,
+}: ActionMenuProps) => {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
 
-  // 👇 Detectar clic fuera del menú
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(target)
+      ) {
         setOpen(false)
       }
     }
@@ -27,15 +40,37 @@ export const ActionMenu = ({ onEdit, onToggleActive, onDelete, isActive }: Actio
       document.removeEventListener("mousedown", handleClickOutside)
     }
 
-    // Limpieza al desmontar
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [open])
 
+  useEffect(() => {
+    if (!open) return
+
+    const updatePosition = () => {
+      const rect = buttonRef.current?.getBoundingClientRect()
+      if (!rect) return
+      setMenuPosition({
+        top: rect.bottom + 8,
+        left: rect.right,
+      })
+    }
+
+    updatePosition()
+    window.addEventListener("resize", updatePosition)
+    window.addEventListener("scroll", updatePosition, true)
+
+    return () => {
+      window.removeEventListener("resize", updatePosition)
+      window.removeEventListener("scroll", updatePosition, true)
+    }
+  }, [open])
+
   return (
-    <div ref={menuRef} className="relative flex justify-center">
+    <div ref={menuRef} className="relative z-10 flex justify-center">
       <Button
+        ref={buttonRef}
         variant="outline"
         size="sm"
         className="border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
@@ -44,44 +79,53 @@ export const ActionMenu = ({ onEdit, onToggleActive, onDelete, isActive }: Actio
         Elegir Acción <MoreVerticalIcon className="h-4 w-4" />
       </Button>
 
-      {open && (
-        <div className="absolute right-0 top-10 bg-white border border-amber-200 rounded-md shadow-lg z-20 w-40">
-          <div className="px-3 py-2 border-b text-sm font-semibold text-amber-800">
-            Acciones
-          </div>
-          <button
-            onClick={() => {
-              setOpen(false)
-              onEdit?.()
+      {open &&
+        createPortal(
+          <div
+            className="fixed z-[9999] w-40 rounded-md border border-amber-200 bg-white shadow-lg"
+            style={{
+              top: `${menuPosition.top}px`,
+              left: `${menuPosition.left}px`,
+              transform: "translateX(-100%)",
             }}
-            className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
           >
-            <EditIcon className="h-4 w-4" /> Editar
-          </button>
-
-          {isActive !== undefined && (
+            <div className="px-3 py-2 border-b text-sm font-semibold text-amber-800">
+              Acciones
+            </div>
             <button
               onClick={() => {
                 setOpen(false)
-                onToggleActive?.()
+                onEdit?.()
               }}
               className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
             >
-              <BanIcon className="h-4 w-4" /> {isActive ? "Desactivar" : "Activar"}
+              <EditIcon className="h-4 w-4" /> Editar
             </button>
-          )}
 
-          <button
-            onClick={() => {
-              setOpen(false)
-              onDelete?.()
-            }}
-            className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"
-          >
-            <TrashIcon className="h-4 w-4" /> Eliminar
-          </button>
-        </div>
-      )}
+            {isActive !== undefined && (
+              <button
+                onClick={() => {
+                  setOpen(false)
+                  onToggleActive?.()
+                }}
+                className="w-full text-left px-3 py-2 flex items-center gap-2 text-amber-700 hover:bg-amber-50"
+              >
+                <BanIcon className="h-4 w-4" /> {isActive ? "Desactivar" : "Activar"}
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                setOpen(false)
+                onDelete?.()
+              }}
+              className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"
+            >
+              <TrashIcon className="h-4 w-4" /> Eliminar
+            </button>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

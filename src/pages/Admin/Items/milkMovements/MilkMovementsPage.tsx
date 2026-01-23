@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
+  DownloadIcon,
   EyeIcon,
   FactoryIcon,
   TrashIcon,
@@ -22,6 +23,7 @@ import { CreateMovementWizard } from "./components/CreateMovementWizard"
 import { MovementDetailsModal } from "./components/MovementDetailsModal"
 import { useDeleteMovement } from "../../hook/useDeleteMovement"
 import { ConfirmModal } from "../../Components/ConfirmModal"
+import { exportMovementsExcel } from "../../Helpers/ExportMovementsExcel"
 
 
 
@@ -47,7 +49,8 @@ export const MilkMovementsPage = () => {
     originTank: "",
     destinationTank: "",
     client: "",
-    movementDate: "",
+    dateFrom: "",
+    dateTo: "",
   })
 
   useEffect(() => {
@@ -109,8 +112,10 @@ export const MilkMovementsPage = () => {
     const matchesClient =
       !filters.client ||
       (movement.client ?? "").toLowerCase().includes(filters.client.toLowerCase())
-    const matchesDate =
-      !filters.movementDate || movementDate === filters.movementDate
+    const matchesDateFrom =
+      !filters.dateFrom || movementDate >= filters.dateFrom
+    const matchesDateTo =
+      !filters.dateTo || movementDate <= filters.dateTo
 
     return (
       matchesSearch &&
@@ -118,7 +123,8 @@ export const MilkMovementsPage = () => {
       matchesOriginTank &&
       matchesDestinationTank &&
       matchesClient &&
-      matchesDate
+      matchesDateFrom &&
+      matchesDateTo
     )
   })
 
@@ -301,6 +307,22 @@ export const MilkMovementsPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-amber-800">
+            <div className="mb-6 flex items-center justify-between">
+              <p className="text-amber-800">
+                Mostrando{" "}
+                <span className="font-semibold">{filteredMovements.length}</span>{" "}
+                movimientos
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportMovementsExcel(filteredMovements)}
+                className="flex items-center gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
+              >
+                <DownloadIcon className="h-4 w-4" />
+                Exportar
+              </Button>
+            </div>
             <CustomTable
               data={filteredMovements}
               columns={columns}

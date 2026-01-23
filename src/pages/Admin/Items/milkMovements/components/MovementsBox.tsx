@@ -10,7 +10,8 @@ type Filters = {
     originTank: string,
     destinationTank: string,
     client: string,
-    movementDate: string,
+    dateFrom: string,
+    dateTo: string,
 }
 
 interface propsMovementBox {
@@ -73,7 +74,7 @@ export const MovementsBox = ({
             </Button>
 
             {showFilters && (
-              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5 p-4 bg-amber-50/50 rounded-lg border border-amber-200">
+              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6 p-4 bg-amber-50/50 rounded-lg border border-amber-200">
                 <FilterBox title="Tipo">
                   <select
                     value={filters.type}
@@ -128,16 +129,26 @@ export const MovementsBox = ({
                     className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                   />
                 </FilterBox>
-                <FilterBox title="Fecha">
-                  <Input
-                    type="date"
-                    value={filters.movementDate}
-                    onChange={(e) =>
-                      setFilters({ ...filters, movementDate: e.target.value })
-                    }
-                    className="border-amber-200 focus:border-amber-400"
-                  />
-                </FilterBox>
+                <FilterBox title="Fecha Inicio">
+                    <Input
+                      type="date"
+                      value={filters.dateFrom}
+                      onChange={(e) =>
+                        setFilters({ ...filters, dateFrom: e.target.value })
+                      }
+                      className="border-amber-200 focus:border-amber-400"
+                    />
+                  </FilterBox>
+                  <FilterBox title="Fecha Final">
+                    <Input
+                      type="date"
+                      value={filters.dateTo}
+                      onChange={(e) =>
+                        setFilters({ ...filters, dateTo: e.target.value })
+                      }
+                      className="border-amber-200 focus:border-amber-400"
+                    />
+                  </FilterBox> 
               </div>
             )}
           </CardContent>

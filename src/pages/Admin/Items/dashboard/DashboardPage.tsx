@@ -1,151 +1,157 @@
-
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-
 import {
   DropletIcon,
   TrendingUpIcon,
-  UsersIcon,
-  PlusIcon,
-  FileTextIcon,
-  EyeIcon,
-  FlaskConicalIcon,
-  BarChart3Icon
+  PackageIcon,
+  ArrowUpRightIcon,
+  FactoryIcon,
+  ShoppingCartIcon,
 } from "lucide-react"
 
 
-import { Link } from "react-router"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
-import { Registros } from "../../Data/Registros"
+import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
+import { useGetDashboard } from "../../hook/useGetDashboard"
+import { useDashboardStore } from "../../store/dashboardStore"
+import type { DashboardRange } from "./types/Dashboard"
+import { DashboardRangeSelect } from "./components/DashboardRangeSelect"
+import { KpiCard } from "./components/KpiCard"
+import { ChartCard } from "./components/ChartCard"
+import { InventoryDistributionCard } from "./components/InventoryDistributionCard"
+import { TanksStatusCard } from "./components/TanksStatusCard"
 
 export const DashboardPage = () => {
+  const [range, setRange] = useState<DashboardRange>("day")
+  const { isLoading, isError } = useGetDashboard({ range })
+  const dashboard = useDashboardStore((state) => state.dashboard)
 
-  const totaLitros = Registros.reduce((acc, i) => acc + i.realVolume, 0)
-  const totalProveedores = new Set(Registros.map(i => i.provider)).size
+  const formatNumber = (value?: number) =>
+    new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 }).format(value ?? 0)
 
+  if (isLoading) {
+    return <CustomFullScreenLoading message="Cargando dashboard..." />
+  }
+
+  if (isError) {
+    return (
+      <>
+        <CustomJumbotron
+          title="Dashboard - Nutre Leche Control"
+          subtitle="Vision general del inventario y movimientos de leche en tiempo real"
+        />
+        <main className="container mx-auto px-6 py-8">
+          <Card>
+            <CardContent className="py-10 text-center text-muted-foreground">
+              No se pudo cargar el dashboard.
+            </CardContent>
+          </Card>
+        </main>
+      </>
+    )
+  }
+
+  const receptionLiters = dashboard?.kpis.receptionLiters ?? 0
+  const outputsLiters = dashboard?.kpis.outputsLiters ?? 0
+  const outputsProcess = dashboard?.kpis.outputsToProcessLiters ?? 0
+  const outputsSales = dashboard?.kpis.outputsSalesLiters ?? 0
+  const inventoryLiters = dashboard?.kpis.inventoryLiters ?? 0
+  const alertTanks = dashboard?.kpis.alertTanks ?? 0
 
   return (
     <>
-      {/* Header */}
-      {/* <Header/> */}
-      
-      {/*Titulo y Subtitulo */}
-     <CustomJumbotron 
-      title="Registro de Ingreso de Leche" 
-      subtitle="Monitorea la calidad, cantidad y gestiona los ingresos de leche en tiempo real" 
-     />
-
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
-        <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2 ">
-
-          {/* Resumen Diario */}
-          <Card className="lg:col-span-1">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BarChart3Icon className="h-5 w-5 text-primary" />
-                Resumen Diario
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Litros recibidos</span>
-                  <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
-                    <TrendingUpIcon className="h-3 w-3 mr-1" />
-                    +4%
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DropletIcon className="h-5 w-5 text-primary" />
-                  <span className="text-2xl font-bold">{totaLitros}</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Proveedores activos</span>
-                  <Badge variant="outline" className="text-muted-foreground">
-                    Sin cambios
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <UsersIcon className="h-5 w-5 text-primary" />
-                  <span className="text-2xl font-bold">{totalProveedores}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Calidad Promedio */}
-          <Card className="lg:col-span-1">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <FlaskConicalIcon className="h-5 w-5 text-primary" />
-                Calidad Promedio
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Grasa (%)</span>
-                  {/* <span className="text-sm text-muted-foreground">{promedioGrasa}%</span> */}
-                </div>
-                <Progress value={70} className="h-2" />
-                <p className="text-xs text-muted-foreground">Meta: 3.6 - 4.2%</p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Proteína (%)</span>
-                  {/* <span className="text-sm text-muted-foreground">{promedioProteina}%</span> */}
-                </div>
-                <Progress value={64} className="h-2" />
-                <p className="text-xs text-muted-foreground">Meta: 3.1 - 3.4%</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Acciones Rapidas  */}
-          <Card className="lg:col-span-1 md:col-span-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Acciones Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-             
-                <Button className="w-full justify-start gap-2 h-12 bg-primary hover:bg-primary/90">
-                    <PlusIcon className="h-4 w-4" />
-                      <Link to="/adm/ingreso">
-                        Nuevo Ingreso
-                      </Link>  
-                </Button>
-             
-
-              <Button variant="outline" className="w-full justify-start gap-2 h-12 bg-transparent">
-                <EyeIcon className="h-4 w-4" />
-                <Link to="/adm/historial" >
-                  Ver Remisiones
-                </Link>
-              </Button>
-
-              <Button className="w-full justify-start gap-2 h-12 bg-green-600 hover:bg-green-700 text-white">
-                <FileTextIcon className="h-4 w-4" />
-                Generar Reporte
-              </Button>
-            </CardContent>
-          </Card>
+      <main className="container mx-auto px-6 py-8 space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-amber-950">
+              Panel general
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Revisa recepciones, salidas e inventario con filtros rapidos.
+            </p>
+          </div>
+          <DashboardRangeSelect value={range} onChange={setRange} />
         </div>
 
-        {/* Datos Adicionales */}
-        {/* <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <CardInicio title="Temperatura Promedio" dato={`${temperaturaPromedio}°C`} escala="°C" className="text-blue-600"/>
-          <CardInicio title="pH Promedio" dato={pHPromedio} escala="pH" className="text-red-600"/>
-          <CardInicio title="Densidad" dato={`${densidadPromedio}°g/ml`} escala="g/ml" className="text-purple-600"/>
-        </div> */}
+        <div className="grid gap-6 lg:grid-cols-4">
+          <KpiCard
+            title="Recepcion total"
+            value={`${formatNumber(receptionLiters)} L`}
+            icon={<DropletIcon className="h-5 w-5 text-sky-500" />}
+            badge={
+              <Badge className="bg-emerald-100 text-emerald-700">
+                <TrendingUpIcon className="mr-1 h-3 w-3" />
+                +4%
+              </Badge>
+            }
+            footer={
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1">
+                  <ArrowUpRightIcon className="h-3 w-3 text-emerald-500" />
+                  {formatNumber(receptionLiters / 10)} hoy
+                </span>
+                <span>{formatNumber(receptionLiters)} L</span>
+              </div>
+            }
+            className="bg-sky-50/60"
+          />
+
+          <KpiCard
+            title="Salidas total"
+            value={`${formatNumber(outputsLiters)} L`}
+            icon={<FactoryIcon className="h-5 w-5 text-amber-500" />}
+            badge={
+              <Badge className="bg-amber-100 text-amber-700">
+                <TrendingUpIcon className="mr-1 h-3 w-3" />
+                +2%
+              </Badge>
+            }
+            footer={
+              <div className="flex items-center justify-between text-xs">
+                <span>{formatNumber(outputsProcess)} proceso</span>
+                <span>{formatNumber(outputsSales)} ventas</span>
+              </div>
+            }
+            className="bg-amber-50/70"
+          />
+
+          <KpiCard
+            title="Inventario"
+            value={`${formatNumber(inventoryLiters)} L`}
+            icon={<PackageIcon className="h-5 w-5 text-emerald-600" />}
+            badge={
+              <Badge className="bg-emerald-100 text-emerald-700">
+                {formatNumber(alertTanks)} alerta
+              </Badge>
+            }
+            footer={
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1">
+                  <ShoppingCartIcon className="h-3 w-3" />
+                  Al dia
+                </span>
+                <span>{formatNumber(inventoryLiters / 12)} L/dia</span>
+              </div>
+            }
+            className="bg-emerald-50/60"
+          />
+
+          <TanksStatusCard tanks={dashboard?.tanks ?? []} />
+          <ChartCard
+            labels={dashboard?.chart.labels ?? []}
+            reception={dashboard?.chart.reception ?? []}
+            outputs={dashboard?.chart.outputs ?? []}
+            range={range}
+            onRangeChange={setRange}
+          />
+
+          <InventoryDistributionCard
+            data={dashboard?.inventoryDistribution ?? []}
+          />
+        </div>
       </main>
     </>
   )
