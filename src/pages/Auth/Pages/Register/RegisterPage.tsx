@@ -7,7 +7,7 @@ import {  Separator } from "@radix-ui/react-select"
 import { User, Mail } from "lucide-react"
 import { useState, type FormEvent } from "react"
 
-import { Link, useNavigate } from "react-router"
+import { Link } from "react-router"
 // import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
 import { Titulo } from "../components/Titulo"
 import { toast } from "sonner"
@@ -22,32 +22,34 @@ import { PasswordField } from "../Login/ui/PasswordField"
 
 
 export const RegisterPage = () => {
-  const navigate = useNavigate()
   const { register, user } = useAuthStore()
   const [isPosting, setIsPosting] = useState(false)
 
   const handleRegister = async(e: FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
     setIsPosting(true)
-    const formData = new FormData(e.target as HTMLFormElement);
-    const name = formData.get('name') as string
-    const lastName = formData.get('lastName') as string
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const isValid = await register(name, lastName, email, password);
-    if(isValid){
-      if(!user) return
-      if(user.rol === 'Administrador'){
-        navigate("/adm/inicio")
-      } else if( user.rol === 'Operador' ){
-        navigate("/operador/inicio")
-      }else {
-        navigate("/")
-      }
-      return
+    const notify = (type: "success" | "error", message: string) => {
+      const t = toast as any
+      if (t?.[type]) t[type](message)
+      else if (typeof t === "function") t(message)
     }
-    toast.error('Correo ya esta Registrado')
-    setIsPosting(false)
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const name = formData.get('name') as string
+      const lastName = formData.get('lastName') as string
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+      const result = await register(name, lastName, email, password);
+      if (result.ok) {
+        notify("success", result.msg || "Creado exitosamente, revisa tu email")
+        (e.target as HTMLFormElement).reset()
+        return
+      }
+      notify("error", result.msg || "Correo ya esta Registrado")
+    } finally {
+      setIsPosting(false)
+    }
   }
 
 

@@ -2,6 +2,8 @@
 import { LoginPage } from "../Auth/Pages/Login/LoginPage"
 import { RegisterPage } from "../Auth/Pages/Register/RegisterPage"
 import { Navigate, Route, Routes } from "react-router"
+
+import { VerifyEmailPage } from "../Auth/Pages/Verify/VerifyEmailPage"
 import { RecuperarPasswordPage } from "../Auth/Pages/RecuperarContraseña/RecuperarPasswordPage"
 
 export const AuthLoginRoutes = () => {
@@ -10,7 +12,8 @@ export const AuthLoginRoutes = () => {
       <Route path="/" element={<Navigate to="auth/login" />} />
       <Route path="auth/login" element={<LoginPage />} />
       <Route path="auth/register" element={<RegisterPage />} />
-       <Route path="auth/recuperarContraseña" element={<RecuperarPasswordPage />} />
+      <Route path="verify" element={<VerifyEmailPage />} />
+      <Route path="auth/recuperarContraseña" element={<RecuperarPasswordPage/>} />
     </Routes>
   )
 }

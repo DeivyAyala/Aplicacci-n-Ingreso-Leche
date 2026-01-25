@@ -1,8 +1,9 @@
-import type { User } from '@/pages/Registro/Items/Usuarios/types/User'
+
 import { create } from 'zustand'
 import { loginAction } from '../actions/login.action'
 import { checkAuthAction } from '../actions/check-auth.action'
 import { registerAction } from '../actions/register.action'
+import type { User } from '@/pages/Admin/Items/users/types/User'
 
 type AuthStatus = 'authenticated' | 'not-authenticated' | 'checking'
 
@@ -21,7 +22,7 @@ type AuthState = {
   register: (name: string, 
     lastName: string, 
     email: string, 
-    password: string ) => Promise<boolean>
+    password: string ) => Promise<{ ok: boolean; msg: string }>
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -71,8 +72,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       return true
     } catch (error) {
       set({
-        user: undefined,
-        token: undefined,
+        user: null,
+        token: null,
         AuthStatus: 'not-authenticated'
       })
       return false
@@ -81,18 +82,21 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   register:async(name: string, lastName: string, email: string, password: string ) => {
     try {
       const data = await registerAction(name, lastName, email, password);
-      localStorage.setItem('token', data.token)
+      localStorage.removeItem('token')
       set({
-        user: data.user,
-        token: data.token,
-        AuthStatus: 'authenticated'
+        user: null,
+        token: null,
+        AuthStatus: 'not-authenticated'
       })
-      return true
+      return { ok: true, msg: data.msg }
       
-    } catch (error) {
+    } catch (error: any) {
       localStorage.removeItem('token')
       set({user: null, token: null, AuthStatus: 'not-authenticated'})
-      return false
+      return {
+        ok: false,
+        msg: error?.response?.data?.msg || "Error al crear usuario",
+      }
     }
   }
 
