@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+﻿import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
@@ -67,7 +67,7 @@ export const LoginPage = () => {
       />
           <CardContent className="space-y-4">
 
-            {/* Botones de autenticación social */}
+            {/* Botones de autenticaciÃ³n social */}
             <div className="space-y-3">
               <SocialButton 
               onclick={handleSocialLogin} 
@@ -111,7 +111,7 @@ export const LoginPage = () => {
                 <Separator className="w-full" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">O continúa con</span>
+                <span className="bg-card px-2 text-muted-foreground">O continuar con</span>
               </div>
             </div>
 
@@ -119,7 +119,7 @@ export const LoginPage = () => {
             <form onSubmit={handleLogin} className="space-y-4">
 
               <div className="space-y-2">
-                <Label htmlFor="email">Correo electrónico</Label>
+                <Label htmlFor="email">Correo electronico</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -155,7 +155,7 @@ export const LoginPage = () => {
                   </Label>
                 </div>
                 <Button variant="link" className="px-0 text-primary hover:text-primary/80">
-                  <Link to='/auth/recuperarContraseña'>
+                  <Link to='/auth/forgot-password'>
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </Button>
@@ -195,3 +195,4 @@ export const LoginPage = () => {
   </HeaderFooter>
   )
 }
+

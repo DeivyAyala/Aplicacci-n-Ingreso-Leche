@@ -28,27 +28,25 @@ export const RegisterPage = () => {
   const handleRegister = async(e: FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
     setIsPosting(true)
-    const notify = (type: "success" | "error", message: string) => {
-      const t = toast as any
-      if (t?.[type]) t[type](message)
-      else if (typeof t === "function") t(message)
-    }
 
     try {
       const formData = new FormData(e.target as HTMLFormElement);
-      const name = formData.get('name') as string
-      const lastName = formData.get('lastName') as string
-      const email = formData.get('email') as string
-      const password = formData.get('password') as string
+      const name = formData.get('name') as string;
+      const lastName = formData.get('lastName') as string;
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+    
       const result = await register(name, lastName, email, password);
+    
       if (result.ok) {
-        notify("success", result.msg || "Creado exitosamente, revisa tu email")
-        (e.target as HTMLFormElement).reset()
-        return
+        toast.success(result.msg || "Creado exitosamente, revisa tu email");
+        (e.target as HTMLFormElement).reset();
+        return;
       }
-      notify("error", result.msg || "Correo ya esta Registrado")
+    
+      toast.error(result.msg || "Correo ya está registrado");
     } finally {
-      setIsPosting(false)
+      setIsPosting(false);
     }
   }
 

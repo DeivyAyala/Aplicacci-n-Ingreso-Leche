@@ -20,13 +20,18 @@ export const ChartCard = ({
   const maxValue = Math.max(1, ...reception, ...outputs)
 
   return (
-    <Card className="lg:col-span-2">
-      <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <Card className="xl:col-span-2">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-lg">Recepciones y salidas</CardTitle>
-        <DashboardRangeSelect value={range} onChange={onRangeChange} size="sm" />
+        <DashboardRangeSelect
+          value={range}
+          onChange={onRangeChange}
+          size="sm"
+          className="w-full sm:w-auto"
+        />
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex h-56 items-end gap-3 overflow-x-auto rounded-xl bg-gradient-to-b from-white to-amber-50/40 px-4 pb-4 pt-6">
+        <div className="flex h-48 items-end gap-2 overflow-x-auto rounded-xl bg-gradient-to-b from-white to-amber-50/40 px-3 pb-3 pt-5 sm:h-56 sm:gap-3 sm:px-4 sm:pb-4 sm:pt-6">
           {labels.length === 0 && (
             <div className="text-sm text-muted-foreground">
               No hay datos para mostrar.
@@ -42,12 +47,12 @@ export const ChartCard = ({
               <div key={label + index} className="flex flex-col items-center gap-2">
                 <div className="flex items-end gap-1">
                   <div
-                    className="w-3 rounded-md bg-sky-400 shadow-sm"
+                    className="w-2.5 rounded-md bg-sky-400 shadow-sm sm:w-3"
                     style={{ height: receptionHeight }}
                     title={`Recepcion: ${receptionValue}`}
                   />
                   <div
-                    className="w-3 rounded-md bg-amber-400 shadow-sm"
+                    className="w-2.5 rounded-md bg-amber-400 shadow-sm sm:w-3"
                     style={{ height: outputsHeight }}
                     title={`Salidas: ${outputsValue}`}
                   />

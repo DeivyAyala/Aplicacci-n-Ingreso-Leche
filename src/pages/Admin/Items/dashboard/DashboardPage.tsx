@@ -43,7 +43,7 @@ export const DashboardPage = () => {
           title="Dashboard - Nutre Leche Control"
           subtitle="Vision general del inventario y movimientos de leche en tiempo real"
         />
-        <main className="container mx-auto px-6 py-8">
+        <main className="container mx-auto px-4 py-6 sm:px-6 sm:py-8">
           <Card>
             <CardContent className="py-10 text-center text-muted-foreground">
               No se pudo cargar el dashboard.
@@ -63,8 +63,8 @@ export const DashboardPage = () => {
 
   return (
     <>
-      <main className="container mx-auto px-6 py-8 space-y-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <main className="container mx-auto px-4 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-amber-950">
               Panel general
@@ -73,10 +73,14 @@ export const DashboardPage = () => {
               Revisa recepciones, salidas e inventario con filtros rapidos.
             </p>
           </div>
-          <DashboardRangeSelect value={range} onChange={setRange} />
+          <DashboardRangeSelect
+            value={range}
+            onChange={setRange}
+            className="w-full sm:w-auto"
+          />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard
             title="Recepcion total"
             value={`${formatNumber(receptionLiters)} L`}

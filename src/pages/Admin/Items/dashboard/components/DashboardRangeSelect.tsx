@@ -5,12 +5,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 import type { DashboardRange } from "../types/Dashboard"
 
 interface DashboardRangeSelectProps {
   value: DashboardRange
   onChange: (value: DashboardRange) => void
   size?: "sm" | "default"
+  className?: string
 }
 
 const RANGE_LABELS: Record<DashboardRange, string> = {
@@ -24,10 +26,14 @@ export const DashboardRangeSelect = ({
   value,
   onChange,
   size = "default",
+  className,
 }: DashboardRangeSelectProps) => {
   return (
     <Select value={value} onValueChange={(val) => onChange(val as DashboardRange)}>
-      <SelectTrigger size={size} className="min-w-[160px]">
+      <SelectTrigger
+        size={size}
+        className={cn("min-w-[160px] sm:min-w-[180px]", className)}
+      >
         <SelectValue placeholder="Selecciona rango" />
       </SelectTrigger>
       <SelectContent>

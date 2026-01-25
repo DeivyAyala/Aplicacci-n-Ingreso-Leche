@@ -21,7 +21,7 @@ const formatLiters = (value?: number) =>
 
 export const TanksStatusCard = ({ tanks }: TanksStatusCardProps) => {
   return (
-    <Card className="lg:row-span-2">
+    <Card className="h-full xl:row-span-2">
       <CardHeader>
         <CardTitle className="text-lg">Estado de los tanques</CardTitle>
       </CardHeader>

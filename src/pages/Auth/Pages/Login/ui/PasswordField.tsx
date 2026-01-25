@@ -17,15 +17,15 @@ export const PasswordField = ({value, name, onChange}: props) => {
     <div className="relative">
         <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"} //Para ocultar o no contraseña
-                    placeholder="••••••••"
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    className="pl-10 pr-10 h-11"
-                    required
-                  />
+              id="password"
+              type={showPassword ? "text" : "password"} //Para ocultar o no contraseña
+              placeholder="••••••••"
+              name={name}
+              value={value}
+              onChange={onChange}
+              className="pl-10 pr-10 h-11"
+              required
+            />
         <Button
             type="button"
             variant="ghost"
