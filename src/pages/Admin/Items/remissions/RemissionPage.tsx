@@ -14,6 +14,7 @@ import { exportDataExcel } from "../../Helpers/ExportDataExcel"
 import { useIngreso } from "../../hook/useIngresos"
 import { useTanksStore } from "../../store/tanksStore"
 import { useGetTanks } from "../../hook/useGetTanks"
+import { toBogotaDateParts } from "../../Helpers/dateTime"
 
 
 
@@ -30,9 +31,9 @@ export const RemissionPage =() => {
     }, [fetchedTanks])
 
   const registros = (data?.ingresos || []).map((item) => {
-   const fecha = new Date(item.customDate)
-   const date = fecha.toISOString().split("T")[0]
-   const time = fecha.toISOString().split("T")[1].slice(0, 5)
+   const bogotaParts = toBogotaDateParts(item.customDate)
+   const date = bogotaParts?.date ?? ""
+   const time = bogotaParts?.time ?? ""
 
    return {
      id: item._id,

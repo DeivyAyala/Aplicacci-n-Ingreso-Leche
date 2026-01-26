@@ -15,6 +15,7 @@ import type { PropsRegitros } from "../../types/typeRegistro"
 import { useQueryClient } from "@tanstack/react-query"
 import { Firm } from "./components/Firm"
 import { useDeleteRemission } from "../../hook/useDeleteRemission"
+import { toBogotaDateParts, toUtcFromBogotaDateTime } from "../../Helpers/dateTime"
 
 
 
@@ -48,11 +49,9 @@ export const DetailsPage = () => {
     if (!data?.ingreso) return;
 
     const ingreso = data.ingreso;
-    const fecha = new Date(ingreso.customDate);
-    
-
-    const date = fecha.toISOString().split("T")[0];
-    const time = fecha.toISOString().split("T")[1].slice(0, 5);
+    const bogotaParts = toBogotaDateParts(ingreso.customDate);
+    const date = bogotaParts?.date ?? "";
+    const time = bogotaParts?.time ?? "";
 
     const base: PropsRegitros = {
       id: ingreso._id,
@@ -114,7 +113,7 @@ export const DetailsPage = () => {
       if (name === "date" || name === "time") {
         const newDate = name === "date" ? value : prev.date
         const newTime = name === "time" ? value : prev.time
-        updated.customDate = `${newDate}T${newTime}:00.000Z`
+        updated.customDate = toUtcFromBogotaDateTime(newDate, newTime) as string
       }
 
       return updated as PropsRegitros

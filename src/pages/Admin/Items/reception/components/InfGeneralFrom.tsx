@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Provider } from "../../provider/types/Provider"
 import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form"
+import { getBogotaTodayDateString } from "@/pages/Admin/Helpers/dateTime"
 
 interface propsInfo {
   formState: PropsRegitros
@@ -18,7 +19,7 @@ interface propsInfo {
 
 export const InfGeneralFrom = ({ providers, register, setValue, formState, errors }: propsInfo) => {
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getBogotaTodayDateString();
 
   const activeProviders = providers.filter(p => p.active)
 

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import {
   SaveIcon,
@@ -19,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useCreateRemission } from "../../hook/useCreateRemission"
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading"
+import { toUtcFromBogotaDateTime } from "../../Helpers/dateTime"
 
 
 
@@ -88,6 +88,7 @@ export const ReceptionPage = () => {
 
 
 
+
   const onSubmit = async (data: PropsRegitros) => {
     if (isSelectedTankFull) {
       toast.error("El tanque seleccionado esta lleno. Selecciona otro tanque")
@@ -97,7 +98,7 @@ export const ReceptionPage = () => {
       toast.error("Con este ingreso el tanque supera la capacidad maxima")
       return
     }
-    const customDate = new Date(`${data.date}T${data.time}:00`).toISOString();
+    const customDate = toUtcFromBogotaDateTime(data.date, data.time);
 
     const payload = {
       provider: data.provider?._id,

@@ -19,7 +19,7 @@ const RANGE_LABELS: Record<DashboardRange, string> = {
   day: "Hoy",
   week: "Ultimos 7 dias",
   month: "Este mes",
-  year: "Este ano",
+  year: "Este año",
 }
 
 export const DashboardRangeSelect = ({

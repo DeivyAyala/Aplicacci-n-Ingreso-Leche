@@ -9,6 +9,7 @@ import type {
   MovementsType,
 } from "../types/MilkMovement";
 import { useCreateMovimiento } from "../../../hook/useCreateMovement";
+import { toUtcFromBogota } from "../../../Helpers/dateTime";
 
 interface CreateMovementWizardProps {
   open: boolean;
@@ -49,7 +50,21 @@ const movementOptions: Array<{
 const formatLiters = (value: number) =>
   new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 }).format(value);
 
-const toDateTimeLocal = (date: Date) => date.toISOString().slice(0, 16);
+const toBogotaDateTimeLocal = (date: Date) => {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Bogota",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(date);
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}T${map.hour}:${map.minute}`;
+};
 
 export const CreateMovementWizard = ({
   open,
@@ -67,7 +82,9 @@ export const CreateMovementWizard = ({
   const [quantity, setQuantity] = useState("");
   const [processType, setProcessType] = useState<MovementProcesType | "">("");
   const [client, setClient] = useState("");
-  const [movementDate, setMovementDate] = useState(toDateTimeLocal(new Date()));
+  const [movementDate, setMovementDate] = useState(
+    toBogotaDateTimeLocal(new Date())
+  );
   const [openConfirm, setOpenConfirm] = useState(false);
 
   useEffect(() => {
@@ -79,7 +96,7 @@ export const CreateMovementWizard = ({
     setQuantity("");
     setProcessType("");
     setClient("");
-    setMovementDate(toDateTimeLocal(new Date()));
+    setMovementDate(toBogotaDateTimeLocal(new Date()));
   }, [open, initialType]);
 
   const originTankData = useMemo(
@@ -139,7 +156,7 @@ export const CreateMovementWizard = ({
         destinationTank: movementType === "TRASLADO" ? destinationTank : undefined,
         client: movementType === "VENTA" ? client : undefined,
         quantity: quantityValue,
-        movementDate,
+        movementDate: toUtcFromBogota(movementDate) || undefined,
       });
       onClose();
     } catch (error) {
@@ -204,7 +221,7 @@ export const CreateMovementWizard = ({
                   <option value="">Selecciona un tanque</option>
                   {tanks.map((tank) => (
                     <option key={tank._id} value={tank._id} disabled={!tank.active}>
-                      {tank.name} Â· {formatLiters(tank.currentCapacity)} L Â·{" "}
+                      {tank.name} · {formatLiters(tank.currentCapacity)} L ·{" "}
                       {tank.active ? "Activo" : "Inactivo"}
                     </option>
                   ))}
@@ -268,7 +285,7 @@ export const CreateMovementWizard = ({
                     <option value="">Selecciona un tanque</option>
                     {tanks.map((tank) => (
                       <option key={tank._id} value={tank._id} disabled={!tank.active}>
-                        {tank.name} Â· Capacidad {formatLiters(tank.capacity)} L Â·{" "}
+                        {tank.name} · Capacidad {formatLiters(tank.capacity)} L ·{" "}
                         Actual {formatLiters(tank.currentCapacity)} L
                       </option>
                     ))}
@@ -394,7 +411,7 @@ export const CreateMovementWizard = ({
                   <span className="font-semibold">
                     {originTankData?.name ?? "-"} ({formatLiters(originInventory)} L)
                   </span>{" "}
-                  â†’ {formatLiters(originRemaining)} L
+                  ? {formatLiters(originRemaining)} L
                 </p>
                 {movementType === "TRASLADO" && (
                   <p>
@@ -403,7 +420,7 @@ export const CreateMovementWizard = ({
                       {destinationTankData?.name ?? "-"} (
                       {formatLiters(destinationInventory)} L)
                     </span>{" "}
-                    â†’ {formatLiters(destinationResult)} L
+                    ? {formatLiters(destinationResult)} L
                   </p>
                 )}
                 {movementType === "PROCESO" && (
