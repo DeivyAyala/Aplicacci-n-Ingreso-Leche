@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { CustomModal } from "@/pages/Admin/Components/CustomModal"
 import { ImageIcon } from "lucide-react"
 import type { Provider } from "../types/Provider"
-import { useForm } from "react-hook-form"
+import { useForm, type FieldError } from "react-hook-form"
 import { useEffect } from "react"
 
 

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ConfirmModal } from "@/pages/Admin/Components/ConfirmModal"
 import { useDeleteRemission } from "@/pages/Admin/hook/useDeleteRemission"
-import type { PropsRegitros } from "@/pages/Admin/types/typeRegistro"
+import type { StaffProps } from "@/pages/Admin/Items/staff/types/Staff"
 
 import { CalendarIcon, TruckIcon, UserIcon, EyeIcon, TrashIcon, BarrelIcon } from "lucide-react"
 import { useState } from "react"
@@ -13,9 +13,24 @@ import { toast } from "sonner"
 
 
 
-interface props{
-    registro: PropsRegitros
-    index: number
+export interface RemisionCardData {
+  id: string
+  date: string
+  time: string
+  providerName: string
+  userName: string
+  tankId: string
+  tankName: string
+  volume: number
+  realVolume: number
+  notes: string[]
+  supervisor?: Partial<StaffProps>
+  analyst?: Partial<StaffProps>
+}
+
+interface props {
+  registro: RemisionCardData
+  index: number
 }
 
 export const RemisionCard = ({registro, index}: props) => {
@@ -45,7 +60,7 @@ export const RemisionCard = ({registro, index}: props) => {
             <div className="flex items-center justify-between">
                 <CardTitle className="text-lg text-amber-900 flex items-center gap-2">
                     <img
-                      src="/public/IconoLeche.png"
+                      src="https://i.pinimg.com/1200x/90/91/40/909140745e79818c382716b25cb05e14.jpg"
                       alt="Remisión"
                       className="h-10 w-10 rounded-lg object-cover border border-amber-200"
                     />
@@ -72,13 +87,13 @@ export const RemisionCard = ({registro, index}: props) => {
                 </div>
                 <div className="flex items-center gap-2">
                     <TruckIcon className="h-4 w-4 text-amber-600" />
-                    <span className="text-amber-800 font-medium">{registro.provider}</span>
+                    <span className="text-amber-800 font-medium">{registro.providerName}</span>
                 </div>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-amber-200">
               <div className="flex items-center gap-2">
                 <UserIcon className="h-4 w-4 text-amber-600" />
-                <span className="text-sm font-medium text-amber-900">{registro.user}</span>
+                <span className="text-sm font-medium text-amber-900">{registro.userName}</span>
               </div>
               {/* CONTENEDOR DE BOTONES RESPONSIVO */}
               <div className="flex flex-wrap justify-end gap-2 w-full">

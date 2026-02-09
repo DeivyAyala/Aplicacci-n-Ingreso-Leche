@@ -133,7 +133,7 @@ const handleCreate = async (formData: Provider) => {
       await editProviderAsync({
         id: updated._id,
         name: updated.name,
-        address: updated.address,
+        addres: updated.address,
         nit: updated.nit,
         email: updated.email,
         phone: updated.phone,

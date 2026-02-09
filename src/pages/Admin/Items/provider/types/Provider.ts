@@ -2,13 +2,13 @@ export interface Provider {
   _id?: string
   id?: string
   name: string
-  nit: string
+  nit: any
   email: string
   phone?: string
   address: string
   inCharge: string
   active: boolean
-  imageUrl?: string | null
+  imageUrl?: string | null 
   createdAt? : string
   updatedAt?: string
 }

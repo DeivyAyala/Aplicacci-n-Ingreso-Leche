@@ -19,4 +19,5 @@ export interface PropsRegitros {
   analyst?: Partial<StaffProps>
   tank?: Partial<TankProps>
   customDate?: string
+  ingreso?: any
 }

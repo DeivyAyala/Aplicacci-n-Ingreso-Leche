@@ -7,7 +7,7 @@ import type {
 
 export interface CreateMovementInput {
   type?: MovementsType;
-  processType?: MovementProcesType;
+  processType?: MovementProcesType | any;
   originTank?: string;
   destinationTank?: string;
   client?: string;

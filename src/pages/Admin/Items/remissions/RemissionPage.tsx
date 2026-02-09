@@ -6,7 +6,7 @@ import {
   SearchIcon,
   DownloadIcon,
 } from "lucide-react"
-import { RemisionCard } from "./components/RemisionCard"
+import { RemisionCard, type RemisionCardData } from "./components/RemisionCard"
 import { SearchBox } from "./components/SearchBox"
 import { RemisionFilters } from "./components/RemisionFilters"
 import { CustomJumbotron } from "../../Components/CustomJumbotron"
@@ -30,7 +30,7 @@ export const RemissionPage =() => {
       }
     }, [fetchedTanks])
 
-  const registros = (data?.ingresos || []).map((item) => {
+  const registros: RemisionCardData[] = (data?.ingresos || []).map((item) => {
    const bogotaParts = toBogotaDateParts(item.customDate)
    const date = bogotaParts?.date ?? ""
    const time = bogotaParts?.time ?? ""
@@ -39,15 +39,15 @@ export const RemissionPage =() => {
      id: item._id,
      date,
      time,
-     provider: item.provider?.name || "Sin proveedor",
+     providerName: item.provider?.name || "Sin proveedor",
      volume: item.volume,
      realVolume: item.realVolume,
-     user: item.user?.name || "Sin usuario",
+     userName: item.user?.name || "Sin usuario",
      notes: Array.isArray(item.notes) ? item.notes : [],
      supervisor: item.supervisor || "",
      analyst: item.analyst || "",
-     tank: item.tank?._id || "",
-    tankName: item.tank?.name || "Sin tanque",
+     tankId: item.tank?._id || "",
+     tankName: item.tank?.name || "Sin tanque",
 
    }
   })
@@ -70,16 +70,17 @@ export const RemissionPage =() => {
   const filtroRegistros = registros.filter((registro) => {
     const matchesSearch =
       registro.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      registro.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      registro.user.toLowerCase().includes(searchTerm.toLowerCase());
+      registro.providerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      registro.userName.toLowerCase().includes(searchTerm.toLowerCase());
       
 
     const matchesDateFrom = !filters.dateFrom || registro.date >= filters.dateFrom;
     const matchesDateTo = !filters.dateTo || registro.date <= filters.dateTo;
     const matchesProvider =
-      !filters.provider || registro.provider.toLowerCase().includes(filters.provider.toLowerCase());
-    const matchesTank = !filters.tank || registro.tank === filters.tank;
-    const matchesUser = !filters.user || registro.user.toLowerCase().includes(filters.user.toLowerCase());
+      !filters.provider || registro.providerName.toLowerCase().includes(filters.provider.toLowerCase());
+    const matchesTank = !filters.tank || registro.tankId === filters.tank;
+    const matchesUser =
+      !filters.user || registro.userName.toLowerCase().includes(filters.user.toLowerCase());
 
     return matchesSearch && matchesDateFrom && matchesDateTo && matchesProvider && matchesTank && matchesUser
   })

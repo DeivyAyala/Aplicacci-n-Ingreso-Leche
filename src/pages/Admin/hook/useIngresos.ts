@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { getIngresosActions } from "../actions/get-ingresos.action"
+import { getIngresosActions, type IngresosResponse } from "../actions/get-ingresos.action"
 
 export const useIngreso = () => {
  //TODO: Viene Logica
-  return useQuery({
+  return useQuery<IngresosResponse>({
     queryKey: ['ingresos'],
     refetchOnWindowFocus: true,
     queryFn: getIngresosActions,

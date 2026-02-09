@@ -3,7 +3,7 @@ export interface TankProps {
     id: string
     name: string
     active: boolean
-    capacity: number
+    capacity: number 
     currentCapacity: number
     createdAt? : string
     updatedAt?: string

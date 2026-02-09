@@ -8,7 +8,7 @@ import type { Provider } from "../types/Provider"
 interface PropsViewProveedor {
   isOpen: boolean
   onClose: () => void
-  provider: Provider | null | undefined
+  provider: Provider | null | undefined 
 }
 
 export const ViewProvider = ({ isOpen, onClose, provider }: PropsViewProveedor) => {

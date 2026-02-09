@@ -37,7 +37,7 @@ export const TanksPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [tankToDelete, setTankToDelete] = useState<String | null>(null)
+  const [tankToDelete, setTankToDelete] = useState<string | null>(null)
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
 
