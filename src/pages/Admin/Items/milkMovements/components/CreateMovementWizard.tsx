@@ -221,7 +221,7 @@ export const CreateMovementWizard = ({
                   <option value="">Selecciona un tanque</option>
                   {tanks.map((tank) => (
                     <option key={tank._id} value={tank._id} disabled={!tank.active}>
-                      {tank.name} · {formatLiters(tank.currentCapacity)} L ·{" "}
+                      {tank.name} - {formatLiters(tank.currentCapacity)} L -{" "}
                       {tank.active ? "Activo" : "Inactivo"}
                     </option>
                   ))}
@@ -285,7 +285,7 @@ export const CreateMovementWizard = ({
                     <option value="">Selecciona un tanque</option>
                     {tanks.map((tank) => (
                       <option key={tank._id} value={tank._id} disabled={!tank.active}>
-                        {tank.name} · Capacidad {formatLiters(tank.capacity)} L ·{" "}
+                        {tank.name} - Capacidad {formatLiters(tank.capacity)} L -{" "}
                         Actual {formatLiters(tank.currentCapacity)} L
                       </option>
                     ))}

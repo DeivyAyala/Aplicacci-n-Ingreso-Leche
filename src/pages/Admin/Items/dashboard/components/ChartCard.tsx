@@ -8,6 +8,7 @@ interface ChartCardProps {
   outputs: number[]
   range: DashboardRange
   onRangeChange: (range: DashboardRange) => void
+  periodLabel?: string
 }
 
 export const ChartCard = ({
@@ -16,13 +17,19 @@ export const ChartCard = ({
   outputs,
   range,
   onRangeChange,
+  periodLabel,
 }: ChartCardProps) => {
   const maxValue = Math.max(1, ...reception, ...outputs)
 
   return (
     <Card className="xl:col-span-2">
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle className="text-lg">Recepciones y salidas</CardTitle>
+        <div>
+          <CardTitle className="text-lg">Recepciones y salidas</CardTitle>
+          {periodLabel && (
+            <p className="text-xs text-muted-foreground">{periodLabel}</p>
+          )}
+        </div>
         <DashboardRangeSelect
           value={range}
           onChange={onRangeChange}

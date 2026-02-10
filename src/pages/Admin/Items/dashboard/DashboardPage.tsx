@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -28,6 +28,26 @@ export const DashboardPage = () => {
   const [range, setRange] = useState<DashboardRange>("day")
   const { isLoading, isError } = useGetDashboard({ range })
   const dashboard = useDashboardStore((state) => state.dashboard)
+
+  const periodLabel = useMemo(() => {
+    if (!dashboard?.from || !dashboard?.to) return ""
+    const fromDate = new Date(dashboard.from)
+    const toDate = new Date(dashboard.to)
+    if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) {
+      return ""
+    }
+
+    const inclusiveTo = new Date(toDate.getTime() - 24 * 60 * 60 * 1000)
+    const formatter = new Intl.DateTimeFormat("es-CO", {
+      day: "2-digit",
+      month: "short",
+    })
+
+    const fromLabel = formatter.format(fromDate)
+    const toLabel = formatter.format(inclusiveTo)
+
+    return fromLabel === toLabel ? fromLabel : `${fromLabel} - ${toLabel}`
+  }, [dashboard?.from, dashboard?.to])
 
   const formatNumber = (value?: number) =>
     new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 }).format(value ?? 0)
@@ -72,6 +92,11 @@ export const DashboardPage = () => {
             <p className="text-sm text-muted-foreground">
               Revisa recepciones, salidas e inventario con filtros rapidos.
             </p>
+            {periodLabel && (
+              <p className="text-xs text-muted-foreground">
+                Periodo: {periodLabel}
+              </p>
+            )}
           </div>
           <DashboardRangeSelect
             value={range}
@@ -150,6 +175,7 @@ export const DashboardPage = () => {
             outputs={dashboard?.chart.outputs ?? []}
             range={range}
             onRangeChange={setRange}
+            periodLabel={periodLabel}
           />
 
           <InventoryDistributionCard

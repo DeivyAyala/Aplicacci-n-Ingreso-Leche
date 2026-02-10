@@ -1,5 +1,7 @@
 import * as XLSX from "xlsx"
-  export const exportDataExcel = (filtroRegistros:any[]) =>{
+import type { RemisionCardData } from "../Items/remissions/components/RemisionCard"
+
+export const exportDataExcel = (filtroRegistros: RemisionCardData[]) => {
     //Generar Encabezados de el excel a exportar  
     const exportsData = filtroRegistros.map((registro)=>({  
       "ID Remisión": registro.id,
@@ -7,11 +9,11 @@ import * as XLSX from "xlsx"
       Hora: registro.time,
       "Volumen Remisión (L)": registro.volume,
       "Volumen Real (L)": registro.realVolume,
-      "Tanque": registro.tank.name,
-      Proveedor: registro.provider,
-      "Calidad": registro.analyst.name,
-      "Supervisor": registro.supervisor.name,
-      "Ususario de Registro": registro.user,
+      Tanque: registro.tankName,
+      Proveedor: registro.providerName,
+      Calidad: registro.analyst?.name ?? "Sin analista",
+      Supervisor: registro.supervisor?.name ?? "Sin supervisor",
+      "Ususario de Registro": registro.userName,
       "Notas": registro.notes.join(", "),
     }))
 
