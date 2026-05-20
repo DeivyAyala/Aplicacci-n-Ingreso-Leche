@@ -8,10 +8,11 @@ interface propsAction {
     handleDelete: React.MouseEventHandler<HTMLButtonElement> | undefined
     onClickEditing : React.MouseEventHandler<HTMLButtonElement> | undefined
     isEditing : boolean
+    showDelete?: boolean
 }
 
 
-export const QuickActions = ({handleDelete, onClickEditing, isEditing}: propsAction) => {
+export const QuickActions = ({handleDelete, onClickEditing, isEditing, showDelete = true}: propsAction) => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false) //Controla si mostrar o no la confirmación de eliminación 
 
     
@@ -30,15 +31,17 @@ export const QuickActions = ({handleDelete, onClickEditing, isEditing}: propsAct
                 {isEditing ? "Cancelar Edición" : "Editar Remisión"}
             </Button>
 
-            <Button
-                variant="outline"
-                className="w-full border-red-200 text-red-700 hover:bg-red-50 bg-transparent"
-                onClick={() => setShowDeleteConfirm(true)}
-            >
-                <TrashIcon className="h-4 w-4 mr-2" />
-                    Eliminar Remisión
-            </Button>
-            {showDeleteConfirm && (
+            {showDelete && (
+              <Button
+                  variant="outline"
+                  className="w-full border-red-200 text-red-700 hover:bg-red-50 bg-transparent"
+                  onClick={() => setShowDeleteConfirm(true)}
+              >
+                  <TrashIcon className="h-4 w-4 mr-2" />
+                      Eliminar Remisión
+              </Button>
+            )}
+            {showDelete && showDeleteConfirm && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                         <AlertTriangleIcon className="h-4 w-4 text-red-600" />

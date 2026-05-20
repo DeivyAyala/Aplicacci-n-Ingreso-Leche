@@ -22,8 +22,16 @@ import { toUtcFromBogotaDateTime } from "../../Helpers/dateTime"
 
 
 
-export const ReceptionPage = () => {
-  
+interface ReceptionPageProps {
+  backUrl?: string
+  successUrl?: string
+}
+
+export const ReceptionPage = ({
+  backUrl = "/adm/inicio",
+  successUrl = "/adm/remission",
+}: ReceptionPageProps) => {
+
   const navigate = useNavigate()
   const queryClient = useQueryClient();
   
@@ -80,8 +88,8 @@ export const ReceptionPage = () => {
     return selected.currentCapacity + realVolumeValue > selected.capacity
   }, [formState.tank?._id, formState.realVolume, tanks])
 
-  const onBack = () =>{
-    navigate('/adm/inicio')
+  const onBack = () => {
+    navigate(backUrl)
   }
 
   
@@ -124,7 +132,7 @@ export const ReceptionPage = () => {
 
 
       // Navegar automáticamente
-      navigate("/adm/remission");
+      navigate(successUrl);
       reset();
       
     } catch (err) {

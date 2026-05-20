@@ -19,7 +19,15 @@ import { toBogotaDateParts, toUtcFromBogotaDateTime } from "../../Helpers/dateTi
 
 
 
-export const DetailsPage = () => {
+interface DetailsPageProps {
+  backUrl?: string
+  showDelete?: boolean
+}
+
+export const DetailsPage = ({
+  backUrl = "/adm/remission",
+  showDelete = true,
+}: DetailsPageProps) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient();
   const { id } = useParams()
@@ -33,7 +41,7 @@ export const DetailsPage = () => {
 
   const handleDelete = () => {
     deleteRemission(id)
-    navigate('/adm/remission')
+    navigate(backUrl)
   }
 
 
@@ -190,7 +198,7 @@ const handleRemoveNote = (index: number) => {
 
 
 
-  const onBack = () => navigate("/adm/remission")
+  const onBack = () => navigate(backUrl)
 
   return (
     <div className="min-h-screen bg-amber-50/30">
@@ -232,10 +240,11 @@ const handleRemoveNote = (index: number) => {
           </div>
 
           <div className="space-y-6">
-            <QuickActions 
-              handleDelete={handleDelete} 
-              isEditing={isEditing} 
-              onClickEditing={() => setIsEditing(v => !v)} 
+            <QuickActions
+              handleDelete={handleDelete}
+              isEditing={isEditing}
+              onClickEditing={() => setIsEditing(v => !v)}
+              showDelete={showDelete}
             />
             <Firm 
               user={formData.user.name} 

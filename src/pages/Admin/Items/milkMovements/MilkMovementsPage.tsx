@@ -27,7 +27,15 @@ import { exportMovementsExcel } from "../../Helpers/ExportMovementsExcel"
 
 
 
-export const MilkMovementsPage = () => {
+interface MilkMovementsPageProps {
+  showDelete?: boolean
+  showExport?: boolean
+}
+
+export const MilkMovementsPage = ({
+  showDelete = true,
+  showExport = true,
+}: MilkMovementsPageProps) => {
   const { isLoading } = useGetMovements()
   const { movements, setMovements } = useMovementsStore()
   const { tanks, setTanks } = useTanksStore()
@@ -206,14 +214,16 @@ export const MilkMovementsPage = () => {
           >
             <EyeIcon className="h-4 w-4" />
           </Button>
-          <Button
-            onClick={() => handleDelete(m)}
-            variant="outline"
-            size="icon"
-            className="border-red-200 text-red-600 hover:bg-red-50 rounded-lg"
-          >
-            <TrashIcon className="h-4 w-4" />
-          </Button>
+          {showDelete && (
+            <Button
+              onClick={() => handleDelete(m)}
+              variant="outline"
+              size="icon"
+              className="border-red-200 text-red-600 hover:bg-red-50 rounded-lg"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       ),
     },
@@ -313,15 +323,17 @@ export const MilkMovementsPage = () => {
                 <span className="font-semibold">{filteredMovements.length}</span>{" "}
                 movimientos
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => exportMovementsExcel(filteredMovements)}
-                className="flex items-center gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
-              >
-                <DownloadIcon className="h-4 w-4" />
-                Exportar
-              </Button>
+              {showExport && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportMovementsExcel(filteredMovements)}
+                  className="flex items-center gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
+                >
+                  <DownloadIcon className="h-4 w-4" />
+                  Exportar
+                </Button>
+              )}
             </div>
             <CustomTable
               data={filteredMovements}

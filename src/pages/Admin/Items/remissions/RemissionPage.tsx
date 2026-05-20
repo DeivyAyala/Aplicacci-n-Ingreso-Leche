@@ -18,7 +18,17 @@ import { toBogotaDateParts } from "../../Helpers/dateTime"
 
 
 
-export const RemissionPage =() => {
+interface RemissionPageProps {
+  showDelete?: boolean
+  showExport?: boolean
+  detailsBasePath?: string
+}
+
+export const RemissionPage = ({
+  showDelete = true,
+  showExport = true,
+  detailsBasePath = "/adm/registro",
+}: RemissionPageProps) => {
 
   const { data } = useIngreso()
   const { tanks, setTanks } = useTanksStore()
@@ -133,24 +143,28 @@ export const RemissionPage =() => {
           <p className="text-amber-800">
             Mostrando <span className="font-semibold">{filtroRegistros.length}</span> remisiones
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => exportDataExcel(filtroRegistros)}
-            className="flex items-center gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
-          >
-            <DownloadIcon className="h-4 w-4" />
-            Exportar
-          </Button>
+          {showExport && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => exportDataExcel(filtroRegistros)}
+              className="flex items-center gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 bg-transparent"
+            >
+              <DownloadIcon className="h-4 w-4" />
+              Exportar
+            </Button>
+          )}
         </div>
 
        {/* Lista de Remisiones */}
         <div className="grid gap-6 grid-cols-2 [@media(max-width:460px)]:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filtroRegistros.map((registro, index) => (
-            <RemisionCard 
-              key={registro.id} 
-              registro={registro} 
+            <RemisionCard
+              key={registro.id}
+              registro={registro}
               index={index + 1}
+              showDelete={showDelete}
+              detailsBasePath={detailsBasePath}
             />
           ))}
         </div>

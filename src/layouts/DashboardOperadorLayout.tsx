@@ -1,4 +1,4 @@
-import { Outlet } from "react-router"
+import { OperatorLayout } from "@/pages/Operator/OperatorLayout"
 
 interface Props {
   role: string
@@ -6,15 +6,5 @@ interface Props {
 }
 
 export const DashboardOperadorLayout = ({ role, userName }: Props) => {
-  return (
-    <div className="flex h-screen">
-      <aside className="w-64 bg-orange-50 p-4 border-r">
-        <h1 className="text-lg font-semibold">Panel Operador</h1>
-        <p className="text-sm text-gray-600">{userName}</p>
-      </aside>
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
-    </div>
-  )
+  return <OperatorLayout role={role} userName={userName} />
 }

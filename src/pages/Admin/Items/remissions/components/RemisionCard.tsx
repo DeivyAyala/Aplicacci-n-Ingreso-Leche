@@ -31,9 +31,16 @@ export interface RemisionCardData {
 interface props {
   registro: RemisionCardData
   index: number
+  showDelete?: boolean
+  detailsBasePath?: string
 }
 
-export const RemisionCard = ({registro, index}: props) => {
+export const RemisionCard = ({
+  registro,
+  index,
+  showDelete = true,
+  detailsBasePath = "/adm/registro",
+}: props) => {
   const navigate = useNavigate()
   const [openConfirm, setOpenConfirm] = useState(false)
   const {deleteRemission, isPending } = useDeleteRemission()
@@ -106,20 +113,22 @@ export const RemisionCard = ({registro, index}: props) => {
                   "
                 >
                   <EyeIcon className="h-4 w-4 mr-1" />
-                  <Link to={`/adm/registro/${registro.id}`}>Ver Detalles</Link>
+                  <Link to={`${detailsBasePath}/${registro.id}`}>Ver Detalles</Link>
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setOpenConfirm(true)}
-                  className="
-                    border-amber-200 text-amber-700 hover:bg-red-50 bg-transparent
-                    flex-1 min-w-[120px]
-                  "
-                >
-                  <TrashIcon className="h-4 w-4 mr-1" />
-                  Eliminar
-                </Button>
+                {showDelete && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setOpenConfirm(true)}
+                    className="
+                      border-amber-200 text-amber-700 hover:bg-red-50 bg-transparent
+                      flex-1 min-w-[120px]
+                    "
+                  >
+                    <TrashIcon className="h-4 w-4 mr-1" />
+                    Eliminar
+                  </Button>
+                )}
               </div>
             </div>
         </CardContent>
